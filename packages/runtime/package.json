@@ -1,0 +1,33 @@
+{
+  "name": "@atlas/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@atlas/schema": "workspace:*",
+    "@atlas/scene": "workspace:*",
+    "@atlas/world": "workspace:*",
+    "@reactor-team/js-sdk": "3.0.1",
+    "zod": "4.5.4"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "react": "19.2.8"
+  }
+}
