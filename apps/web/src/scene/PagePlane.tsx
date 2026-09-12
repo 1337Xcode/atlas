@@ -12,12 +12,16 @@ export interface PagePlaneProps {
   visible?: boolean
 }
 
-/** A page is a 1 by 1.4 plane scaled to the scenario's page box. Textures are sRGB with anisotropy 16. */
+// note: a page is a 1 by 1.4 plane scaled to the scenario's page box
+// perf: the scans are ~1900x4000, and anisotropy costs a tap per level on every sample
+// why: 4 is indistinguishable from 16 on a plane the reader views nearly head on
 export function PagePlane({ src, x, y, w, h, opacity, visible = true }: PagePlaneProps) {
   const tex = useLoader(THREE.TextureLoader, src)
   useEffect(() => {
     tex.colorSpace = THREE.SRGBColorSpace
-    tex.anisotropy = 16
+    tex.anisotropy = 4
+    tex.generateMipmaps = true
+    tex.minFilter = THREE.LinearMipmapLinearFilter
     tex.needsUpdate = true
   }, [tex])
   const mat = useMemo(

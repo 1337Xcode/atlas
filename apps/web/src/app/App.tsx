@@ -33,6 +33,15 @@ interface Aligned {
   driftLine?: number
 }
 
+// perf: walked backwards in place, since this runs on every frame
+function lastBeatAt(beats: Scenario['beats'], t: number): Scenario['beats'][number] | undefined {
+  for (let i = beats.length - 1; i >= 0; i -= 1) {
+    const beat = beats[i]
+    if (beat && beat.t <= t) return beat
+  }
+  return undefined
+}
+
 function buildAlign(
   sc: Scenario,
   words: Record<string, WordBox[]>,
@@ -380,7 +389,7 @@ export function App() {
   const prov = provenanceVisible
   const page = sc.pages[sc.readPage]!
   const cur = running ? align.find((a) => t >= a.start && t < a.end) : undefined
-  const beat = [...sc.beats].reverse().find((b) => b.t <= t)
+  const beat = lastBeatAt(sc.beats, t)
   const tracking =
     running &&
     !!beat &&
@@ -447,8 +456,9 @@ export function App() {
 
   return (
     <div className="fixed inset-0 bg-black" onClick={advanceStop}>
+      {/* perf: 1.5 keeps the scan legible while halving the fragment work of the effect chain */}
       <Canvas
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         gl={{ alpha: true, antialias: false }}
         style={{ position: 'fixed', inset: 0 }}
       >

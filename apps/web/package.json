@@ -15,7 +15,6 @@
     "@react-three/postprocessing": "3.1.1",
     "@theatre/core": "0.7.2",
     "framer-motion": "13.2.0",
-    "openseadragon": "6.1.0",
     "postprocessing": "6.39.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -27,7 +26,6 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.3.3",
     "@theatre/studio": "0.7.2",
-    "@types/openseadragon": "6.0.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.3",
     "@types/three": "0.185.4",

@@ -50,9 +50,6 @@ importers:
       framer-motion:
         specifier: 13.2.0
         version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      openseadragon:
-        specifier: 6.1.0
-        version: 6.1.0
       postprocessing:
         specifier: 6.39.4
         version: 6.39.4(three@0.185.1)
@@ -81,9 +78,6 @@ importers:
       '@theatre/studio':
         specifier: 0.7.2
         version: 0.7.2(@theatre/core@0.7.2)
-      '@types/openseadragon':
-        specifier: 6.0.0
-        version: 6.0.0
       '@types/react':
         specifier: 19.2.18
         version: 19.2.18
@@ -893,10 +887,6 @@ packages:
 
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
-
-  '@types/openseadragon@6.0.0':
-    resolution: {integrity: sha512-tmwZFanLT8NNyiDiQhkVCPdTFhSvMcDVOFLYdzyZAEnjxGgeTMu8pvV2CFRXddAAUKLo16Q45AW58IpLur8kpQ==}
-    deprecated: This is a stub types definition. openseadragon provides its own type definitions, so you do not need this installed.
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -1789,9 +1779,6 @@ packages:
         optional: true
       zod:
         optional: true
-
-  openseadragon@6.1.0:
-    resolution: {integrity: sha512-S2kEBO6zd2pbUByMVZ6PkEldvXHbB2kemL3tAhSltnHyjpArJPgXeM/AH/g8qsoXHy9pMHzx63XyJftE556MbA==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -2805,10 +2792,6 @@ snapshots:
 
   '@types/offscreencanvas@2019.7.3': {}
 
-  '@types/openseadragon@6.0.0':
-    dependencies:
-      openseadragon: 6.1.0
-
   '@types/react-dom@19.2.3(@types/react@19.2.18)':
     dependencies:
       '@types/react': 19.2.18
@@ -3664,8 +3647,6 @@ snapshots:
     optionalDependencies:
       undici: 8.10.2
       zod: 4.5.2
-
-  openseadragon@6.1.0: {}
 
   optionator@0.9.4:
     dependencies:

@@ -1,16 +1,14 @@
-import { useEffect, useRef } from 'react'
-import OpenSeadragon from 'openseadragon'
 import { motion } from 'framer-motion'
-import { localPaths } from '../data/paths'
 import type { Cluster } from '../data/types'
 
+// why: the front pages are drawn by the scene, which the scenario's beats animate directly
+// why: a second tiled copy on top of them showed the same pages twice and fought the scripted camera
+// note: this layer is now only the page captions and the invitation to step in
+
 export interface HubHandoff {
-  bounds: { x: number; y: number; width: number; height: number }
   pageId: string
 }
 
-// note: the pages sit in a row, controls hidden, and selecting one hands its framing back
-// note: flat scans with the `image` tile source; swap in a `.dzi` pyramid once tiles are generated
 export function Hub({
   cluster,
   resolved,
@@ -20,55 +18,33 @@ export function Hub({
   cluster: Cluster
   resolved: string[]
   visible: boolean
-  onSelect: (h: HubHandoff) => void
+  onSelect: (handoff: HubHandoff) => void
 }) {
-  const el = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!el.current) return
-    const viewer = OpenSeadragon({
-      element: el.current,
-      showNavigationControl: false,
-      showNavigator: false,
-      animationTime: 2.4,
-      springStiffness: 3,
-      visibilityRatio: 1,
-      gestureSettingsMouse: { clickToZoom: false },
-    })
-    cluster.pages.forEach((p, i) =>
-      viewer.addTiledImage({
-        tileSource: { type: 'image', url: localPaths.asset(p.thumb) },
-        x: i * 1.12,
-        y: 0,
-        width: 1,
-      }),
-    )
-    viewer.addHandler('canvas-click', (e) => {
-      const point = viewer.viewport.pointFromPixel(e.position)
-      const idx = Math.floor(point.x / 1.12)
-      const page = cluster.pages[idx]
-      if (!page) return
-      const b = viewer.viewport.getBounds()
-      onSelect({ bounds: { x: b.x, y: b.y, width: b.width, height: b.height }, pageId: page.id })
-    })
-    return () => viewer.destroy()
-  }, [cluster, onSelect])
+  const first = cluster.pages[0]
+
   return (
     <motion.div
       className="fixed inset-0"
       animate={{ opacity: visible ? 1 : 0 }}
       transition={{ duration: 1.2 }}
       style={{ pointerEvents: visible ? 'auto' : 'none' }}
+      onClick={() => {
+        if (first) onSelect({ pageId: first.id })
+      }}
     >
-      <div ref={el} className="h-full w-full" />
-      <div className="ui pointer-events-none fixed bottom-[18vh] left-0 right-0 flex justify-center gap-16">
-        {cluster.pages.map((p) => (
-          <span key={p.id} className="flex flex-col items-center gap-1">
-            <span>{p.title}</span>
-            {resolved.includes(p.id) && (
+      <div className="ui pointer-events-none fixed bottom-[18vh] left-0 right-0 flex flex-wrap justify-center gap-8 px-6 sm:gap-16">
+        {cluster.pages.map((page) => (
+          <span key={page.id} className="flex flex-col items-center gap-1 text-center">
+            <span>{page.title}</span>
+            {resolved.includes(page.id) && (
               <span style={{ color: 'rgba(255,178,86,0.85)' }}>Resolved</span>
             )}
           </span>
         ))}
+      </div>
+
+      <div className="ui pointer-events-none fixed bottom-[9vh] left-0 right-0 flex justify-center">
+        <span style={{ opacity: 0.55 }}>click anywhere to read the front page</span>
       </div>
     </motion.div>
   )

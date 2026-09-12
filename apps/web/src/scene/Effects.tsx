@@ -62,15 +62,15 @@ export interface EffectsProps {
 
 /** One merged pass. No bloom, no flare, no shadows. */
 export function Effects({ grain, vignette, aberration, warmth, focus }: EffectsProps) {
+  // perf: the whole tree re-renders every frame, so this vector is reused rather than rebuilt
+  const offset = useMemo(() => new Vector2(), [])
+  offset.set(aberration, aberration)
+
   return (
     <EffectComposer multisampling={0}>
       <RadialFocus {...focus} />
       <Warmth t={warmth} />
-      <ChromaticAberration
-        offset={new Vector2(aberration, aberration)}
-        radialModulation={false}
-        modulationOffset={0}
-      />
+      <ChromaticAberration offset={offset} radialModulation={false} modulationOffset={0} />
       <Noise premultiply opacity={grain} />
       <Vignette eskil={false} offset={0.35} darkness={vignette} />
     </EffectComposer>
