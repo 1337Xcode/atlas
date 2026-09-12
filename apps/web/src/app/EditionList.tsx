@@ -25,12 +25,7 @@ export function EditionList({
   return (
     <aside className="edition-list" aria-label="Choose a historical event" id="edition-list">
       <header className="edition-list-heading">
-        <span className="eyebrow">The collection</span>
-        <h2>
-          History, <br />
-          one page at a time.
-        </h2>
-        <p>Ten events. The records behind them.</p>
+        <h2>Events</h2>
       </header>
       <div
         className="edition-wheel"
@@ -45,22 +40,19 @@ export function EditionList({
           defaultSelected={index}
           onChange={setIndex}
           fontSize={1.1}
-          spacing={2.4}
+          spacing={2.2}
           inset={20}
           tilt={3}
           curve={0.18}
           blur={0}
           fade={0.12}
           minOpacity={0.22}
-          smoothing={reducedMotion ? 1 : 110}
+          smoothing={reducedMotion ? 1 : 90}
           soundUrl=""
           className="edition-wheel-control"
         />
       </div>
       <footer className="edition-list-footer">
-        <span className="eyebrow">
-          {String(index + 1).padStart(2, '0')} / {String(editions.length).padStart(2, '0')}
-        </span>
         <p>{formatEditionDate(selected.date)}</p>
         <button
           className="reader-button edition-open"
@@ -69,7 +61,6 @@ export function EditionList({
         >
           Read this edition <span aria-hidden="true">↗</span>
         </button>
-        <span className="quiet">Scroll, drag, or use ↑ ↓. Enter opens.</span>
       </footer>
     </aside>
   )

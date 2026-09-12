@@ -1,10 +1,12 @@
 import tailwind from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { fileURLToPath } from 'node:url'
 
 // note: shaders are imported with ?raw, so vite hands over the glsl source rather than a url
 export default defineConfig({
   plugins: [react(), tailwind()],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: {
     port: 5173,
     // note: the newspaper reads the archive from the backend during integration

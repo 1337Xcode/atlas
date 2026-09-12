@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { type Edition, type ReaderPage, formatEditionDate } from '../data/editions'
 import { worldUrlForArticle } from '../data/worlds'
+import { HoverPlayCard } from '../components/ui/hover-play-card'
 
 export function EditionPage({ edition, page }: { edition: Edition; page: ReaderPage }) {
   const [imageFailed, setImageFailed] = useState(false)
@@ -30,7 +31,6 @@ export function EditionPage({ edition, page }: { edition: Edition; page: ReaderP
   return (
     <article className="reader-paper" aria-label={edition.headline} data-reader-page>
       <header className="paper-masthead">
-        <span className="paper-kicker">An independent window into history</span>
         <span className="paper-name">The Atlas</span>
         <div className="paper-rule">
           <span>{formatEditionDate(edition.date)}</span>
@@ -40,7 +40,6 @@ export function EditionPage({ edition, page }: { edition: Edition; page: ReaderP
       <div className="paper-story">
         <div className="paper-section">
           <span>{edition.nature}</span>
-          <span>From the historical record</span>
         </div>
         <h1>{edition.headline}</h1>
         <p className="paper-dateline">{edition.dateline}</p>
@@ -48,28 +47,13 @@ export function EditionPage({ edition, page }: { edition: Edition; page: ReaderP
           {imageFailed ? (
             <p role="alert">The photograph could not load. Reload to try again.</p>
           ) : (
-            <a
-              className="paper-world"
+            <HoverPlayCard
+              poster={edition.image.url}
+              alt={edition.image.caption}
               href={worldUrlForArticle(edition.id)}
-              aria-label={`Explore ${edition.title} in the world viewer`}
-            >
-              <img
-                src={edition.image.url}
-                alt={edition.image.caption}
-                draggable={false}
-                fetchPriority="high"
-                onError={() => setImageFailed(true)}
-              />
-              <span className="world-invitation">
-                <span className="world-play" aria-hidden="true">
-                  ▷
-                </span>
-                <span>
-                  <strong>Explore this moment</strong>
-                  <small>Open the interactive world viewer</small>
-                </span>
-              </span>
-            </a>
+              label={`Explore ${edition.title} in the world viewer`}
+              onImageError={() => setImageFailed(true)}
+            />
           )}
           <figcaption>
             {edition.image.caption} <span>{edition.image.credit}</span>

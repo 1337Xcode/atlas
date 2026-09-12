@@ -19,6 +19,20 @@ async function noHorizontalOverflow(page: Page) {
   )
 }
 
+// test: the supplied play control must stay centered on the photograph at every viewport
+async function centeredPlay(page: Page) {
+  const image = await page.locator('.paper-world img').boundingBox()
+  const button = await page
+    .getByRole('link', { name: 'Explore Apollo 11 in the world viewer' })
+    .boundingBox()
+  if (!image || !button) throw new Error('The photograph or play control did not render')
+  expect(Math.abs(button.x + button.width / 2 - image.x - image.width / 2)).toBeLessThan(2)
+  expect(Math.abs(button.y + button.height / 2 - image.y - image.height / 2)).toBeLessThan(2)
+  expect(button.width).toBeGreaterThanOrEqual(60)
+  await expect(page.getByText('History, in perspective.', { exact: true })).toHaveCount(0)
+  await expect(page.getByText('The interactive history collection', { exact: true })).toHaveCount(0)
+}
+
 for (const [name, engine] of Object.entries({ chromium, webkit })) {
   test(`${name}: desktop reader, wheel, swipe, and no overlapping layers`, async () => {
     const info = test.info()
@@ -36,6 +50,8 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
       })
       await page.goto(base)
       await loaded(page)
+      await centeredPlay(page)
+      await page.locator('.paper-world').hover()
       await page.evaluate(() => document.fonts.ready)
       expect(
         await page
@@ -99,6 +115,7 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
       page.on('pageerror', (error) => errors.push(error.message))
       await page.goto(base)
       await loaded(page)
+      await centeredPlay(page)
       await page.screenshot({ path: info.outputPath('phone.png') })
       await page.getByRole('button', { name: 'Events', exact: true }).click()
       await expect(page.locator('.reader-main')).toBeHidden()

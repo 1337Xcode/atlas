@@ -54,9 +54,8 @@ export function Reader() {
     <div className="reader-shell" data-menu-open={menuOpen}>
       <header className="reader-header">
         <a className="reader-brand" href="/" aria-label="Atlas home">
-          ATLAS<span>History, in perspective.</span>
+          ATLAS
         </a>
-        <span className="reader-header-note">The interactive history collection</span>
         <button
           ref={menuButton}
           type="button"
@@ -110,7 +109,6 @@ export function Reader() {
         >
           <div className="reader-toolbar">
             <div className="reader-edition-title">
-              <span className="eyebrow">Now reading</span>
               <h2>{edition.title}</h2>
             </div>
             <div className="reader-page-actions">
@@ -122,7 +120,6 @@ export function Reader() {
               >
                 {zoomed ? 'Fit width' : 'Enlarge'}
               </button>
-              <span className="reader-divider" />
               <button
                 type="button"
                 className="reader-button arrow-button"
@@ -193,7 +190,6 @@ export function Reader() {
                 </button>
               ))}
             </div>
-            <span className="reader-swipe-hint">Swipe sideways to turn</span>
           </footer>
         </main>
       </div>

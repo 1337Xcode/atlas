@@ -2,7 +2,7 @@
   --reader-muted: #a0a0a0;
   height: 100dvh;
   display: grid;
-  grid-template-rows: 76px minmax(0, 1fr);
+  grid-template-rows: 64px minmax(0, 1fr);
   background: #111;
   color: #f4f4f4;
   font-family: 'Geist Variable', Arial, sans-serif;
@@ -67,11 +67,10 @@
   color: var(--reader-muted);
 }
 .edition-list-heading h2 {
-  font-size: 23px;
+  font-size: 14px;
   line-height: 1.2;
-  letter-spacing: -0.04em;
   font-weight: 500;
-  margin: 14px 0 12px;
+  margin: 0;
 }
 .edition-list-heading p,
 .edition-list-footer p {
@@ -88,8 +87,9 @@
   mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
 }
 .edition-wheel-control [role='option'] {
-  top: 28%;
+  top: 24%;
   font-size: clamp(14px, 1.12vw, 18px);
+  font-weight: 400;
   letter-spacing: -0.02em;
 }
 .edition-wheel-control:focus-visible {
@@ -100,8 +100,7 @@
 .edition-list-footer {
   display: grid;
   gap: 10px;
-  border-top: 1px solid #2b2b2b;
-  padding-top: 18px;
+  padding-top: 12px;
 }
 .quiet {
   font-size: 11px;
@@ -148,7 +147,7 @@
   min-height: 0;
   min-width: 0;
   display: grid;
-  grid-template-rows: 76px minmax(0, 1fr) auto;
+  grid-template-rows: 62px minmax(0, 1fr) auto;
 }
 .reader-toolbar {
   display: flex;
@@ -287,38 +286,10 @@
   object-fit: cover;
   display: block;
 }
-.world-invitation {
-  position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 32px 18px 16px;
-  background: linear-gradient(transparent, #000c);
+.world-play-button {
+  border: 1px solid rgb(255 255 255 / 50%);
+  backdrop-filter: blur(4px);
   font-family: 'Geist Variable', Arial, sans-serif;
-}
-.world-invitation strong {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-}
-.world-invitation small {
-  display: block;
-  margin-top: 3px;
-  font-size: 10px;
-  opacity: 0.82;
-}
-.world-play {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid #ffffffa0;
-  border-radius: 50%;
-  font-size: 22px;
-}
-.paper-world:hover .world-play {
-  background: #ffffff30;
 }
 .paper-figure figcaption {
   font-size: 9px;
