@@ -3,6 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { motion } from 'framer-motion'
 import { catalogue } from '../data/client'
 import { localPaths } from '../data/paths'
+import { worldUrlFor } from '../data/worlds'
 import { createProjector } from '../scene/projection'
 import { ErrorNotice } from './ErrorNotice'
 import { useViewport } from './useViewport'
@@ -21,6 +22,7 @@ import { TitleCard } from '../overlay/TitleCard'
 import { ObjectiveCard } from '../overlay/ObjectiveCard'
 import { WireCard } from '../overlay/WireCard'
 import { Provenance, type ProjectedMark } from '../overlay/Provenance'
+import { EnterWorld } from '../overlay/EnterWorld'
 import { Translation } from '../overlay/Translation'
 import { Catalogue } from '../hub/Catalogue'
 import { Hub, type HubHandoff } from '../hub/Hub'
@@ -477,6 +479,7 @@ export function App() {
     : null
 
   // why: a catalogue that came back short must not crash the page the reader is already on
+  const worldUrl = worldUrlFor(sc.id)
   const cluster = clusters.find((c) => c.id === sc.id) ?? {
     id: sc.id,
     label: sc.title,
@@ -655,6 +658,15 @@ export function App() {
         scale={page.h * projector.scale}
       />
       <Provenance marks={marks} />
+      {worldUrl ? (
+        <EnterWorld
+          title={sc.title}
+          date={sc.date}
+          poster={sc.ghost.src}
+          href={worldUrl}
+          visible={!browsing && !running}
+        />
+      ) : null}
       <div className="ui pointer-events-none fixed bottom-[18px] left-8 flex gap-4">
         <span style={{ fontVariantNumeric: 'tabular-nums', opacity: 0.6 }}>
           {Math.floor(t / 60)}:{String(Math.floor(t % 60)).padStart(2, '0')}
