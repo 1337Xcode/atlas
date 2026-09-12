@@ -5,6 +5,7 @@ import { dirname, join, resolve } from 'node:path'
 export type ServerConfig = {
   contentDir: string
   imageBaseUrl: string
+  audioBaseUrl: string
   modelId: string | undefined
   reactorApiKey: string
   ingestEnabled: boolean
@@ -16,6 +17,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
     // note: archive paths are relative to the repository, not to whoever started the process
     contentDir: resolve(workspaceRoot(), env.ATLAS_CONTENT_DIR ?? 'content'),
     imageBaseUrl: '/api/images',
+    audioBaseUrl: '/api/audio',
     modelId: env.ATLAS_WORLD_MODEL,
     reactorApiKey: env.REACTOR_API_KEY ?? '',
     ingestEnabled: env.ATLAS_INGEST_ENABLED === 'true',

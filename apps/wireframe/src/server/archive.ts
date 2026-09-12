@@ -20,6 +20,7 @@ function load() {
       archive: createArchive({
         contentDir: config.contentDir,
         imageBaseUrl: config.imageBaseUrl,
+        audioBaseUrl: config.audioBaseUrl,
         ...(config.modelId === undefined ? {} : { modelId: config.modelId }),
       }),
       model: getWorldModel(config.modelId),

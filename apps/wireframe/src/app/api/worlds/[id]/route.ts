@@ -36,7 +36,8 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       article: entry.article,
       model,
       token,
-      anchorImageUrl: archive.imageUrl(entry.article, archive.anchorImage(entry.article)),
+      anchorImageUrl: archive.imageUrl(archive.anchorImage(entry.article)),
+      soundscape: archive.soundscape(entry.article),
     })
 
     return Response.json(

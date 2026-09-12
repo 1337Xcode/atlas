@@ -28,6 +28,8 @@ export type SessionSnapshot = {
   // note: set while the world is about to close itself, for the banner
   countdown: LifecycleCountdown | null
   endedReason: SessionEndReason | undefined
+  // note: set when the browser refused to play the archive sound without a fresh gesture
+  audioBlocked: boolean
 }
 
 export type SessionStore = {
@@ -55,6 +57,7 @@ export function createSessionStore(status: TransportStatus): SessionStore {
     stats: undefined,
     countdown: null,
     endedReason: undefined,
+    audioBlocked: false,
   }
 
   const update: SessionStore['update'] = (patch) => {

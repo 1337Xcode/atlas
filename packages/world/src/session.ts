@@ -11,6 +11,7 @@ import {
   type WorldControlSettings,
   type WorldSessionPlan,
   type WorldSessionToken,
+  type WorldSoundscape,
 } from '@atlas/schema'
 import { REACTOR_API_URL } from './tokens.ts'
 import type { WorldModelDescriptor } from './wire.ts'
@@ -55,6 +56,8 @@ export type BuildWorldSessionPlanInput = {
   token: WorldSessionToken
   // note: a url the browser can fetch, since the seed image is uploaded client-side
   anchorImageUrl: string
+  // note: already resolved to urls by the archive; an article with no sound is silent
+  soundscape?: WorldSoundscape
   apiUrl?: string
   controls?: Partial<WorldControlSettings>
 }
@@ -85,6 +88,7 @@ export function buildWorldSessionPlan(input: BuildWorldSessionPlanInput): BuiltW
     token,
     scene,
     anchorImage: { url: anchorImageUrl, caption: anchor.caption },
+    soundscape: input.soundscape ?? { cues: [] },
     capabilities: model.capabilities,
     controls: resolveControls(model, input.controls),
     annotations: annotate(article),

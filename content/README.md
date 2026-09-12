@@ -78,3 +78,53 @@ do most of the work:
    the Moon has no atmosphere.
 2. Write only what a source supports, and point each event at that source. The
    reader can see the citation next to the key they are holding.
+
+## Sound
+
+A world may carry an optional `soundscape`. It is optional on purpose: silence is better
+than sound we cannot stand behind.
+
+```json
+"soundscape": {
+  "bed": {
+    "id": "air-to-ground-loop",
+    "src": "apollo-11-first-steps/air-to-ground-loop.m4a",
+    "kind": "archival",
+    "caption": "Air to ground radio loop during the lunar surface activity.",
+    "credit": "NASA, public domain, stated on the source record",
+    "sourceIndex": 0,
+    "gain": 0.35
+  },
+  "cues": [
+    {
+      "id": "boot-in-regolith",
+      "key": "1",
+      "src": "apollo-11-first-steps/boot.m4a",
+      "kind": "reconstruction",
+      "caption": "Reconstructed boot pressing into regolith.",
+      "credit": "Reconstruction by the Atlas team",
+      "gain": 0.4
+    }
+  ]
+}
+```
+
+Files live in `content/audio/<article-id>/`. Keep a bed to 30 to 60 seconds; it loops.
+
+Rules the linter enforces:
+
+- `kind` is `archival` or `reconstruction`. There is no third kind, because there is no
+  honest third kind. Music of any sort is refused.
+- An `archival` layer must cite a source the article carries. A recording that claims to be
+  of the event has to point at the record that says so.
+- A `cue` must use a key the scene's `events` already declare, so sound and prompt agree.
+- `gain` sits around 0.3 to 0.5. Above 0.8 you get a warning: sound goes under the picture.
+
+Sourcing, in order of preference:
+
+1. An archival recording whose source record states a reuse condition. Check the record, not
+   the collection. A file being publicly downloadable is not a licence.
+2. A plain reconstruction of ordinary ambience, such as wind, water, crowd murmur or machinery,
+   labelled `reconstruction` and credited to whoever made it.
+3. Silence. Use it for anything involving mass death unless an archival recording of the exact
+   staged moment exists. The Triangle fire and D-Day worlds are silent for this reason.

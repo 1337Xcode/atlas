@@ -8,6 +8,7 @@ export {
 } from './lifecycle.ts'
 export { readModelMessage, type ModelEvent } from './messages.ts'
 export { buildCameraPose, type PoseInput } from './pose.ts'
+export { createSoundstage, type PlayableSound, type Soundstage } from './sound.ts'
 export { createWorldSession, type CreateWorldSessionOptions, type WorldSession } from './session.ts'
 export type { SessionEndReason, SessionPhase, SessionSnapshot } from './store.ts'
 export {

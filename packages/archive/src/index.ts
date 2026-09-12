@@ -4,7 +4,7 @@ export {
   type Archive,
   type ArchiveConfig,
 } from './archive.ts'
-export { ImageNotFoundError, readArchiveImage, type ArchiveImageFile } from './images.ts'
+export { assetUrl, AssetNotFoundError, readArchiveFile, type ArchiveFile } from './files.ts'
 export {
   loadArchive,
   type ArchiveEntry,

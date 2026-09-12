@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { SourceSchema } from './article.ts'
 import { IdSchema, NonEmptyStringSchema } from './common.ts'
 import { CompiledSceneSchema } from './scene.ts'
+import { WorldSoundscapeSchema } from './soundscape.ts'
 
 // feat: capabilities travel with the plan so the runtime never offers a control the model lacks
 export const WorldCapabilitiesSchema = z.object({
@@ -70,6 +71,8 @@ export const WorldSessionPlanSchema = z.object({
   token: WorldSessionTokenSchema,
   scene: CompiledSceneSchema,
   anchorImage: z.object({ url: NonEmptyStringSchema, caption: NonEmptyStringSchema }),
+  // note: the model has no audio track, so any sound is ours and comes from the archive
+  soundscape: WorldSoundscapeSchema,
   capabilities: WorldCapabilitiesSchema,
   controls: WorldControlSettingsSchema,
   // feat: every hold key carries the source that attests it, so the reader can check the claim
