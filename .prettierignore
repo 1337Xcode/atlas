@@ -2,3 +2,6 @@ pnpm-lock.yaml
 .next/
 node_modules/
 dist/
+
+# next writes this file itself and rewrites any reformatting
+apps/api/next-env.d.ts
