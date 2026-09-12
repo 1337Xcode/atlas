@@ -12,7 +12,7 @@ export async function GET() {
       dateline: article.dateline,
       nature: article.nature,
       summary: article.summary,
-      anchorImageUrl: archive.imageUrl(archive.anchorImage(article)),
+      anchorImageUrl: archive.imageUrl(article, archive.anchorImage(article)),
     })),
     // note: withheld articles are reported, never silently dropped
     problems,

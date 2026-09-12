@@ -5,7 +5,6 @@ import { createInputStore, type InputStore } from './input.ts'
 import { createLifecycleGuard } from './lifecycle.ts'
 import { readModelMessage, type ModelEvent } from './messages.ts'
 import { buildCameraPose } from './pose.ts'
-import { createSoundstage, type PlayableSound } from './sound.ts'
 import { stageWorld } from './staging.ts'
 import { createSessionStore, type SessionEndReason, type SessionSnapshot } from './store.ts'
 import { createReactorTransport, type Unsubscribe, type WorldTransport } from './transport.ts'
@@ -14,8 +13,6 @@ export type CreateWorldSessionOptions = {
   plan: WorldSessionPlan
   transport?: WorldTransport
   fetchAnchorImage?: (url: string) => Promise<Blob>
-  // note: injected in tests, so the control loop can be driven without an audio device
-  createSound?: (url: string) => PlayableSound
 }
 
 export interface WorldSession {
@@ -31,8 +28,6 @@ export interface WorldSession {
   nudge: () => void
   // note: any input at all, including mouse movement, so the idle timer stays honest
   markActivity: () => void
-  // feat: let the reader turn the archive sound on after the browser blocked it
-  resumeSound: () => void
 }
 
 // why: a world that never reports a first chunk is a gpu we are paying for and nobody can see
@@ -47,12 +42,6 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   const input = createInputStore()
   const store = createSessionStore(transport.status())
   const usePose = plan.capabilities.look.mode === 'camera-pose'
-
-  const soundstage = createSoundstage({
-    soundscape: plan.soundscape,
-    ...(options.createSound ? { create: options.createSound } : {}),
-    onBlocked: () => store.update({ audioBlocked: true }),
-  })
 
   const idleWire = (): WireState => ({
     intent: input.intent(plan.scene.rotationSpeedDeg),
@@ -99,7 +88,6 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     const signature = input.heldEventKeys().join(',')
     if (signature === heldSignature) return []
     heldSignature = signature
-    soundstage.setHeldKeys(input.heldEventKeys())
     const trigger = model.commands.triggerKvCacheReset
     return trigger ? [trigger()] : []
   }
@@ -152,15 +140,12 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     store.update({ phase: 'live' })
     // why: billing starts at the first frame, so the clock on an unattended world starts here too
     guard.begin()
-    // note: the bed comes in with the picture, never before it
-    soundstage.start()
   }
 
   // fn: release the gpu and say why, so the ui can offer the right way back in
   const closeSession = async (reason: SessionEndReason) => {
     if (store.snapshot().phase === 'closed') return
     guard.dispose()
-    soundstage.stop()
     clearTimeout(warmupTimer)
     input.clear()
     store.update({ phase: 'closed', endedReason: reason, countdown: null })
@@ -271,10 +256,6 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       void flush()
     },
     markActivity: guard.markActivity,
-    resumeSound: () => {
-      store.update({ audioBlocked: false })
-      soundstage.resume()
-    },
     snapshot: store.snapshot,
     subscribe: store.subscribe,
     attachVideo: (element) => {

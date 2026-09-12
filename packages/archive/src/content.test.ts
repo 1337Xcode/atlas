@@ -6,7 +6,7 @@ import { createArchive } from './archive.ts'
 
 // why: the archive shipped in this repo is the demo, so it is tested like code
 const contentDir = fileURLToPath(new URL('../../../content', import.meta.url))
-const archive = createArchive({ contentDir, imageBaseUrl: '/api/images', audioBaseUrl: '/api/audio' })
+const archive = createArchive({ contentDir, imageBaseUrl: '/api/images' })
 
 describe('the archive in this repository', () => {
   it('loads without a single problem', async () => {

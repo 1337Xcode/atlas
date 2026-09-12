@@ -43,15 +43,15 @@ detected with `(pointer: coarse)`, not the screen width.
 
 ## Packages
 
-| Package          | Responsibility                                                                              |
-| ---------------- | ------------------------------------------------------------------------------------------- |
-| `@atlas/schema`  | zod contracts for articles, scene briefs, sessions and control state                        |
-| `@atlas/scene`   | compiles a brief into layered prompts, composes them, lints them for fidelity               |
-| `@atlas/archive` | loads and validates the local JSON archive, withholds unservable articles                   |
-| `@atlas/world`   | Reactor model registry, command vocabularies, token minting, session planning               |
-| `@atlas/runtime` | browser control loop: transport, input, camera pose, chunk clock, sound, touch, React hooks |
-| `@atlas/ingest`  | optional side channel: post an article, or draft one from a news URL                        |
-| `apps/wireframe` | Next.js test harness (replaceable)                                                          |
+| Package          | Responsibility                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| `@atlas/schema`  | zod contracts for articles, scene briefs, sessions and control state                 |
+| `@atlas/scene`   | compiles a brief into layered prompts, composes them, lints them for fidelity        |
+| `@atlas/archive` | loads and validates the local JSON archive, withholds unservable articles            |
+| `@atlas/world`   | Reactor model registry, command vocabularies, token minting, session planning        |
+| `@atlas/runtime` | browser control loop: transport, input, camera pose, chunk clock, touch, React hooks |
+| `@atlas/ingest`  | optional side channel: post an article, or draft one from a news URL                 |
+| `apps/wireframe` | Next.js test harness (replaceable)                                                   |
 
 ## API
 
@@ -60,7 +60,6 @@ detected with `(pointer: coarse)`, not the screen width.
 | `GET /api/articles`         | the servable archive, plus any withheld files and why         |
 | `POST /api/worlds/[id]`     | mints a scoped Reactor token and returns a `WorldSessionPlan` |
 | `GET /api/images/[...path]` | serves archive images, including the anchor frame             |
-| `GET /api/audio/[...path]`  | serves archive recordings, when an article has any            |
 | `POST /api/ingest`          | optional; off unless `ATLAS_INGEST_ENABLED=true`              |
 
 Using the runtime from another frontend:
@@ -90,9 +89,6 @@ The world is generated, so accuracy has to be engineered rather than hoped for:
   stage. The Triangle fire world is the mourning march ten days later; the D-Day world is
   the airfield the evening before.
 - Seeds are fixed, so the same article renders the same world every time.
-- **Sound is gated like the pictures.** Only archival recordings that cite a source, or plainly
-  labelled reconstructions. Anything that reads as music is refused outright, and silence is the
-  right answer where neither is honest. No audio ships yet for that reason.
 
 See `docs/spec.md` for scope, `docs/decisions/` for why each choice was made, `AGENTS.md`
 for the coding standards, and `content/README.md` for how to author an article.

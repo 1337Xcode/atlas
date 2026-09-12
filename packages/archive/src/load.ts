@@ -1,13 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { ArticleSchema, type Article } from '@atlas/schema'
-import {
-  compileScene,
-  isServable,
-  lintScene,
-  lintSoundscape,
-  type SceneDiagnostic,
-} from '@atlas/scene'
+import { compileScene, isServable, lintScene, type SceneDiagnostic } from '@atlas/scene'
 import { getWorldModel } from '@atlas/world'
 
 export type ArchiveEntry = {
@@ -54,14 +48,11 @@ export async function loadArchive(options: LoadArchiveOptions): Promise<LoadedAr
     const compiled = compileScene(article.world, {
       promptCharBudget: model.capabilities.promptCharBudget,
     })
-    const diagnostics = [
-      ...lintScene({ brief: article.world, compiled, sourceCount: article.sources.length }),
-      ...lintSoundscape({
-        soundscape: article.soundscape,
-        sourceCount: article.sources.length,
-        eventKeys: compiled.layers.events.map((event) => event.key),
-      }),
-    ]
+    const diagnostics = lintScene({
+      brief: article.world,
+      compiled,
+      sourceCount: article.sources.length,
+    })
     const servable = isServable(diagnostics)
     entries.push({ article, file, diagnostics, servable })
 

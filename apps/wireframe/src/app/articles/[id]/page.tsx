@@ -31,7 +31,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
       <WorldFrame
         articleId={article.id}
-        anchorImageUrl={archive.imageUrl(anchor)}
+        anchorImageUrl={archive.imageUrl(article, anchor)}
         anchorCaption={anchor.caption}
       />
 
@@ -56,7 +56,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
           .map((image) => (
             <li key={image.id}>
               <figure>
-                <img src={archive.imageUrl(image)} alt={image.caption} width={480} />
+                <img src={archive.imageUrl(article, image)} alt={image.caption} width={480} />
                 <figcaption>
                   {image.caption} — {image.credit}
                 </figcaption>

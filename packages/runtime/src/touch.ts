@@ -104,7 +104,9 @@ export function bindTouchControls(options: BindTouchControlsOptions): Unsubscrib
 
   // note: buttons declare themselves in markup, so react can re-render them freely
   const actionOf = (target: EventTarget | null): string | undefined =>
-    target instanceof HTMLElement ? (target.closest('[data-action]')?.getAttribute('data-action') ?? undefined) : undefined
+    target instanceof HTMLElement
+      ? (target.closest('[data-action]')?.getAttribute('data-action') ?? undefined)
+      : undefined
 
   const onButtonDown = (event: PointerEvent) => {
     const action = actionOf(event.target)

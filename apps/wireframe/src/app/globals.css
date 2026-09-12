@@ -176,16 +176,6 @@ button {
   padding: 0.5rem 1rem;
 }
 
-.sound-blocked {
-  position: absolute;
-  top: 2.25rem;
-  right: 0.5rem;
-  background: #000;
-  color: #fff;
-  font-size: 0.75rem;
-  padding: 0.3rem 0.5rem;
-}
-
 /* feat: thumb pads, only rendered on a touch device */
 .pads {
   position: absolute;

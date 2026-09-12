@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { IdSchema, NonEmptyStringSchema } from './common.ts'
 import { SceneBriefSchema } from './scene.ts'
-import { SoundscapeSchema } from './soundscape.ts'
 
 // note: the anchor image is the seed frame the world model conditions on, plates are page dressing
 export const ImageRoleSchema = z.enum(['anchor', 'plate'])
@@ -37,8 +36,6 @@ export const ArticleSchema = z
     images: z.array(ArticleImageSchema).min(1),
     sources: z.array(SourceSchema).min(1),
     world: SceneBriefSchema,
-    // note: optional, and silence is a valid answer where honest sound is not available
-    soundscape: SoundscapeSchema.optional(),
   })
   .refine((article) => article.images.filter((image) => image.role === 'anchor').length === 1, {
     error: 'exactly one image must carry role "anchor"',

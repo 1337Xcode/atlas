@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { authoredBrief, sampleArticle } from '@atlas/schema/testing'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createArchive } from './archive.ts'
-import { readArchiveFile } from './files.ts'
+import { readArchiveImage } from './images.ts'
 
 let contentDir: string
 
@@ -19,7 +19,7 @@ beforeEach(async () => {
 })
 
 function archive() {
-  return createArchive({ contentDir, imageBaseUrl: '/api/images', audioBaseUrl: '/api/audio' })
+  return createArchive({ contentDir, imageBaseUrl: '/api/images' })
 }
 
 describe('createArchive', () => {
@@ -58,7 +58,7 @@ describe('createArchive', () => {
 
   it('resolves relative image sources against the image base url', async () => {
     const article = sampleArticle()
-    expect(archive().imageUrl(archive().anchorImage(article))).toBe(
+    expect(archive().imageUrl(article, archive().anchorImage(article))).toBe(
       '/api/images/berlin-wall-opens/crowd-at-the-wall.jpg',
     )
   })
@@ -74,7 +74,7 @@ describe('createArchive', () => {
         },
       ],
     })
-    expect(archive().imageUrl(archive().anchorImage(article))).toBe(
+    expect(archive().imageUrl(article, archive().anchorImage(article))).toBe(
       'https://example.org/scan.jpg',
     )
   })
@@ -98,25 +98,25 @@ describe('createArchive', () => {
   })
 })
 
-describe('readArchiveFile', () => {
+describe('readArchiveImage', () => {
   it('reads an image and reports its mime type', async () => {
     const path = join('berlin-wall-opens', 'crowd-at-the-wall.jpg')
     await writeFile(join(contentDir, 'images', path), 'jpeg-bytes', 'utf8')
 
-    const file = await readArchiveFile(join(contentDir, 'images'), path)
+    const file = await readArchiveImage(join(contentDir, 'images'), path)
     expect(file.mimeType).toBe('image/jpeg')
     expect(Buffer.from(file.bytes).toString()).toBe('jpeg-bytes')
   })
 
   it('refuses a path that escapes the images directory', async () => {
     await expect(
-      readArchiveFile(join(contentDir, 'images'), '../articles/berlin-wall-opens.json'),
-    ).rejects.toThrow(/no archive asset/)
+      readArchiveImage(join(contentDir, 'images'), '../articles/berlin-wall-opens.json'),
+    ).rejects.toThrow(/no archive image/)
   })
 
   it('refuses a file type that is not an image', async () => {
-    await expect(readArchiveFile(join(contentDir, 'images'), 'notes.txt')).rejects.toThrow(
-      /no archive asset/,
+    await expect(readArchiveImage(join(contentDir, 'images'), 'notes.txt')).rejects.toThrow(
+      /no archive image/,
     )
   })
 })

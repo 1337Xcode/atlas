@@ -146,12 +146,6 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
           />
         ) : null}
 
-        {snapshot?.audioBlocked ? (
-          <button type="button" className="sound-blocked" onClick={() => session?.resumeSound()}>
-            turn on the archive sound
-          </button>
-        ) : null}
-
         {closed ? (
           <div className="closed">
             <p>{endedMessage(snapshot?.endedReason)}</p>
@@ -176,13 +170,6 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
         to crouch, <kbd>esc</kbd> to release the mouse. The arrow keys also look around if you would
         rather not use the mouse.
       </p>
-
-      {plan.soundscape.bed ? (
-        <p className="legend">
-          sound: {plan.soundscape.bed.caption} ({plan.soundscape.bed.kind},{' '}
-          {plan.soundscape.bed.credit})
-        </p>
-      ) : null}
 
       <dl className="annotations">
         {plan.annotations.map((annotation) => (
