@@ -8,6 +8,8 @@ export type WorldStatusProps = {
   chunkIndex: number
   fps: number | undefined
   rtt: number | undefined
+  // note: "relay" means media is routed through a turn server, which costs latency
+  candidateType: string | undefined
 }
 
 const PHASE_LABEL: Record<SessionPhase, string> = {
@@ -20,11 +22,13 @@ const PHASE_LABEL: Record<SessionPhase, string> = {
   closed: 'closed',
 }
 
-export function WorldStatus({ phase, chunkIndex, fps, rtt }: WorldStatusProps) {
+export function WorldStatus({ phase, chunkIndex, fps, rtt, candidateType }: WorldStatusProps) {
   return (
     <p className="hud">
       {PHASE_LABEL[phase]}
-      {phase === 'live' ? ` · chunk ${chunkIndex} · ${fps ?? '--'} fps · ${rtt ?? '--'} ms` : null}
+      {phase === 'live'
+        ? ` · chunk ${chunkIndex} · ${fps ?? '--'} fps · ${rtt ?? '--'} ms · ${candidateType ?? '--'}`
+        : null}
     </p>
   )
 }

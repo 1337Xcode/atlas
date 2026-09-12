@@ -228,3 +228,21 @@ describe('bindControls', () => {
     expect(input.intent(5).longitudinal).toBe('idle')
   })
 })
+
+describe('looking around without pointer lock', () => {
+  it('turns from plain mouse movement over the world', () => {
+    bind()
+    enter()
+    const event = new MouseEvent('mousemove', { bubbles: true })
+    Object.defineProperty(event, 'movementX', { value: 9 })
+    Object.defineProperty(event, 'movementY', { value: 0 })
+    surface.dispatchEvent(event)
+    expect(input.consumeLook().dxPx).toBe(9)
+  })
+
+  it('ignores movement over the page when the world was never clicked', () => {
+    bind()
+    move(9, 0)
+    expect(input.consumeLook()).toEqual({ dxPx: 0, dyPx: 0 })
+  })
+})

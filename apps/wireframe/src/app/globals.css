@@ -256,3 +256,9 @@ button {
   opacity: 0.8;
   margin: 0;
 }
+
+/* why: the model renders 1664x960, and upscaling past that is what looks soft */
+.world:not([data-expanded='true']) .viewport {
+  max-width: 1664px;
+  margin: 0 auto;
+}

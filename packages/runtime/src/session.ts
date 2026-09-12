@@ -1,5 +1,5 @@
 import { composePrompt } from '@atlas/scene'
-import type { WorldSessionPlan } from '@atlas/schema'
+import { IDLE_CONTROL_INTENT, type WorldSessionPlan } from '@atlas/schema'
 import { getWorldModel, planCommands, type Command, type WireState } from '@atlas/world'
 import { createInputStore, type InputStore } from './input.ts'
 import { createLifecycleGuard } from './lifecycle.ts'
@@ -31,7 +31,11 @@ export interface WorldSession {
 }
 
 // why: video arriving is proof the world works, so the controls unlock on it even with no chunk report
-const VIDEO_WARMUP_MS = 8_000
+// note: short, because the model only drops input for its first moments
+const VIDEO_WARMUP_MS = 2_500
+
+// why: a command the model keeps refusing must not be resent forever
+const MAX_REFUSAL_RETRIES = 2
 
 // why: no video at all means a gpu we are paying for that nobody can see, so it is released
 const NO_VIDEO_TIMEOUT_MS = 40_000
@@ -46,14 +50,18 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   const store = createSessionStore(transport.status())
   const usePose = plan.capabilities.look.mode === 'camera-pose'
 
-  const idleWire = (): WireState => ({
-    intent: input.intent(plan.scene.rotationSpeedDeg),
+  // note: what the model knows before we tell it anything, so a diff from here sends everything
+  const blankWire = (): WireState => ({
+    intent: { ...IDLE_CONTROL_INTENT, rotationSpeedDeg: plan.scene.rotationSpeedDeg },
     pose: null,
     prompt: '',
   })
 
-  let acked: WireState = idleWire()
+  let acked: WireState = blankWire()
   let heldSignature = ''
+  // note: a flag rather than a mutation, so a refusal cannot be overwritten by the flush that caused it
+  let resendAll = false
+  const refusalCounts = new Map<string, number>()
   let flushing = false
   let pendingFlush = false
   let warmupTimer: ReturnType<typeof setTimeout> | undefined
@@ -62,6 +70,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   let videoWarmupTimer: ReturnType<typeof setTimeout> | undefined
   const subscriptions: Unsubscribe[] = []
 
+  // fn: send and wait for the model's own reply, used while staging where each step is confirmed
   const send = async (command: Command): Promise<ModelEvent | undefined> => {
     const reply = await transport.sendCommand(command)
     const event = reply ? readModelMessage(reply) : undefined
@@ -70,12 +79,20 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     return event
   }
 
+  // perf: the input path never waits on a reply round trip, it fires and reads errors from the event stream
+  // docs: a call site that never awaits sendCommand fires and moves on, and it never rejects
+  const dispatch = (command: Command) => {
+    void transport.sendCommand(command)
+  }
+
   const nextWireState = (): WireState => {
     const intent = input.intent(plan.scene.rotationSpeedDeg)
     const scene = input.sceneInput()
+    // note: the most pixels one chunk can turn, so the rest waits for the next chunk
+    const lookBudgetPx = plan.controls.maxRotationPerLatentRad / plan.controls.lookSensitivity
     const pose = usePose
       ? buildCameraPose({
-          look: input.consumeLook(),
+          look: input.consumeLook({ dxPx: lookBudgetPx, dyPx: lookBudgetPx }),
           lookHorizontal: intent.lookHorizontal,
           lookVertical: intent.lookVertical,
           jumpLatents: input.jumpLatents(plan.capabilities.chunkLatents),
@@ -109,15 +126,15 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       do {
         pendingFlush = false
         const next = nextWireState()
-        const commands = [...planCommands(model, acked, next), ...driftGuard()]
+        // why: after a refusal the model's real state is unknown, so everything is re-diffed once
+        const previous = resendAll ? blankWire() : acked
+        resendAll = false
+        const commands = [...planCommands(model, previous, next), ...driftGuard()]
         if (commands.length === 0) continue
 
-        let rejected = false
-        for (const command of commands) {
-          if ((await send(command))?.kind === 'command-error') rejected = true
-        }
-        // why: leaving the acked state stale makes the next flush retry the same diff
-        if (!rejected) acked = next
+        // perf: one pass, no awaits, so a keypress reaches the wire in the same tick
+        for (const command of commands) dispatch(command)
+        acked = next
 
         store.update({
           prompt: next.prompt,
@@ -175,11 +192,16 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         break
       case 'generation-reset':
         input.clear()
-        acked = idleWire()
+        acked = blankWire()
         break
-      case 'command-error':
+      case 'command-error': {
         store.notice(`${event.command}: ${event.reason}`)
+        const refused = (refusalCounts.get(event.command) ?? 0) + 1
+        refusalCounts.set(event.command, refused)
+        // why: re-open the diff so the next tick resends, and give up rather than loop forever
+        if (refused <= MAX_REFUSAL_RETRIES) resendAll = true
         break
+      }
       default:
         break
     }
@@ -216,7 +238,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       },
     })
 
-    acked = { ...idleWire(), prompt }
+    acked = { ...blankWire(), prompt }
     heldSignature = input.heldEventKeys().join(',')
     store.update({ phase: 'warming', prompt })
     // why: a world with no video at all is worth nothing and still costs, so it is released
@@ -302,7 +324,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     restage: async () => {
       try {
         input.clear()
-        acked = idleWire()
+        acked = blankWire()
         await send(model.commands.lifecycle('reset'))
         await delay(plan.controls.resetSettleMs)
         await stage()

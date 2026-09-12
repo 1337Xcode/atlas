@@ -12,6 +12,8 @@ export type TransportStats = {
   rtt: number | undefined
   framesPerSecond: number | undefined
   packetLossRatio: number | undefined
+  // note: "relay" means media is going through a turn server, the first suspect when latency is bad
+  candidateType: string | undefined
 }
 
 export type TransportEvents = {
@@ -57,8 +59,8 @@ export function createReactorTransport(plan: WorldSessionPlan): WorldTransport {
       // note: the sdk resolves the track before emitting; the viewport only needs the stream
       track: (handler) => listen('trackReceived', (name, _track, stream) => handler(name, stream)),
       stats: (handler) =>
-        listen('statsUpdate', ({ rtt, framesPerSecond, packetLossRatio }) =>
-          handler({ rtt, framesPerSecond, packetLossRatio }),
+        listen('statsUpdate', ({ rtt, framesPerSecond, packetLossRatio, candidateType }) =>
+          handler({ rtt, framesPerSecond, packetLossRatio, candidateType }),
         ),
     }
 

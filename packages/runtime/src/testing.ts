@@ -81,6 +81,8 @@ export function createFakeTransport(options: FakeTransportOptions = {}): FakeTra
       sent.push(command)
       const refusal = refusals.get(command.name)
       if (refusal) {
+        // docs: a rejected command also arrives out of band as a command_error message
+        emitMessage('command_error', { command: command.name, reason: refusal })
         return { type: 'command_error', data: { command: command.name, reason: refusal } }
       }
       if (autoConfirm && command.name === 'set_image') {

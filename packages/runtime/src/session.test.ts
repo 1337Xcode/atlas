@@ -231,7 +231,8 @@ describe('the live control loop', () => {
   })
 
   it('hands the camera back exactly once when the mouse stops', async () => {
-    session.input.accumulateLook({ dxPx: 100, dyPx: 0 })
+    // note: inside one chunk's turning budget, so nothing is left to spend
+    session.input.accumulateLook({ dxPx: 10, dyPx: 0 })
     session.nudge()
     await settle()
 
@@ -242,6 +243,27 @@ describe('the live control loop', () => {
 
     transport.sent.length = 0
     transport.emitChunk(2)
+    await settle()
+    expect(transport.names()).toEqual([])
+  })
+
+  // why: clipping a fling and throwing the rest away is what made looking feel unresponsive
+  it('keeps turning for a chunk or two after a fast flick, then settles', async () => {
+    session.input.accumulateLook({ dxPx: 200, dyPx: 0 })
+    session.nudge()
+    await settle()
+
+    transport.sent.length = 0
+    transport.emitChunk(1)
+    await settle()
+    expect(transport.names()).toContain('set_camera_pose')
+
+    for (let chunk = 2; chunk < 8; chunk += 1) {
+      transport.emitChunk(chunk)
+      await settle()
+    }
+    transport.sent.length = 0
+    transport.emitChunk(9)
     await settle()
     expect(transport.names()).toEqual([])
   })
@@ -311,7 +333,7 @@ describe('the live control loop', () => {
   })
 
   it('keeps webrtc stats for the operator', async () => {
-    transport.emitStats({ rtt: 42, framesPerSecond: 48, packetLossRatio: 0 })
+    transport.emitStats({ rtt: 42, framesPerSecond: 48, packetLossRatio: 0, candidateType: 'host' })
     expect(session.snapshot().stats?.framesPerSecond).toBe(48)
   })
 })

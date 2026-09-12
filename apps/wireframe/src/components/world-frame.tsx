@@ -127,6 +127,7 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
           chunkIndex={snapshot?.chunkIndex ?? 0}
           fps={snapshot?.stats?.framesPerSecond}
           rtt={snapshot?.stats?.rtt}
+          candidateType={snapshot?.stats?.candidateType}
         />
 
         {snapshot?.countdown ? (

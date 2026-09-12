@@ -146,10 +146,18 @@ export function bindControls(options: BindControlsOptions): Unsubscribe {
     dragging = false
   }
 
+  // why: pointer lock is often refused, so looking must also work from plain mouse movement
+  const shouldLook = (event: MouseEvent): boolean => {
+    if (document.pointerLockElement === surface) return true
+    if (!active) return false
+    // note: over the world, or dragging from it, so the buttons underneath stay usable
+    if (dragging) return true
+    return event.target instanceof Node && surface.contains(event.target)
+  }
+
   // perf: deltas accumulate here and convert to one rotation per chunk, never a command per move
   const onMouseMove = (event: MouseEvent) => {
-    const locked = document.pointerLockElement === surface
-    if (!locked && !(dragging && active)) return
+    if (!shouldLook(event)) return
     if (event.movementX === 0 && event.movementY === 0) return
     input.accumulateLook({ dxPx: event.movementX, dyPx: event.movementY })
     onActivity()

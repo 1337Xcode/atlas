@@ -24,6 +24,9 @@ export type HoldAction =
 // note: a symmetric grid of +1 up / -1 down per latent, so the reader lands where they launched
 const JUMP_ARC: readonly number[] = [1, 1, 1, -1, -1, -1]
 
+// why: how many chunks of unspent mouse movement are worth keeping after a fast flick
+const LOOK_BACKLOG_CHUNKS = 2
+
 export type LookDelta = { dxPx: number; dyPx: number }
 
 export type InputStore = {
@@ -38,7 +41,8 @@ export type InputStore = {
   intent: (rotationSpeedDeg: number) => ControlIntent
   sceneInput: () => SceneInputState
   // note: consumed exactly when the pose that carries it is built
-  consumeLook: () => LookDelta
+  // note: a cap spends only what one chunk can rotate and keeps the rest for the next one
+  consumeLook: (cap?: LookDelta) => LookDelta
   consumeCrouchDip: () => 'down' | 'up' | null
   jumpLatents: (count: number) => number[]
   advanceJump: (latents: number) => void
@@ -145,9 +149,22 @@ export function createInputStore(): InputStore {
       heldEventKeys: heldEvents,
       vertical: jumping ? 'jump' : crouching ? 'crouch' : 'stand',
     }),
-    consumeLook: () => {
-      const consumed = look
-      look = { dxPx: 0, dyPx: 0 }
+    consumeLook: (cap) => {
+      if (!cap) {
+        const all = look
+        look = { dxPx: 0, dyPx: 0 }
+        return all
+      }
+      // why: clipping a fling and discarding the rest is what makes looking feel unresponsive
+      const spend = (value: number, limit: number) =>
+        Math.sign(value) * Math.min(Math.abs(value), Math.abs(limit))
+      const consumed = { dxPx: spend(look.dxPx, cap.dxPx), dyPx: spend(look.dyPx, cap.dyPx) }
+      // why: a fling should turn further than one chunk, but never keep turning for seconds
+      const keep = (value: number, limit: number) => spend(value, limit * LOOK_BACKLOG_CHUNKS)
+      look = {
+        dxPx: keep(look.dxPx - consumed.dxPx, cap.dxPx),
+        dyPx: keep(look.dyPx - consumed.dyPx, cap.dyPx),
+      }
       return consumed
     },
     consumeCrouchDip: () => {
