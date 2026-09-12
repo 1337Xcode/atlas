@@ -20,6 +20,8 @@ import { TitleCard } from '../overlay/TitleCard'
 import { ObjectiveCard } from '../overlay/ObjectiveCard'
 import { WireCard } from '../overlay/WireCard'
 import { Provenance, type ProjectedMark } from '../overlay/Provenance'
+import { Translation } from '../overlay/Translation'
+import { Catalogue } from '../hub/Catalogue'
 import { Hub, type HubHandoff } from '../hub/Hub'
 import { LiveReactorSource } from '../world/LiveReactorSource'
 import { FallbackSource } from '../world/FallbackSource'
@@ -135,6 +137,9 @@ function Clock({
 export function App() {
   const viewport = useViewport()
   const [failure, setFailure] = useState<string | null>(null)
+  // note: the catalogue is the front door, and escape returns to it from any phase
+  const [browsing, setBrowsing] = useState(true)
+  const [translated, setTranslated] = useState<string | null>(null)
   const [clusters, setClusters] = useState<Cluster[]>([])
   const [sc, setSc] = useState<Scenario | null>(null)
   const [words, setWords] = useState<Record<string, WordBox[]>>({})
@@ -166,6 +171,7 @@ export function App() {
     resolvedMarks,
     resolveMark,
     provenanceVisible,
+    toggleProvenance,
     stopIndex,
     setStop,
   } = usePhases()
@@ -204,6 +210,7 @@ export function App() {
       setStop(-1)
       setObjective(false)
       setWire(null)
+      setTranslated(null)
       setCaption({ text: '', kind: 'voice', until: null })
       createSheet(
         s,
@@ -257,6 +264,11 @@ export function App() {
       if (b.objective) ev.push({ t: b.objective.at, run: () => setObjective(true) })
       if (b.wire)
         ev.push({ t: b.t, run: () => setWire({ ...b.wire!, until: T.current + b.wire!.dur }) })
+      // feat: the english rendering over a foreign-language block, raised and cleared by the beats
+      if (b.translate !== undefined) {
+        const name = b.translate
+        ev.push({ t: b.t, run: () => setTranslated(name) })
+      }
       if (b.resolved) ev.push({ t: b.t, run: () => resolveMark(sc.readPage) })
       if (b.phase === 'world' && b.world)
         ev.push({
@@ -351,10 +363,13 @@ export function App() {
         setPaused((p) => !p)
       }
       if (e.key === 'ArrowRight') advanceStop()
+      // note: the catalogue tells the reader these exist, so they have to work
+      if (e.key === 'p' || e.key === 'P') toggleProvenance()
+      if (e.key === 'Escape') setBrowsing(true)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [advanceStop])
+  }, [advanceStop, toggleProvenance])
 
   const onTick = useCallback(
     (dt: number) => {
@@ -440,6 +455,22 @@ export function App() {
         phase !== 'world',
     }
   })
+  // note: the translation box is authored in page units, so it is projected like a mark
+  const translationBox = translated === null ? undefined : sc.translations?.[translated]
+  const translationRect = translationBox
+    ? (() => {
+        const [x0, y0] = proj(
+          page.x + translationBox.x * page.w,
+          page.y + translationBox.y * page.h,
+        )
+        const [x1, y1] = proj(
+          page.x + (translationBox.x + translationBox.w) * page.w,
+          page.y + (translationBox.y + translationBox.h) * page.h,
+        )
+        return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }
+      })()
+    : null
+
   const cluster = clusters.find((c) => c.id === sc.id)!
   const lb = sample('letterbox', t)
   const readLine =
@@ -540,6 +571,17 @@ export function App() {
           }}
         />
       </Canvas>
+      <Catalogue
+        visible={browsing}
+        onOpen={(eventId) => {
+          setBrowsing(false)
+          if (eventId !== sc.id) {
+            choose(eventId).catch((cause: unknown) => {
+              setFailure(cause instanceof Error ? cause.message : 'that event could not be opened')
+            })
+          }
+        }}
+      />
       <Hub
         cluster={cluster}
         resolved={resolvedMarks}
@@ -563,6 +605,12 @@ export function App() {
         agency={wire?.agency ?? ''}
         text={wire?.text ?? ''}
         visible={!!wire}
+      />
+      <Translation
+        box={translationBox ?? null}
+        rect={translationRect}
+        visible={!prov && translated !== null}
+        scale={page.h * projector.scale}
       />
       <Provenance marks={marks} />
       <div className="ui pointer-events-none fixed bottom-[18px] left-8 flex gap-4">

@@ -178,6 +178,20 @@ export const AudioCueSchema = z.object({
 })
 export type AudioCue = z.infer<typeof AudioCueSchema>
 
+// note: an english rendering typeset over a foreign-language block, positioned in page units
+export const TranslationBoxSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  w: z.number(),
+  h: z.number(),
+  size: z.number(),
+  weight: z.number(),
+  text: z.string(),
+  heading: z.string().optional(),
+  sub: z.string().optional(),
+})
+export type TranslationBox = z.infer<typeof TranslationBoxSchema>
+
 export const ScenarioSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -209,6 +223,10 @@ export const ScenarioSchema = z.object({
   audio: z.record(z.string(), AudioCueSchema),
   stops: z.array(StopSchema),
   readLines: z.array(z.string()).optional(),
+  // note: the english lines read aloud over a foreign-language page
+  readLinesEn: z.array(z.string()).optional(),
+  // note: keyed by the name a beat's `translate` field names
+  translations: z.record(z.string(), TranslationBoxSchema).optional(),
   beats: z.array(BeatSchema),
 })
 export type Scenario = z.infer<typeof ScenarioSchema>

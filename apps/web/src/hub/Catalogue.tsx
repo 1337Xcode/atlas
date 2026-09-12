@@ -31,9 +31,10 @@ export function Catalogue({
   const [country, setCountry] = useState<string | null>(null)
   const [decade, setDecade] = useState<string | null>(null)
   useEffect(() => {
-    void fetch('/catalogue.json')
-      .then((r) => r.json())
-      .then(setData)
+    // note: a catalogue that cannot be read leaves the filters empty rather than failing the page
+    fetch(localPaths.catalogue())
+      .then((response) => response.json() as Promise<CatalogueData>)
+      .then(setData, () => undefined)
   }, [])
   const q = query.trim().toLowerCase()
   const clusters = useMemo(

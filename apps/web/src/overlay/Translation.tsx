@@ -1,15 +1,6 @@
 import { motion } from 'framer-motion'
-export interface TranslationBox {
-  x: number
-  y: number
-  w: number
-  h: number
-  size: number
-  weight: number
-  text: string
-  heading?: string
-  sub?: string
-}
+// why: the box shape belongs to the scenario contract, so it is not declared twice
+import type { TranslationBox } from '../data/types'
 /** An English rendering typeset over a foreign language block, positioned in page UV and projected by the caller. Marked generated so the provenance toggle hides it. */
 export function Translation({
   box,

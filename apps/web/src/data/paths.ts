@@ -1,6 +1,8 @@
 // why: one place that knows where archive assets live, so the backend can be swapped in later
 
 export type AssetPaths = {
+  // note: the catalogue of every event, curated and not yet harvested alike
+  catalogue: () => string
   scenario: (eventId: string) => string
   manifest: (eventId: string) => string
   // note: hand-authored theatre keyframes, which override the scenario's own beats
@@ -13,6 +15,7 @@ const leading = (path: string) => (path.startsWith('/') ? path : `/${path}`)
 
 // note: served from `public/` in development and from the same origin in production
 export const localPaths: AssetPaths = {
+  catalogue: () => '/events/catalogue.json',
   scenario: (eventId) => `/events/${eventId}/scenario.json`,
   manifest: (eventId) => `/events/${eventId}/manifest.json`,
   theatre: (eventId) => `/events/${eventId}/theatre.json`,
@@ -23,6 +26,7 @@ export const localPaths: AssetPaths = {
 // fn: point the newspaper at the archive api instead of the public folder
 export function apiPaths(base = '/api'): AssetPaths {
   return {
+    catalogue: () => `${base}/articles`,
     scenario: (eventId) => `${base}/worlds/${eventId}/scenario`,
     manifest: (eventId) => `${base}/worlds/${eventId}/manifest`,
     theatre: (eventId) => `${base}/worlds/${eventId}/theatre`,
