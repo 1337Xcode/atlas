@@ -1,0 +1,78 @@
+{
+  "id": "apollo-11-first-steps",
+  "headline": "Men Walk On Moon",
+  "dateline": "SEA OF TRANQUILLITY, 21 JULY 1969",
+  "occurredOn": "1969-07-20",
+  "nature": "exploration",
+  "summary": "Apollo 11's lunar module Eagle landed on the Sea of Tranquillity at 20:17 UTC on 20 July 1969. Neil Armstrong stepped onto the surface at 02:56 UTC the following morning, joined nineteen minutes later by Edwin Aldrin.",
+  "body": "Eagle touched down with about twenty-five seconds of descent fuel remaining, roughly six kilometres beyond the intended point, on a plain of fine grey regolith strewn with small craters and blocks. Armstrong descended the ladder and stepped off the footpad at 02:56 UTC on 21 July. The two men spent two hours and thirty-one minutes outside the spacecraft. They planted a United States flag stiffened by a horizontal rod, read a plaque fixed to the ladder strut, deployed a passive seismometer and a laser ranging retroreflector, set out a foil sheet to collect solar wind particles, photographed the site and collected 21.5 kilograms of rock and soil. Michael Collins remained in lunar orbit aboard Columbia.",
+  "context": "The landing came eight years after President Kennedy's commitment to a crewed lunar landing before the decade's end, and followed the Gemini rendezvous programme and the Apollo 8 and 10 lunar flights. The Moon has no atmosphere: the sky above the site is black even in full sunlight, shadows fall hard and unsoftened, and disturbed dust travels in clean ballistic arcs rather than billowing.",
+  "images": [
+    {
+      "id": "aldrin-on-the-moon",
+      "src": "apollo-11-first-steps/aldrin-on-the-moon.jpg",
+      "caption": "Edwin Aldrin photographed by Neil Armstrong on the Sea of Tranquillity, 21 July 1969.",
+      "credit": "NASA, public domain",
+      "role": "anchor"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Apollo 11 Mission Report, MSC-00171",
+      "publisher": "NASA Manned Spacecraft Center"
+    },
+    {
+      "title": "Apollo 11 Lunar Surface Journal, EVA transcript",
+      "publisher": "NASA History Division"
+    },
+    {
+      "title": "Apollo 11 Preliminary Science Report, SP-214",
+      "publisher": "NASA"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "gloved hands",
+    "subject": "A white Apollo pressure suit with a gold-visored helmet, its gloved hands held in the near foreground on the grey regolith plain of the Sea of Tranquillity.",
+    "anchors": [
+      { "object": "lunar module Eagle", "position": "straight ahead" },
+      { "object": "United States flag on a horizontal rod", "position": "on the left" },
+      { "object": "ridge of blocky ejecta", "position": "on the horizon" }
+    ],
+    "environment": "Fine grey regolith cut with deep boot treads, small craters and angular blocks, a black sky, hard shadows, harsh low sunlight.",
+    "style": "Hasselblad colour film, high contrast, grain, 1969.",
+    "idle": "The suited figure stands still on the regolith, weight settled, the gloved hands steady in the foreground as sunlight glares off the white fabric and a thin film of grey dust clings along the boots.",
+    "travel": "Boots press crisp treads into the grey dust in slow low-gravity strides, flicking small arcs of grains that fall straight back onto the surface as the regolith slides past underfoot.",
+    "guards": [
+      "the sky above the horizon stays black in full sunlight, the way an airless sky reads on film"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "Kick the regolith",
+        "detail": "The boot in the foreground scuffs forward through the grey dust and throws a fan of grains ahead of it; the grains travel in clean straight arcs and land in a sharp-edged spray on the surface, then the boot settles back onto the regolith.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "2",
+        "name": "Read the ladder plaque",
+        "detail": "The gloved hands reach toward the plaque fixed to the ladder strut of the lunar module, the engraved lettering and the two hemispheres of the Earth catching the low sunlight across the brushed metal, and the hands lower again.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "3",
+        "name": "Set out the solar wind collector",
+        "detail": "The gloved hands lift the folded foil sheet of the solar wind collector into frame, unroll it and set its frame upright on the regolith, the foil rippling once and holding still in the hard sunlight while the boots stay planted.",
+        "sourceIndex": 2
+      }
+    ],
+    "vertical": {
+      "jump": "The suited figure pushes off the regolith and rises in a slow low-gravity hop, boots lifting clear of the dust and hanging a moment before settling back down onto the surface.",
+      "crouch": "The camera lowers toward the ground as the suited figure crouches down low over the regolith, the gloved hands coming close to the boot-printed dust.",
+      "stand": "The suited figure straightens back up out of the crouch."
+    },
+    "seed": 1969,
+    "rotationSpeedDeg": 4
+  }
+}

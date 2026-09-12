@@ -20,8 +20,10 @@ export type LintSceneInput = {
 // why: the model renders the nouns it is given, so absence words place the thing they deny
 const NEGATION = /\b(no|not|never|none|nothing|nobody|empty|without|devoid|absent|lacks?)\b/i
 
-// why: camera and viewpoint language belongs to the camera layer alone
-const CAMERA_LANGUAGE = /\b(camera|viewpoint|first-person|third-person|point of view)\b/i
+// why: framing and camera direction belong to the camera layer alone
+// note: a camera can still be an object in the scene, so only directing verbs are flagged
+const CAMERA_LANGUAGE =
+  /\b(first-person|third-person|point of view|viewpoint)\b|\bcamera\s+(holds|lowers|rises|orbits|moves|tracks|pans|rotates|arcs|circles|stays|sweeps|is)\b/i
 
 // why: anything the base describes as moving keeps moving after the reader releases the key
 const MOTION_VERB = /\b(walk|walks|walking|run|runs|running|move|moves|moving|drift|drifts|fly|flies|orbit|orbits|pan|pans|zoom|zooms)\b/i
