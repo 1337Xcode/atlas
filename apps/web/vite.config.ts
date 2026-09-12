@@ -1,6 +1,14 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
+// demo: a tunnelled demo is served under a hostname vite has never heard of
+const tunnelled = {
+  host: true,
+  allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.app', '.ngrok.io'],
+}
+// note: the reader mints its world token through the API app, same origin in production
+const proxied = { proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: true } } }
+
 export default defineConfig({
   plugins: [
     react(),
@@ -22,17 +30,7 @@ export default defineConfig({
     exclude: ['@reactor-team/js-sdk'],
     include: ['@atlas/runtime > @reactor-team/js-sdk > awaitqueue'],
   },
-  server: {
-    port: 5173,
-    host: true,
-    // demo: served to judges through an ngrok tunnel
-    allowedHosts: ['.ngrok-free.app', '.ngrok.app', '.ngrok-free.dev', '.ngrok.io'],
-    // note: the reader mints its world token through the API app, same-origin in production
-    proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: true } },
-  },
-  preview: {
-    port: 4173,
-    proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: true } },
-  },
+  server: { port: 5173, ...tunnelled, ...proxied },
+  preview: { port: 4173, ...tunnelled, ...proxied },
   build: { sourcemap: true },
 })
