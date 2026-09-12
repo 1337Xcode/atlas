@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
 // note: projects split by the environment the code under test actually runs in
@@ -19,6 +20,10 @@ export default defineConfig({
         },
       },
       {
+        // note: the app's own `@/` alias, so route handlers can be called directly in tests
+        resolve: {
+          alias: { '@': fileURLToPath(new URL('./apps/wireframe/src', import.meta.url)) },
+        },
         test: {
           name: 'wireframe',
           environment: 'node',

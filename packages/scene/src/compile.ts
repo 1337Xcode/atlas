@@ -53,10 +53,12 @@ function compileEvent(event: SceneEvent): SceneLayers['events'][number] {
   return { key: event.key, name: event.name, static: detail.static, dynamic: detail.dynamic }
 }
 
+// note: authored fragments are stitched into prose, so each one is closed and capitalised
 function joinProse(parts: readonly string[]): string {
   return parts
     .map((part) => part.trim())
     .filter((part) => part.length > 0)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .map((part) => (/[.!?]$/.test(part) ? part : `${part}.`))
     .join(' ')
 }

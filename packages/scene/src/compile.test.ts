@@ -21,7 +21,7 @@ describe('compileScene', () => {
 
   it('keeps prop guards in their own layer, never in the base', () => {
     const scene = compileScene(authoredBrief(), options)
-    expect(scene.layers.guards).toBe('any tool in a raised hand visible ahead in frame.')
+    expect(scene.layers.guards).toBe('Any tool in a raised hand visible ahead in frame.')
     expect(scene.layers.base).not.toContain('any tool in a raised hand')
   })
 
