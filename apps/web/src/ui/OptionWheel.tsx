@@ -1,380 +1,254 @@
 import {
-  useRef,
-  useState,
   useCallback,
   useEffect,
+  useRef,
+  useState,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
   type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
 } from 'react'
 
-// note: adapted from the react bits source supplied for this project
-// note: type-only imports and a guarded label read support the workspace compiler
-// perf: keep one animation clock running through bursts of trackpad input
-// fix: an empty option list must not calculate a modulo by zero
+// note: adapted from the react bits option wheel supplied for this project, trimmed to what
+// note: the reader uses: a curved column of labels that the wheel, a drag or a click moves through
 
-type Side = 'left' | 'right'
-
-export interface OptionWheelProps {
-  items?: string[]
-  defaultSelected?: number
-  onChange?: (index: number, item: string) => void
-  textColor?: string
-  activeColor?: string
-  side?: Side
+export type OptionWheelProps = {
+  items: string[]
+  selected: number
+  onChange: (index: number) => void
+  label: string
+  /** rem */
   fontSize?: number
+  /** row height, as a multiple of the font size */
   spacing?: number
-  curve?: number
+  /** px from the left edge */
+  inset?: number
+  /** degrees of rotation per row; 0 lays the labels out flat */
   tilt?: number
-  blur?: number
+  /** how far the curve pulls distant labels sideways, 0 to 1 */
+  curve?: number
+  /** opacity lost per row away from the centre */
   fade?: number
   minOpacity?: number
+  /** easing time constant in ms */
   smoothing?: number
-  inset?: number
-  loop?: boolean
-  draggable?: boolean
-  soundUrl?: string
-  soundVolume?: number
-  className?: string
 }
 
-interface WheelConfig {
+type Geometry = Required<Omit<OptionWheelProps, 'items' | 'selected' | 'onChange' | 'label'>> & {
   count: number
-  items: string[]
-  rowH: number
-  curve: number
-  tilt: number
-  blur: number
-  fade: number
-  minOpacity: number
-  side: Side
-  loop: boolean
-  smoothing: number
-  draggable: boolean
-  soundUrl: string
-  soundVolume: number
+  rowHeight: number
 }
 
-const DEFAULT_ITEMS = [
-  'Ambient',
-  'House',
-  'Techno',
-  'Jazz',
-  'Lo-Fi',
-  'Synthwave',
-  'Trance',
-  'Funk',
-  'Disco',
-  'Hip-Hop',
-  'Chillwave',
-  'Drum & Bass',
-]
+const rootFontSize = () =>
+  typeof window === 'undefined'
+    ? 16
+    : parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
 
-const OptionWheel = ({
-  items = DEFAULT_ITEMS,
-  defaultSelected = 3,
+export function OptionWheel({
+  items,
+  selected,
   onChange,
-  textColor = '#a6a6a6',
-  activeColor = '#ffffff',
-  side = 'left',
-  fontSize = 3,
-  spacing = 1.4,
-  curve = 1,
-  tilt = 6,
-  blur = 2,
-  fade = 0.25,
-  minOpacity = 0.05,
-  smoothing = 200,
-  inset = 80,
-  loop = false,
-  draggable = true,
-  soundUrl = '',
-  soundVolume = 0.5,
-  className = '',
-}: OptionWheelProps) => {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
-  const posRef = useRef(defaultSelected)
-  const targetRef = useRef(defaultSelected)
-  const rafRef = useRef<number | null>(null)
-  const lastRef = useRef(0)
-  const cfgRef = useRef<WheelConfig>({} as WheelConfig)
+  label,
+  fontSize = 1.05,
+  spacing = 2.4,
+  inset = 48,
+  tilt = 3,
+  curve = 0.18,
+  fade = 0.13,
+  minOpacity = 0.2,
+  smoothing = 90,
+}: OptionWheelProps) {
+  const root = useRef<HTMLDivElement>(null)
+  const options = useRef<(HTMLDivElement | null)[]>([])
+  const position = useRef(selected)
+  const target = useRef(selected)
+  const frame = useRef<number | null>(null)
+  const lastFrameAt = useRef(0)
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const drag = useRef<{ y: number; from: number; id: number; moved: boolean } | null>(null)
+  const announced = useRef(selected)
   const onChangeRef = useRef(onChange)
-  const selectedRef = useRef(defaultSelected)
-  const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const dragRef = useRef<{ y: number; start: number; id: number } | null>(null)
-  const dragMovedRef = useRef(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const audioUrlRef = useRef('')
-  const lastTickRef = useRef(0)
-  const [selectedIndex, setSelectedIndex] = useState(defaultSelected)
-  const [isDragging, setIsDragging] = useState(false)
-
-  const remPx =
-    typeof window !== 'undefined'
-      ? parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-      : 16
+  const geometry = useRef<Geometry>({} as Geometry)
+  const [dragging, setDragging] = useState(false)
 
   onChangeRef.current = onChange
-  cfgRef.current = {
+  geometry.current = {
     count: items.length,
-    items,
-    rowH: Math.max(fontSize * spacing * remPx, 1),
-    curve,
-    tilt,
-    blur,
-    fade,
-    minOpacity,
-    side,
-    loop,
-    smoothing,
-    draggable,
-    soundUrl,
-    soundVolume,
-  }
-
-  // Single rAF loop that eases the wheel position toward its target with
-  // frame-rate independent exponential smoothing, then lays every option out
-  // along the curve based on its distance from the current position.
-  const runFrame = useCallback((now: number) => {
-    const dt = Math.min((now - lastRef.current) / 1000, 0.05)
-    lastRef.current = now
-    const cfg = cfgRef.current
-    const tau = Math.max(cfg.smoothing, 1) / 1000
-    const k = 1 - Math.exp(-dt / tau)
-
-    const target = targetRef.current
-    const cur = posRef.current
-    let next = cur + (target - cur) * k
-    const settled = Math.abs(target - next) < 0.001
-    if (settled) next = target
-    posRef.current = next
-
-    const els = itemRefs.current
-    const n = cfg.count
-    const mirror = cfg.side === 'right' ? -1 : 1
-    // Options sit on a circle whose radius keeps the arc length between two
-    // neighbors equal to one row height, so tilt controls how tightly it curls.
-    const tiltRad = (cfg.tilt * Math.PI) / 180
-    const R = tiltRad > 0.0005 ? cfg.rowH / tiltRad : 0
-    for (let i = 0; i < n; i++) {
-      const el = els[i]
-      if (!el) continue
-      let d = i - next
-      if (cfg.loop && n > 1) {
-        d = ((d % n) + n) % n
-        if (d > n / 2) d -= n
-      }
-      const dist = Math.abs(d)
-      let x = 0
-      let y = d * cfg.rowH
-      let rot = 0
-      if (R > 0) {
-        const ang = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, d * tiltRad))
-        y = R * Math.sin(ang)
-        x = -mirror * R * (1 - Math.cos(ang)) * cfg.curve
-        rot = (mirror * ang * 180) / Math.PI
-      }
-      el.style.transform = `translate(${x.toFixed(2)}px, calc(${y.toFixed(2)}px - 50%)) rotate(${rot.toFixed(3)}deg)`
-      el.style.opacity = String(Math.max(cfg.minOpacity, 1 - dist * cfg.fade))
-      el.style.filter = cfg.blur > 0 ? `blur(${(dist * cfg.blur).toFixed(2)}px)` : 'none'
-      el.style.setProperty('--ow-p', Math.max(0, 1 - Math.min(dist, 1)).toFixed(4))
-    }
-
-    rafRef.current = settled ? null : requestAnimationFrame(runFrame)
-  }, [])
-
-  const startLoop = useCallback(() => {
-    if (rafRef.current !== null) return
-    lastRef.current = performance.now()
-    rafRef.current = requestAnimationFrame(runFrame)
-  }, [runFrame])
-
-  // Optional tick on selection change, throttled so fast scrolling can't spam
-  // it, and with playback failures (e.g. autoplay policies) silently ignored.
-  const playTick = useCallback(() => {
-    const { soundUrl, soundVolume } = cfgRef.current
-    if (!soundUrl) return
-    const now = performance.now()
-    if (now - lastTickRef.current < 70) return
-    lastTickRef.current = now
-    if (!audioRef.current || audioUrlRef.current !== soundUrl) {
-      audioRef.current = new Audio(soundUrl)
-      audioRef.current.preload = 'auto'
-      audioUrlRef.current = soundUrl
-    }
-    const audio = audioRef.current
-    audio.volume = Math.min(Math.max(soundVolume, 0), 1)
-    audio.currentTime = 0
-    audio.play()?.catch(() => {})
-  }, [])
-
-  const applyTarget = useCallback(
-    (value: number, snap: boolean) => {
-      const cfg = cfgRef.current
-      if (cfg.count === 0) return
-      let v = value
-      if (!cfg.loop) v = Math.min(Math.max(v, 0), Math.max(cfg.count - 1, 0))
-      if (snap) v = Math.round(v)
-      targetRef.current = v
-      const idx = ((Math.round(v) % cfg.count) + cfg.count) % cfg.count
-      if (idx !== selectedRef.current) {
-        selectedRef.current = idx
-        setSelectedIndex(idx)
-        onChangeRef.current?.(idx, cfg.items[idx] ?? '')
-        playTick()
-      }
-      startLoop()
-    },
-    [startLoop, playTick],
-  )
-
-  // Wheel / touchpad scrolling, registered manually so it can be non-passive.
-  useEffect(() => {
-    const el = rootRef.current
-    if (!el) return
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault()
-      const cfg = cfgRef.current
-      const delta = e.deltaMode === 1 ? e.deltaY * 24 : e.deltaY
-      // Cap each event at one step so notchy mouse wheels move exactly one
-      // option per click, while touchpads still scroll continuously.
-      const step = Math.max(-1, Math.min(1, delta / cfg.rowH))
-      applyTarget(targetRef.current + step, false)
-      if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current)
-      wheelTimerRef.current = setTimeout(() => applyTarget(targetRef.current, true), 140)
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => {
-      el.removeEventListener('wheel', onWheel)
-      if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current)
-    }
-  }, [applyTarget])
-
-  const handlePointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!cfgRef.current.draggable) return
-    dragRef.current = { y: e.clientY, start: targetRef.current, id: e.pointerId }
-    dragMovedRef.current = false
-    setIsDragging(true)
-  }, [])
-
-  const handlePointerMove = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      const drag = dragRef.current
-      if (!drag) return
-      const dy = e.clientY - drag.y
-      if (!dragMovedRef.current && Math.abs(dy) > 4) {
-        dragMovedRef.current = true
-        // Capture only once a real drag starts, so plain clicks still reach
-        // the items and navigate to them.
-        rootRef.current?.setPointerCapture(drag.id)
-      }
-      if (dragMovedRef.current) applyTarget(drag.start - dy / cfgRef.current.rowH, false)
-    },
-    [applyTarget],
-  )
-
-  const handlePointerEnd = useCallback(() => {
-    if (!dragRef.current) return
-    dragRef.current = null
-    setIsDragging(false)
-    if (dragMovedRef.current) applyTarget(targetRef.current, true)
-  }, [applyTarget])
-
-  const handleItemClick = useCallback(
-    (index: number) => {
-      if (dragMovedRef.current) return
-      const cfg = cfgRef.current
-      const cur = targetRef.current
-      let d = index - (((cur % cfg.count) + cfg.count) % cfg.count)
-      if (cfg.loop && cfg.count > 1) {
-        if (d > cfg.count / 2) d -= cfg.count
-        else if (d < -cfg.count / 2) d += cfg.count
-      }
-      applyTarget(cur + d, true)
-    },
-    [applyTarget],
-  )
-
-  const handleKeyDown = useCallback(
-    (e: ReactKeyboardEvent<HTMLDivElement>) => {
-      let delta: number | null = null
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') delta = -1
-      else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') delta = 1
-      if (delta == null) return
-      e.preventDefault()
-      applyTarget(Math.round(targetRef.current) + delta, true)
-    },
-    [applyTarget],
-  )
-
-  useEffect(() => {
-    applyTarget(targetRef.current, false)
-  }, [
-    items,
+    rowHeight: Math.max(fontSize * spacing * rootFontSize(), 1),
     fontSize,
     spacing,
-    curve,
+    inset,
     tilt,
-    blur,
+    curve,
     fade,
     minOpacity,
-    side,
-    loop,
     smoothing,
-    applyTarget,
-  ])
+  }
+
+  // perf: one rAF loop eases toward the target, then lays every label out along the arc
+  const step = useCallback((now: number) => {
+    const config = geometry.current
+    const delta = Math.min((now - lastFrameAt.current) / 1000, 0.05)
+    lastFrameAt.current = now
+    const ease = 1 - Math.exp(-delta / (Math.max(config.smoothing, 1) / 1000))
+    let next = position.current + (target.current - position.current) * ease
+    const settled = Math.abs(target.current - next) < 0.001
+    if (settled) next = target.current
+    position.current = next
+
+    // note: labels sit on a circle whose arc length between neighbours is one row height
+    const tiltRad = (config.tilt * Math.PI) / 180
+    const radius = tiltRad > 0.0005 ? config.rowHeight / tiltRad : 0
+    for (let index = 0; index < config.count; index += 1) {
+      const element = options.current[index]
+      if (!element) continue
+      const offset = index - next
+      const distance = Math.abs(offset)
+      let x = 0
+      let y = offset * config.rowHeight
+      let rotation = 0
+      if (radius > 0) {
+        const angle = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, offset * tiltRad))
+        y = radius * Math.sin(angle)
+        x = -radius * (1 - Math.cos(angle)) * config.curve
+        rotation = (angle * 180) / Math.PI
+      }
+      element.style.transform = `translate(${x.toFixed(2)}px, calc(${y.toFixed(2)}px - 50%)) rotate(${rotation.toFixed(3)}deg)`
+      element.style.opacity = String(Math.max(config.minOpacity, 1 - distance * config.fade))
+      element.style.setProperty('--ow-p', Math.max(0, 1 - Math.min(distance, 1)).toFixed(4))
+    }
+
+    frame.current = settled ? null : requestAnimationFrame(step)
+  }, [])
+
+  const run = useCallback(() => {
+    if (frame.current !== null) return
+    lastFrameAt.current = performance.now()
+    frame.current = requestAnimationFrame(step)
+  }, [step])
+
+  // fn: move the wheel, and report a landing as soon as the nearest label changes
+  const moveTo = useCallback(
+    (value: number, snap: boolean) => {
+      const { count } = geometry.current
+      if (count === 0) return
+      let next = Math.min(Math.max(value, 0), count - 1)
+      if (snap) next = Math.round(next)
+      target.current = next
+      const landed = Math.round(next)
+      if (landed !== announced.current) {
+        announced.current = landed
+        onChangeRef.current(landed)
+      }
+      run()
+    },
+    [run],
+  )
+
+  // why: the wheel owns vertical scrolling here, so it must be registered non-passively
+  useEffect(() => {
+    const element = root.current
+    if (!element) return
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      const distance = event.deltaY * (event.deltaMode === 1 ? 24 : 1)
+      // note: one notch of a mouse wheel is capped at one row; a trackpad still glides
+      const stepped = Math.max(-1, Math.min(1, distance / geometry.current.rowHeight))
+      moveTo(target.current + stepped, false)
+      if (settleTimer.current) clearTimeout(settleTimer.current)
+      settleTimer.current = setTimeout(() => moveTo(target.current, true), 140)
+    }
+    element.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      element.removeEventListener('wheel', onWheel)
+      if (settleTimer.current) clearTimeout(settleTimer.current)
+    }
+  }, [moveTo])
+
+  // why: the selection is owned by the reader, so an outside change animates the wheel too
+  useEffect(() => {
+    if (announced.current === selected) {
+      run()
+      return
+    }
+    announced.current = selected
+    target.current = selected
+    run()
+  }, [selected, items, run])
 
   useEffect(
     () => () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current)
-      rafRef.current = null
-      audioRef.current?.pause()
+      if (frame.current !== null) cancelAnimationFrame(frame.current)
+      frame.current = null
     },
     [],
   )
 
+  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    drag.current = { y: event.clientY, from: target.current, id: event.pointerId, moved: false }
+    setDragging(true)
+  }
+  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const current = drag.current
+    if (!current) return
+    const dy = event.clientY - current.y
+    if (!current.moved && Math.abs(dy) > 4) {
+      current.moved = true
+      // note: capture only once a real drag starts, so a plain click still reaches a label
+      root.current?.setPointerCapture(current.id)
+    }
+    if (current.moved) moveTo(current.from - dy / geometry.current.rowHeight, false)
+  }
+  const onPointerEnd = () => {
+    const current = drag.current
+    if (!current) return
+    drag.current = null
+    setDragging(false)
+    if (current.moved) moveTo(target.current, true)
+  }
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const delta = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0
+    if (delta === 0) return
+    event.preventDefault()
+    moveTo(Math.round(target.current) + delta, true)
+  }
+
   return (
     <div
-      ref={rootRef}
+      ref={root}
       role="listbox"
       tabIndex={0}
-      aria-label="Option wheel"
-      className={`relative h-full w-full select-none overflow-hidden outline-none [touch-action:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}${className ? ` ${className}` : ''}`}
+      aria-label={label}
+      className="option-wheel"
+      data-dragging={dragging}
       style={
         {
-          '--ow-text-color': textColor,
-          '--ow-active-color': activeColor,
           '--ow-font-size': `${fontSize}rem`,
           '--ow-inset': `${inset}px`,
         } as CSSProperties
       }
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerEnd}
-      onPointerCancel={handlePointerEnd}
-      onKeyDown={handleKeyDown}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerEnd}
+      onKeyDown={onKeyDown}
     >
-      {items.map((label, index) => (
+      {items.map((item, index) => (
         <div
-          key={`${label}-${index}`}
-          ref={(el) => {
-            itemRefs.current[index] = el
+          key={item}
+          ref={(element) => {
+            options.current[index] = element
           }}
           role="option"
-          aria-selected={selectedIndex === index}
-          className={`absolute top-1/2 cursor-pointer whitespace-nowrap leading-none will-change-[transform,opacity,filter] [font-size:var(--ow-font-size)] [color:color-mix(in_srgb,var(--ow-active-color)_calc(var(--ow-p,0)*100%),var(--ow-text-color))] ${
-            side === 'right'
-              ? 'right-[var(--ow-inset)] origin-right'
-              : 'left-[var(--ow-inset)] origin-left'
-          } ${selectedIndex === index ? 'font-medium' : 'font-extralight'}`}
-          onClick={() => handleItemClick(index)}
+          aria-selected={index === selected}
+          className="option-wheel-item"
+          onClick={() => {
+            if (drag.current?.moved) return
+            moveTo(index, true)
+          }}
         >
-          {label}
+          {item}
         </div>
       ))}
     </div>
   )
 }
-
-export default OptionWheel

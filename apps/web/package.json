@@ -8,38 +8,21 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p .",
-    "test:browser": "playwright test src/app/reader.browser.spec.ts --reporter=line"
+    "test:browser": "playwright test --reporter=line"
   },
   "dependencies": {
+    "@atlas/runtime": "workspace:*",
     "@atlas/schema": "workspace:*",
     "@fontsource-variable/geist": "5.3.0",
-    "@radix-ui/react-slot": "1.2.3",
-    "@react-three/drei": "10.7.8",
-    "@react-three/fiber": "9.7.0",
-    "@react-three/postprocessing": "3.1.1",
-    "@theatre/core": "0.7.2",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "framer-motion": "13.2.0",
-    "lucide-react": "0.468.0",
-    "postprocessing": "6.39.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "tailwind-merge": "3.3.1",
-    "three": "0.185.1",
-    "tone": "15.5.36",
-    "zod": "4.5.2",
-    "zustand": "5.0.15"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@atlas/world": "workspace:*",
     "@playwright/test": "1.51.1",
-    "@tailwindcss/vite": "4.3.3",
-    "@theatre/studio": "0.7.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.3",
-    "@types/three": "0.185.4",
     "@vitejs/plugin-react": "6.1.1",
-    "tailwindcss": "4.3.3",
     "vite": "8.2.2"
   }
 }

@@ -2,43 +2,30 @@ import { chromium, webkit, expect, test, type Page } from '@playwright/test'
 
 const base = process.env.ATLAS_WEB_URL ?? 'http://localhost:5173'
 
-async function loaded(page: Page) {
+async function paperLoaded(page: Page) {
   await expect(page.locator('[data-reader-page]')).toHaveCount(1)
-  await expect(page.locator('[data-reader-page] img')).toBeVisible()
+  await expect(page.locator('.paper-world img')).toBeVisible()
   await expect
     .poll(() =>
       page
-        .locator('[data-reader-page] img')
+        .locator('.paper-world img')
         .evaluate((image) => (image as HTMLImageElement).naturalWidth),
     )
     .toBeGreaterThan(0)
 }
+
 async function noHorizontalOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   )
 }
 
-// test: the supplied play control must stay centered on the photograph at every viewport
-async function centeredPlay(page: Page) {
-  const image = await page.locator('.paper-world img').boundingBox()
-  const button = await page
-    .getByRole('link', { name: 'Explore Apollo 11 in the world viewer' })
-    .boundingBox()
-  if (!image || !button) throw new Error('The photograph or play control did not render')
-  expect(Math.abs(button.x + button.width / 2 - image.x - image.width / 2)).toBeLessThan(2)
-  expect(Math.abs(button.y + button.height / 2 - image.y - image.height / 2)).toBeLessThan(2)
-  expect(button.width).toBeGreaterThanOrEqual(60)
-  await expect(page.getByText('History, in perspective.', { exact: true })).toHaveCount(0)
-  await expect(page.getByText('The interactive history collection', { exact: true })).toHaveCount(0)
-}
-
 for (const [name, engine] of Object.entries({ chromium, webkit })) {
-  test(`${name}: desktop reader, wheel, swipe, and no overlapping layers`, async () => {
+  test(`${name}: the desktop reader is a centred paper with no navigation`, async () => {
     const info = test.info()
     const browser = await engine.launch()
     try {
-      const page = await browser.newPage({ viewport: { width: 1440, height: 960 } })
+      const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
       const errors: string[] = []
       const posts: string[] = []
       page.on('pageerror', (error) => errors.push(error.message))
@@ -49,51 +36,43 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
         if (request.method() === 'POST') posts.push(request.url())
       })
       await page.goto(base)
-      await loaded(page)
-      await centeredPlay(page)
-      await page.locator('.paper-world').hover()
+      await paperLoaded(page)
       await page.evaluate(() => document.fonts.ready)
-      expect(
-        await page
-          .locator('.reader-header')
-          .evaluate((element) => getComputedStyle(element).fontFamily),
-      ).toContain('Geist')
-      await expect(page.getByRole('searchbox')).toHaveCount(0)
-      await expect(page.getByPlaceholder('Search by headline or date')).toHaveCount(0)
+
+      // the wordmark is the only chrome; there are no page-turn or menu controls
+      await expect(page.getByRole('link', { name: 'Atlas home' })).toBeVisible()
+      await expect(page.getByRole('button', { name: /page|menu|event list/i })).toHaveCount(0)
       await expect(page.locator('canvas')).toHaveCount(0)
-      const sidebar = await page.locator('.reader-sidebar').boundingBox()
-      const main = await page.locator('.reader-main').boundingBox()
-      expect(sidebar && main && sidebar.x + sidebar.width <= main.x + 1).toBeTruthy()
+
+      // the paper sits in the middle of the viewport, not in the space left over by the rail
+      const offset = await page.locator('.reader-paper').evaluate((element) => {
+        const box = element.getBoundingClientRect()
+        return Math.abs(box.x + box.width / 2 - window.innerWidth / 2)
+      })
+      expect(offset).toBeLessThan(2)
+      await expect(page.locator('.reader-rail')).toBeVisible()
+      await expect(page.locator('.reader-strip')).toBeHidden()
       await noHorizontalOverflow(page)
       await page.screenshot({ path: info.outputPath('desktop.png') })
-      await page.getByRole('button', { name: 'Next page', exact: true }).click()
-      await loaded(page)
-      await expect(page.locator('.scan-heading h2')).toHaveText('Canberra Times, 22 Jul 1969')
-      const surface = page.locator('.reader-surface')
-      await surface.hover()
-      await page.mouse.wheel(120, 0)
-      await loaded(page)
-      await expect(page.locator('.scan-heading h2')).toHaveText('Washington Post A1, 21 Jul 1969')
-      await surface.focus()
-      await page.keyboard.press('ArrowLeft')
-      await expect(page.locator('.scan-heading h2')).toHaveText('Canberra Times, 22 Jul 1969')
-      await page.getByRole('button', { name: 'Enlarge', exact: true }).click()
-      await expect(surface).toHaveAttribute('data-zoomed', 'true')
-      await page.getByRole('button', { name: 'Fit width', exact: true }).click()
-      await page.getByRole('listbox').focus()
-      await page.keyboard.press('ArrowDown')
-      await page.getByRole('button', { name: 'Read this edition' }).click()
-      await expect(page.locator('.reader-edition-title h2')).toHaveText('Berlin Wall')
-      await loaded(page)
+
+      // the archival scans continue the same vertical scroll instead of becoming pages
+      await expect(page.locator('.paper-scan')).toHaveCount(3)
+      const scroller = page.locator('.reader-scroll')
+      await scroller.evaluate((element) => element.scrollTo({ top: 1200 }))
+      await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+
+      // scrolling the list in the margin opens whatever it lands on, with no second step
+      await page.locator('.option-wheel').hover()
+      await page.mouse.wheel(0, 300)
+      await expect(page.locator('.paper-story h1')).not.toHaveText('Men Walk On Moon')
+      await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).toBe(0)
+
+      // and so does clicking one
+      await page.getByRole('option', { name: 'Windrush arrival', exact: true }).click()
+      await expect(page.locator('.paper-story h1')).toContainText('Tilbury')
+      await paperLoaded(page)
       await noHorizontalOverflow(page)
-      for (let i = 2; i < 10; i++) {
-        await page.getByRole('listbox').focus()
-        await page.keyboard.press('ArrowDown')
-        await page.getByRole('button', { name: 'Read this edition' }).click()
-        await loaded(page)
-        await expect(page.locator('.page-count')).toHaveText('1 / 1')
-      }
-      await expect(page.locator('.reader-edition-title h2')).toHaveText('Windrush arrival')
+
       expect(errors).toEqual([])
       expect(posts).toEqual([])
     } finally {
@@ -101,7 +80,7 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
     }
   })
 
-  test(`${name}: phone menu replaces paper, touch swipe and resize`, async () => {
+  test(`${name}: the phone reader keeps the same single column`, async () => {
     const info = test.info()
     const browser = await engine.launch()
     try {
@@ -114,39 +93,17 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
       const errors: string[] = []
       page.on('pageerror', (error) => errors.push(error.message))
       await page.goto(base)
-      await loaded(page)
-      await centeredPlay(page)
-      await page.screenshot({ path: info.outputPath('phone.png') })
-      await page.getByRole('button', { name: 'Events', exact: true }).click()
-      await expect(page.locator('.reader-main')).toBeHidden()
-      await expect(page.getByRole('listbox')).toBeVisible()
-      await expect(page.getByRole('listbox')).toBeFocused()
+      await paperLoaded(page)
+      await expect(page.locator('.reader-rail')).toBeHidden()
+      await expect(page.locator('.reader-strip')).toBeVisible()
       await noHorizontalOverflow(page)
-      await page.screenshot({ path: info.outputPath('phone-menu.png') })
-      await page.keyboard.press('ArrowDown')
-      await page.getByRole('button', { name: 'Read this edition' }).click()
-      await expect(page.locator('.reader-edition-title h2')).toHaveText('Berlin Wall')
-      await expect(page.locator('.reader-sidebar')).toBeHidden()
-      const surface = page.locator('.reader-surface')
-      await surface.dispatchEvent('pointerdown', {
-        pointerId: 1,
-        pointerType: 'touch',
-        isPrimary: true,
-        button: 0,
-        clientX: 300,
-        clientY: 200,
-      })
-      await surface.dispatchEvent('pointerup', {
-        pointerId: 1,
-        pointerType: 'touch',
-        isPrimary: true,
-        button: 0,
-        clientX: 80,
-        clientY: 200,
-      })
-      await expect(page.locator('.scan-heading h2')).toHaveText('Neues Deutschland, 10 Nov 1989')
-      await loaded(page)
-      for (const width of [320, 768, 1024]) {
+      await page.screenshot({ path: info.outputPath('phone.png') })
+
+      await page.getByRole('button', { name: 'Berlin Wall', exact: true }).click()
+      await expect(page.locator('.paper-story h1')).toContainText('East Germany')
+      await paperLoaded(page)
+
+      for (const width of [320, 768, 1024, 1440]) {
         await page.setViewportSize({ width, height: 800 })
         await noHorizontalOverflow(page)
       }

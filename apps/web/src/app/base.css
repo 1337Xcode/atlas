@@ -1,0 +1,20 @@
+/* why: the world fills the viewport, so the document itself never scrolls or bounces */
+html,
+body,
+#root {
+  margin: 0;
+  /* note: dvh, so mobile browser chrome cannot crop the world */
+  height: 100dvh;
+  background: #121211;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* why: a pointer-driven page still has to be reachable by thumb */
+@media (pointer: coarse) {
+  button,
+  [role='button'] {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+}

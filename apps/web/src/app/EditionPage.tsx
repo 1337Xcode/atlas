@@ -1,56 +1,31 @@
 import { useState } from 'react'
-import { type Edition, type ReaderPage, formatEditionDate } from '../data/editions'
-import { worldUrlForArticle } from '../data/worlds'
-import { HoverPlayCard } from '../components/ui/hover-play-card'
+import { type Edition, formatEditionDate } from '../data/editions'
+import { PlayCard } from '../components/ui/play-card'
 
-export function EditionPage({ edition, page }: { edition: Edition; page: ReaderPage }) {
+// feat: one continuous paper: the story, then whatever archival scans the event has
+export function EditionPage({ edition, onPlay }: { edition: Edition; onPlay: () => void }) {
   const [imageFailed, setImageFailed] = useState(false)
-  if (page.kind === 'scan') {
-    return (
-      <article className="reader-paper reader-scan" aria-label={page.label} data-reader-page>
-        <header className="scan-heading">
-          <span>From the archive</span>
-          <h2>{page.label}</h2>
-        </header>
-        {imageFailed ? (
-          <p role="alert">This scan could not load. Use Previous page to return to the story.</p>
-        ) : (
-          <img
-            src={page.url}
-            alt={page.label}
-            draggable={false}
-            onError={() => setImageFailed(true)}
-          />
-        )}
-        <footer className="paper-source">
-          Source: {page.source}. Original page, shown without changes.
-        </footer>
-      </article>
-    )
-  }
+
   return (
     <article className="reader-paper" aria-label={edition.headline} data-reader-page>
       <header className="paper-masthead">
         <span className="paper-name">The Atlas</span>
-        <div className="paper-rule">
-          <span>{formatEditionDate(edition.date)}</span>
-          <span>Reading edition</span>
-        </div>
+        <div className="paper-rule">{formatEditionDate(edition.date)}</div>
       </header>
+
       <div className="paper-story">
-        <div className="paper-section">
-          <span>{edition.nature}</span>
-        </div>
+        <p className="paper-kicker">{edition.nature}</p>
         <h1>{edition.headline}</h1>
         <p className="paper-dateline">{edition.dateline}</p>
+
         <figure className="paper-figure">
           {imageFailed ? (
             <p role="alert">The photograph could not load. Reload to try again.</p>
           ) : (
-            <HoverPlayCard
+            <PlayCard
               poster={edition.image.url}
               alt={edition.image.caption}
-              href={worldUrlForArticle(edition.id)}
+              onPlay={onPlay}
               label={`Explore ${edition.title} in the world viewer`}
               onImageError={() => setImageFailed(true)}
             />
@@ -59,9 +34,11 @@ export function EditionPage({ edition, page }: { edition: Edition; page: ReaderP
             {edition.image.caption} <span>{edition.image.credit}</span>
           </figcaption>
         </figure>
+
         <p className="paper-summary">{edition.summary}</p>
+
         <details className="paper-details">
-          <summary>Context &amp; sources</summary>
+          <summary>Context and sources</summary>
           <p>{edition.context}</p>
           {edition.contentNote && <p>{edition.contentNote}</p>}
           <ul>
@@ -83,8 +60,18 @@ export function EditionPage({ edition, page }: { edition: Edition; page: ReaderP
           </p>
         </details>
       </div>
+
+      {edition.scans.map((scan) => (
+        <section className="paper-scan" key={scan.id} aria-label={scan.label}>
+          <h2>{scan.label}</h2>
+          <img src={scan.url} alt={scan.label} loading="lazy" draggable={false} />
+          <p>Source: {scan.source}. Original page, shown without changes.</p>
+        </section>
+      ))}
+
       <footer className="paper-source">
-        Compiled from cited sources. This reading edition is not an original newspaper scan.
+        Compiled from the cited sources. The front page above is set by Atlas, not scanned from an
+        original newspaper.
       </footer>
     </article>
   )

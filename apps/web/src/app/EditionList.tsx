@@ -1,67 +1,54 @@
-import { useMemo, useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
-import { type Edition, formatEditionDate } from '../data/editions'
-import OptionWheel from '../ui/OptionWheel'
+import { useMemo } from 'react'
+import type { Edition } from '../data/editions'
+import { OptionWheel } from '../ui/OptionWheel'
+import { GradualBlur } from '../components/ui/gradual-blur'
 
-export function EditionList({
-  editions,
-  currentId,
-  onOpen,
-}: {
+export type EditionListProps = {
   editions: Edition[]
-  currentId: string
-  onOpen: (id: string) => void
-}) {
-  const [index, setIndex] = useState(() =>
-    Math.max(
-      0,
-      editions.findIndex((edition) => edition.id === currentId),
-    ),
-  )
-  const reducedMotion = useReducedMotion()
+  index: number
+  onSelect: (index: number) => void
+  // note: the same list, laid out as a row, for viewports with no margin to spare
+  asStrip?: boolean
+}
+
+// feat: whatever the reader lands on opens, so there is no second step to confirm a choice
+export function EditionList({ editions, index, onSelect, asStrip = false }: EditionListProps) {
   const labels = useMemo(() => editions.map((edition) => edition.title), [editions])
-  const selected = editions[index]
-  if (!selected) return null
+
+  if (asStrip) {
+    return (
+      <nav className="reader-strip" aria-label="Events">
+        {editions.map((edition, position) => (
+          <button
+            key={edition.id}
+            type="button"
+            aria-current={position === index}
+            onClick={() => onSelect(position)}
+          >
+            {edition.title}
+          </button>
+        ))}
+      </nav>
+    )
+  }
+
   return (
-    <aside className="edition-list" aria-label="Choose a historical event" id="edition-list">
-      <header className="edition-list-heading">
-        <h2>Events</h2>
-      </header>
-      <div
-        className="edition-wheel"
-        onKeyDown={(event) => {
-          if (event.key !== 'Enter') return
-          event.preventDefault()
-          onOpen(selected.id)
-        }}
-      >
-        <OptionWheel
-          items={labels}
-          defaultSelected={index}
-          onChange={setIndex}
-          fontSize={1.1}
-          spacing={2.2}
-          inset={20}
-          tilt={3}
-          curve={0.18}
-          blur={0}
-          fade={0.12}
-          minOpacity={0.22}
-          smoothing={reducedMotion ? 1 : 90}
-          soundUrl=""
-          className="edition-wheel-control"
-        />
-      </div>
-      <footer className="edition-list-footer">
-        <p>{formatEditionDate(selected.date)}</p>
-        <button
-          className="reader-button edition-open"
-          onClick={() => onOpen(selected.id)}
-          type="button"
-        >
-          Read this edition <span aria-hidden="true">↗</span>
-        </button>
-      </footer>
-    </aside>
+    <>
+      <OptionWheel
+        items={labels}
+        selected={index}
+        onChange={onSelect}
+        label="Events"
+        fontSize={1.05}
+        spacing={2.4}
+        inset={48}
+        tilt={3}
+        curve={0.18}
+        fade={0.13}
+        minOpacity={0.2}
+      />
+      <GradualBlur position="top" height="4rem" strength={0.9} divCount={3} curve="bezier" />
+      <GradualBlur position="bottom" height="4rem" strength={0.9} divCount={3} curve="bezier" />
+    </>
   )
 }
