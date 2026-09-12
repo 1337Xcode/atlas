@@ -25,7 +25,7 @@ archival photograph, cropped to 1664x960 (the model's native frame).
 
 ## The scene brief
 
-Preferred form is `kind: "scene"` — one slot per prompt layer:
+Preferred form is `kind: "scene"`, one slot per prompt layer:
 
 | Field         | Owns                                                                  |
 | ------------- | --------------------------------------------------------------------- |
@@ -61,7 +61,7 @@ lesson, not a film. The build fails on an error and reports warnings.
 - **Events cite a source.** An event whose `sourceIndex` does not exist is an
   error. If a detail is not attested, it does not go in the world.
 - **Definite reference in events.** "The mason hammer swings down", never "A
-  mason hammer" — a re-introduction spawns a duplicate.
+  mason hammer". A re-introduction spawns a duplicate.
 - **No intent qualifiers.** "Make sure", "correctly" and "accurately" are
   invisible to a renderer.
 - **Budgets.** The composed prompt is capped by the model (2000 characters on

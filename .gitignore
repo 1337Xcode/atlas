@@ -5,6 +5,21 @@ coverage/
 test-results/
 playwright-report/
 *.tsbuildinfo
+
+# secrets: the api key never leaves this machine
 .env
 .env.local
+.env.*.local
+
+# os and editor noise
 .DS_Store
+.idea/
+.vscode/
+
+# internal working notes, kept local and deliberately not published
+/docs/
+/AGENTS.md
+/content/research/
+CLAUDE.md
+apps/*/AGENTS.md
+apps/*/CLAUDE.md
