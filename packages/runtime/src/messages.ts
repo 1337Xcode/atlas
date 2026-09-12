@@ -10,12 +10,20 @@ const CommandError = z.looseObject({
   command: z.string().optional(),
   reason: z.string().optional(),
 })
+// docs: state is the authoritative session snapshot, including what the inputs are actually set to
 const State = z.looseObject({
   running: z.boolean(),
   started: z.boolean(),
   paused: z.boolean(),
   has_image: z.boolean(),
   has_prompt: z.boolean(),
+  current_prompt: z.string().nullish(),
+  move_longitudinal: z.string().optional(),
+  move_lateral: z.string().optional(),
+  look_horizontal: z.string().optional(),
+  look_vertical: z.string().optional(),
+  rotation_speed_deg: z.number().optional(),
+  camera_pose_active: z.boolean().optional(),
 })
 
 export type ModelEvent =
@@ -29,7 +37,23 @@ export type ModelEvent =
   | { kind: 'generation-complete' }
   | { kind: 'generation-reset' }
   | { kind: 'command-error'; command: string; reason: string }
-  | { kind: 'state'; running: boolean; started: boolean; hasImage: boolean; hasPrompt: boolean }
+  | {
+      kind: 'state'
+      running: boolean
+      started: boolean
+      hasImage: boolean
+      hasPrompt: boolean
+      // note: what the model says its inputs are, which is what the session reconciles against
+      inputs: {
+        prompt: string | undefined
+        longitudinal: string | undefined
+        lateral: string | undefined
+        lookHorizontal: string | undefined
+        lookVertical: string | undefined
+        rotationSpeedDeg: number | undefined
+        cameraPoseActive: boolean | undefined
+      }
+    }
   | { kind: 'unknown'; type: string }
 
 // fn: narrow a raw model message to an event the session acts on
@@ -76,6 +100,15 @@ export function readModelMessage(message: ModelMessage): ModelEvent {
         started: parsed.data.started,
         hasImage: parsed.data.has_image,
         hasPrompt: parsed.data.has_prompt,
+        inputs: {
+          prompt: parsed.data.current_prompt ?? undefined,
+          longitudinal: parsed.data.move_longitudinal,
+          lateral: parsed.data.move_lateral,
+          lookHorizontal: parsed.data.look_horizontal,
+          lookVertical: parsed.data.look_vertical,
+          rotationSpeedDeg: parsed.data.rotation_speed_deg,
+          cameraPoseActive: parsed.data.camera_pose_active,
+        },
       }
     }
     default:

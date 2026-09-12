@@ -332,6 +332,56 @@ describe('the live control loop', () => {
     expect(transport.names()).toContain('set_move_longitudinal')
   })
 
+  // why: a dropped command used to desync us forever, which is why w stopped moving the reader
+  it('resends movement when the model reports it never took effect', async () => {
+    session.input.press('forward')
+    session.nudge()
+    await settle()
+    expect(lastMove()).toBe('forward')
+
+    transport.sent.length = 0
+    transport.emitMessage('state', {
+      running: true,
+      started: true,
+      paused: false,
+      has_image: true,
+      has_prompt: true,
+      move_longitudinal: 'idle',
+      move_lateral: 'idle',
+      look_horizontal: 'idle',
+      look_vertical: 'idle',
+    })
+    transport.emitChunk(1)
+    await settle()
+
+    expect(transport.names()).toContain('set_move_longitudinal')
+    expect(lastMove()).toBe('forward')
+  })
+
+  it('sends nothing extra when the model agrees with what we believe', async () => {
+    session.input.press('forward')
+    session.nudge()
+    await settle()
+
+    transport.sent.length = 0
+    transport.emitMessage('state', {
+      running: true,
+      started: true,
+      paused: false,
+      has_image: true,
+      has_prompt: true,
+      move_longitudinal: 'forward',
+      move_lateral: 'idle',
+      look_horizontal: 'idle',
+      look_vertical: 'idle',
+      current_prompt: session.snapshot().prompt,
+    })
+    transport.emitChunk(1)
+    await settle()
+
+    expect(transport.names()).toEqual([])
+  })
+
   it('keeps webrtc stats for the operator', async () => {
     transport.emitStats({ rtt: 42, framesPerSecond: 48, packetLossRatio: 0, candidateType: 'host' })
     expect(session.snapshot().stats?.framesPerSecond).toBe(48)

@@ -37,6 +37,11 @@ const VIDEO_WARMUP_MS = 2_500
 // why: a command the model keeps refusing must not be resent forever
 const MAX_REFUSAL_RETRIES = 2
 
+// fn: trust the model's own report of an axis, falling back to what we believed
+function axis<T extends string>(reported: string | undefined, believed: T): T {
+  return reported === undefined ? believed : (reported as T)
+}
+
 // why: no video at all means a gpu we are paying for that nobody can see, so it is released
 const NO_VIDEO_TIMEOUT_MS = 40_000
 
@@ -194,6 +199,24 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         input.clear()
         acked = blankWire()
         break
+      // docs: state is the authoritative snapshot, so our belief about the wire is corrected from it
+      // why: a command the model never applied would otherwise desync us forever, and w would stop working
+      case 'state': {
+        const { inputs } = event
+        acked = {
+          intent: {
+            longitudinal: axis(inputs.longitudinal, acked.intent.longitudinal),
+            lateral: axis(inputs.lateral, acked.intent.lateral),
+            lookHorizontal: axis(inputs.lookHorizontal, acked.intent.lookHorizontal),
+            lookVertical: axis(inputs.lookVertical, acked.intent.lookVertical),
+            rotationSpeedDeg: inputs.rotationSpeedDeg ?? acked.intent.rotationSpeedDeg,
+          },
+          // note: the model reports only whether a pose is active, so an active one is left alone
+          pose: inputs.cameraPoseActive === false ? null : acked.pose,
+          prompt: inputs.prompt ?? acked.prompt,
+        }
+        break
+      }
       case 'command-error': {
         store.notice(`${event.command}: ${event.reason}`)
         const refused = (refusalCounts.get(event.command) ?? 0) + 1
