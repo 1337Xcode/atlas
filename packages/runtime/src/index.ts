@@ -7,6 +7,7 @@ export {
   type SessionLimitReason,
 } from './lifecycle.ts'
 export { readModelMessage, type ModelEvent } from './messages.ts'
+export { describeSessionError } from './session-error.ts'
 export { buildCameraPose, type PoseInput } from './pose.ts'
 export { createWorldSession, type CreateWorldSessionOptions, type WorldSession } from './session.ts'
 export type { SessionEndReason, SessionPhase, SessionSnapshot } from './store.ts'

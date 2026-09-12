@@ -3,6 +3,7 @@ import { IDLE_CONTROL_INTENT, type WorldSessionPlan } from '@atlas/schema'
 import { getWorldModel, planCommands, type Command, type WireState } from '@atlas/world'
 import { createInputStore, type InputStore } from './input.ts'
 import { createLifecycleGuard } from './lifecycle.ts'
+import { describeSessionError } from './session-error.ts'
 import { readModelMessage, type ModelEvent } from './messages.ts'
 import { buildCameraPose } from './pose.ts'
 import { stageWorld } from './staging.ts'
@@ -118,7 +119,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     return trigger ? [trigger()] : []
   }
 
-  // perf: one batch in flight at a time, coalescing everything that happened meanwhile
+  // perf: diff current intent once per flush without awaiting control replies
   const flush = async () => {
     if (store.snapshot().phase !== 'live') return
     if (flushing) {
@@ -166,7 +167,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     warmupTimer = undefined
     videoWarmupTimer = undefined
     store.update({ phase: 'live' })
-    // why: billing starts at the first frame, so the clock on an unattended world starts here too
+    // why: start the interaction timeout when the controls become available
     guard.begin()
   }
 
@@ -283,7 +284,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       transport.on('status', (status) => store.update({ status })),
       transport.on('message', (message) => onEvent(readModelMessage(message))),
       transport.on('stats', (stats) => store.update({ stats })),
-      transport.on('error', (error) => store.notice(error.message)),
+      transport.on('error', (error) => store.notice(describeSessionError(error))),
       transport.on('track', (name, received) => {
         if (name !== 'main_video') return
         stream = received
@@ -340,7 +341,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         await stage()
       } catch (cause) {
         // why: a failed world names the reason and releases the gpu, it never takes the page down
-        store.update({ phase: 'error', error: describe(cause), endedReason: 'failed' })
+        store.update({ phase: 'error', error: describeSessionError(cause), endedReason: 'failed' })
         await releaseGpu()
       }
     },
@@ -352,7 +353,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         await delay(plan.controls.resetSettleMs)
         await stage()
       } catch (cause) {
-        store.update({ phase: 'error', error: describe(cause) })
+        store.update({ phase: 'error', error: describeSessionError(cause) })
       }
     },
     stop: async (reason = 'user') => {
@@ -370,8 +371,4 @@ async function fetchImage(url: string): Promise<Blob> {
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-function describe(cause: unknown): string {
-  return cause instanceof Error ? cause.message : String(cause)
 }

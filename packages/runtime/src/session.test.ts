@@ -56,6 +56,27 @@ afterEach(() => {
 })
 
 describe('staging a world', () => {
+  it('reports provider capacity without retrying or sending model commands', async () => {
+    const fake = createFakeTransport()
+    const connect = vi
+      .fn()
+      .mockRejectedValue(
+        Object.assign(
+          new Error('no available capacity: no available servers to handle the request'),
+          { status: 429 },
+        ),
+      )
+    const blocked = createWorldSession({ plan: plan(), transport: { ...fake, connect } })
+    await blocked.start()
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(blocked.snapshot().phase).toBe('error')
+    expect(blocked.snapshot().error).toContain('no free servers')
+    expect(connect).toHaveBeenCalledTimes(1)
+    expect(fake.names()).toEqual([])
+    expect(fake.status()).toBe('disconnected')
+    await blocked.stop()
+  })
+
   it('runs the documented launch sequence', async () => {
     await stage()
 

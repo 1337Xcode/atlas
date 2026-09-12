@@ -8,6 +8,7 @@ import {
   useWorldViewport,
 } from '@atlas/runtime/react'
 import { WorldSessionPlanSchema, type WorldSessionPlan } from '@atlas/schema'
+import { describeSessionError } from '@atlas/runtime'
 import { useCallback, useEffect, useRef, useState } from 'react'
 // note: extensionless, because turbopack does not resolve an explicit .tsx specifier
 import { WorldPads } from './world-pads'
@@ -27,6 +28,10 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
   const [error, setError] = useState<string>()
   const [expanded, setExpanded] = useState(false)
   const shell = useRef<HTMLDivElement>(null)
+  const openingRequest = useRef<AbortController | null>(null)
+
+  // fix: leaving during token minting must not open a world after unmount
+  useEffect(() => () => openingRequest.current?.abort(), [])
 
   const { session, snapshot } = useWorldSession(plan, { autoStart: true })
   const bindVideo = useWorldViewport(session)
@@ -34,15 +39,26 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
   const touch = useCoarsePointer()
   const pads = useWorldTouchControls(session, plan)
 
-  // fn: fetch a fresh plan, which mints the token and therefore starts the clock
+  // fn: mint one fresh plan per click; billing begins only when a session holds a GPU
   const open = useCallback(async () => {
+    if (openingRequest.current) return
+    const request = new AbortController()
+    openingRequest.current = request
     setOpening(true)
     setError(undefined)
     try {
-      const response = await fetch(`/api/worlds/${articleId}`, { method: 'POST' })
+      const response = await fetch(`/api/worlds/${articleId}`, {
+        method: 'POST',
+        signal: AbortSignal.any([request.signal, AbortSignal.timeout(15_000)]),
+      })
       const body: unknown = await response.json()
+      if (request.signal.aborted) return
       if (!response.ok) {
-        setError(readError(body))
+        setError(
+          describeSessionError(
+            Object.assign(new Error(readError(body)), { status: response.status }),
+          ),
+        )
         return
       }
       const parsed = WorldSessionPlanSchema.safeParse((body as { plan: unknown }).plan)
@@ -52,13 +68,19 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
       }
       setPlan(parsed.data)
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'could not reach the world service')
+      if (!request.signal.aborted) setError(describeSessionError(cause))
     } finally {
-      setOpening(false)
+      if (openingRequest.current === request) {
+        openingRequest.current = null
+        setOpening(false)
+      }
     }
   }, [articleId])
 
   const leave = useCallback(() => {
+    openingRequest.current?.abort()
+    openingRequest.current = null
+    setOpening(false)
     void session?.stop('user')
     setPlan(undefined)
     if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined)
@@ -149,14 +171,14 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
 
         {closed || snapshot?.phase === 'error' ? (
           <div className="closed">
-            <p>{snapshot?.error ?? endedMessage(snapshot?.endedReason)}</p>
+            <p role="alert">{error ?? snapshot?.error ?? endedMessage(snapshot?.endedReason)}</p>
             {/* note: enough to tell a connect problem from a generation problem without a console */}
             <p className="diagnosis">
               transport {snapshot?.status ?? 'unknown'} · chunk {snapshot?.chunkIndex ?? 0}
               {snapshot?.notices.length ? ` · ${snapshot.notices.at(-1)}` : ''}
             </p>
-            <button type="button" onClick={() => void open()}>
-              open it again
+            <button type="button" onClick={() => void open()} disabled={opening}>
+              {opening ? 'opening' : 'try again'}
             </button>
           </div>
         ) : null}
@@ -196,7 +218,11 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
         <button type="button" onClick={toggleExpand}>
           {expanded ? 'shrink' : 'expand'}
         </button>
-        <button type="button" onClick={() => void session?.restage()} disabled={closed}>
+        <button
+          type="button"
+          onClick={() => void session?.restage()}
+          disabled={snapshot?.phase !== 'live'}
+        >
           restage
         </button>
         <button type="button" onClick={leave}>

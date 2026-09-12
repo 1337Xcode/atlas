@@ -38,8 +38,7 @@ export interface WorldTransport {
 
 // fn: the live transport, backed by the reactor sdk over webrtc
 export function createReactorTransport(plan: WorldSessionPlan): WorldTransport {
-  // why: the sdk calls this resolver before every authenticated request, not only connect, and a
-  // why: session may only be operated by the token that created it — so it always returns that one
+  // why: reuse the same scoped token for requests belonging to this session
   const reactor = new Reactor({
     modelName: plan.model.slug,
     apiUrl: plan.apiUrl,
