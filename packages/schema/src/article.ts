@@ -31,6 +31,8 @@ export const ArticleSchema = z
     summary: NonEmptyStringSchema,
     body: NonEmptyStringSchema,
     context: NonEmptyStringSchema,
+    // why: some events need care — what the world deliberately does not stage is stated up front
+    contentNote: NonEmptyStringSchema.optional(),
     images: z.array(ArticleImageSchema).min(1),
     sources: z.array(SourceSchema).min(1),
     world: SceneBriefSchema,

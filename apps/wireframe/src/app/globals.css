@@ -1,0 +1,117 @@
+/* wireframe styling only: enough to read and click, nothing to keep */
+
+:root {
+  color-scheme: light dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 60rem;
+  padding: 2rem 1rem 6rem;
+}
+
+a {
+  color: inherit;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid currentColor;
+  opacity: 0.3;
+  margin: 2rem 0;
+}
+
+ul,
+ol {
+  padding-left: 1.25rem;
+}
+
+button,
+kbd {
+  font: inherit;
+  border: 1px solid currentColor;
+  background: none;
+  color: inherit;
+  padding: 0.15rem 0.4rem;
+}
+
+button {
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+}
+
+.world {
+  border: 1px solid currentColor;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.world img,
+.world video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1664 / 960;
+  background: #000;
+  object-fit: cover;
+}
+
+.viewport {
+  position: relative;
+}
+
+.viewport:focus-visible {
+  outline: 2px solid currentColor;
+}
+
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  background: #000;
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+.legend,
+.prompt,
+.annotations dd {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.annotations dt {
+  margin-top: 0.5rem;
+}
+
+.annotations dd {
+  margin: 0 0 0 1rem;
+}
+
+.error {
+  border: 1px solid currentColor;
+  padding: 0.5rem;
+}
+
+.notices {
+  font-size: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.problems {
+  border: 1px dashed currentColor;
+  padding: 0.5rem 1rem;
+}

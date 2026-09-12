@@ -1,0 +1,90 @@
+{
+  "id": "partition-of-india-midnight",
+  "headline": "Two Dominions Born As The Clock Strikes Midnight",
+  "dateline": "CALCUTTA AND DELHI, 15 AUGUST 1947",
+  "occurredOn": "1947-08-15",
+  "nature": "independence-and-partition",
+  "summary": "At midnight on 14-15 August 1947 the Constituent Assembly in Delhi assumed sovereign authority as crowds waited outside. The Indian Independence Act set 15 August for the two new Dominions of India and Pakistan, while the Punjab boundary stayed unpublished until 17 August.",
+  "body": "In Delhi the chimes of midnight were followed by a conch shell and cheering, and strings of new flags and electric lights were strung across the streets. The same dispatches carried news from Lahore of fires, looting and lethal clashes. Independence arrived as a humanly uneven moment: public ceremony in one city, danger in another.\n\nIn Calcutta, Mohandas Gandhi spent the day fasting with Huseyn Shaheed Suhrawardy in a shared house, appealing for calm between communities rather than attending the ceremonies. The Radcliffe boundary was announced only on 17 August, so people in Lahore, Amritsar and the villages and railway stations near the future frontier had no authoritative line to consult. The result was immense displacement and a death toll whose range is still disputed.",
+  "context": "The Indian Independence Act received Royal Assent on 18 July 1947 and divided Punjab and Bengal between the two Dominions. Contemporary British reporting used period vocabulary and an editorial frame that understated the coercive structures of colonial rule; Pakistan's own commemoration of 14 August sits alongside the Act's appointed day of 15 August.",
+  "contentNote": "The world stages the quiet Calcutta room of Gandhi's fast on 15 August, which is what the only rights-cleared photograph for this event documents. The violence in Punjab and Bengal is described in the article and is deliberately not depicted.",
+  "images": [
+    {
+      "id": "gandhi-and-suhrawardy",
+      "src": "partition-of-india-midnight/gandhi-and-suhrawardy.jpg",
+      "caption": "Gandhi and Huseyn Shaheed Suhrawardy during a seventy-three hour fast, Calcutta, 15 August 1947.",
+      "credit": "Public domain in India, Pakistan and Bangladesh; see Wikimedia Commons file page",
+      "role": "anchor"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Indian Independence Act 1947",
+      "publisher": "UK Parliament",
+      "url": "https://www.legislation.gov.uk/ukpga/1947/30/pdfs/ukpga_19470030_en.pdf"
+    },
+    {
+      "title": "India and Pakistan Win Freedom",
+      "publisher": "The New York Times, 15 August 1947"
+    },
+    {
+      "title": "Partition maps and Sikh appeals",
+      "publisher": "The National Archives (UK)",
+      "url": "https://www.nationalarchives.gov.uk/"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "low wooden platform",
+    "subject": "A low wooden platform spread with white cotton bedding in a bare Calcutta room on a humid August afternoon, two elderly men seated on it while a small group sits along the floor.",
+    "anchors": [
+      {
+        "object": "low wooden platform with white bedding",
+        "position": "straight ahead"
+      },
+      {
+        "object": "spinning wheel on the floor",
+        "position": "on the left"
+      },
+      {
+        "object": "shuttered window",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Bare plaster walls, a swept stone floor, folded khadi cloth, hot flat daylight through the shutters.",
+    "style": "Press photography of 1947, monochrome, available light indoors.",
+    "idle": "The seated men hold still on the platform with their shoulders rising and falling slowly, a hand resting on folded cloth, dust turning in the light from the shutters and papers lifting at one corner.",
+    "travel": "The swept stone floor slides past underfoot across the room, the seated group shifting aside and the light from the shutters sweeping along the bare plaster wall.",
+    "guards": [
+      "the room holds one low platform, with the group seated on the floor around it"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "A statement is read",
+        "detail": "One of the seated men lifts a sheet of paper and reads from it aloud to the room, the others leaning in to listen, and then the paper is set back down under its stone.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "2",
+        "name": "The spinning wheel turns",
+        "detail": "A hand reaches to the spinning wheel on the floor and turns its crank in a slow steady rhythm, the thread drawing out from the spindle and the wheel settling again when the hand lifts away.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "3",
+        "name": "New flags in the street",
+        "detail": "Through the shuttered window, strings of small new flags lift over the lane outside and electric lamps come on along the wall opposite, voices carrying up from the street before it quiets again.",
+        "sourceIndex": 0
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the stone floor, lifting above the height of the platform for a moment before dropping back down.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the platform.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1947,
+    "rotationSpeedDeg": 3
+  }
+}

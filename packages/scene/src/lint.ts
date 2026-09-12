@@ -31,7 +31,11 @@ const MOTION_VERB = /\b(walk|walks|walking|run|runs|running|move|moves|moving|dr
 // why: intent words are invisible to a renderer
 const INTENT_QUALIFIER = /\b(make sure|correctly|properly|accurately|be sure|without cutting)\b/i
 
-const INDEFINITE_OPENER = /^\s*(a|an)\s/i
+// note: words that end the noun phrase an article governs, so the head noun can be found without a parser
+const PHRASE_BREAKS = new Set([
+  'the', 'a', 'an', 'of', 'from', 'in', 'on', 'with', 'and', 'to', 'at', 'through', 'over',
+  'under', 'into', 'by', 'for', 'across', 'along', 'beside', 'against',
+])
 
 type Rule = {
   name: string
@@ -133,12 +137,15 @@ const RULES: readonly Rule[] = [
     severity: 'warning',
     run: ({ brief }) => {
       if (brief.kind !== 'scene') return []
-      return brief.events
-        .flatMap((event) => {
-          const details = typeof event.detail === 'string' ? [event.detail] : [event.detail.static, event.detail.dynamic]
-          return details.some((detail) => INDEFINITE_OPENER.test(detail)) ? [event.name] : []
-        })
-        .map((name) => `event "${name}" re-introduces its subject; a re-description spawns a duplicate`)
+      const established = establishedNouns(brief.subject, brief.anchors)
+      return brief.events.flatMap((event) => {
+        const details =
+          typeof event.detail === 'string' ? [event.detail] : [event.detail.static, event.detail.dynamic]
+        const repeated = details.flatMap((detail) => reintroduced(detail, established))
+        return repeated.length === 0
+          ? []
+          : [`event "${event.name}" re-introduces "${repeated[0]}"; a re-description spawns a duplicate`]
+      })
     },
   },
   {
@@ -184,6 +191,34 @@ function flagFragments({ brief }: LintSceneInput, pattern: RegExp, reason: strin
   return authorFragments(brief)
     .filter((fragment) => pattern.test(fragment.text))
     .map((fragment) => `${fragment.label} ${reason}`)
+}
+
+// fn: the nouns the base has already cast, which an event must refer back to definitely
+function establishedNouns(subject: string, anchors: readonly { object: string }[]): Set<string> {
+  const words = [subject, ...anchors.map((anchor) => anchor.object)]
+    .join(' ')
+    .toLowerCase()
+    .match(/[a-z-]{5,}/g)
+  return new Set(words ?? [])
+}
+
+// fn: nouns an event re-introduces with an indefinite article, rather than referring back to them
+function reintroduced(detail: string, established: Set<string>): string[] {
+  const words = detail.toLowerCase().match(/[a-z-]+/g) ?? []
+  const hits: string[] = []
+
+  words.forEach((word, index) => {
+    if (word !== 'a' && word !== 'an') return
+    const phrase: string[] = []
+    for (const next of words.slice(index + 1, index + 4)) {
+      if (PHRASE_BREAKS.has(next)) break
+      phrase.push(next)
+    }
+    const head = phrase.at(-1)
+    if (head && head.length >= 5 && established.has(head)) hits.push(head)
+  })
+
+  return hits
 }
 
 function oversize(label: string, text: string, budget: number): string {

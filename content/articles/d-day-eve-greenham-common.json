@@ -1,0 +1,98 @@
+{
+  "id": "d-day-eve-greenham-common",
+  "headline": "Full Victory — Nothing Else: The Order Of The Day",
+  "dateline": "GREENHAM COMMON, 5 JUNE 1944",
+  "occurredOn": "1944-06-05",
+  "nature": "war-preparation",
+  "summary": "On the evening of 5 June 1944, hours after General Eisenhower ordered the Normandy assault to proceed, he walked among paratroopers of the 101st Airborne Division at Greenham Common as they waited to board their transport aircraft.",
+  "body": "Poor weather had already delayed the operation once. Early on 5 June Eisenhower gave the order for the following day, and that evening he went out to the airfields where airborne troops were drawing kit, blacking faces and checking harness. His order of the day was read to the men, and a statement he drafted in case the landings failed was kept in his pocket; the U.S. National Archives holds both, evidence that success was not assumed.\n\nAfter midnight the airborne troops went inland to protect the flanks of the seaborne landings, which began at 06:30 across Utah, Omaha, Gold, Sword and Juno. Nearly 160,000 Allied troops landed that day, and the National WWII Museum reports more than 10,300 Allied casualties by nightfall while cautioning that D-Day figures are approximations. The Allies gained a foothold; the war in Europe ran until May 1945.",
+  "context": "Operation Overlord joined naval, air and land forces and depended on industrial supply, training in Britain, intelligence, French Resistance liaison and a deception plan meant to hold German attention away from Normandy. The forces were multinational, drawn from the United States, Britain, Canada and other Allied countries and imperial systems, and French civilians experienced the operation from occupied territory.",
+  "contentNote": "The world stages the waiting airfield on the evening before the landings, which is what the anchor photograph documents. The landings and their casualties are described in the article and are deliberately not staged as spectacle.",
+  "images": [
+    {
+      "id": "eisenhower-with-paratroopers",
+      "src": "d-day-eve-greenham-common/eisenhower-with-paratroopers.jpg",
+      "caption": "General Eisenhower with paratroopers of the 101st Airborne Division, Greenham Common, 5 June 1944.",
+      "credit": "U.S. Army, public domain (Library of Congress provenance)",
+      "role": "anchor"
+    },
+    {
+      "id": "approaching-omaha",
+      "src": "d-day-eve-greenham-common/approaching-omaha.jpg",
+      "caption": "Troops in an LCVP approaching Omaha Beach, 6 June 1944.",
+      "credit": "U.S. Navy, public domain, NARA provenance",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "World War II: D-Day, The Invasion of Normandy",
+      "publisher": "Eisenhower Presidential Library",
+      "url": "https://www.eisenhowerlibrary.gov/research/online-documents/world-war-ii-d-day-invasion-normandy"
+    },
+    {
+      "title": "Records Relating to D-Day",
+      "publisher": "U.S. National Archives",
+      "url": "https://www.archives.gov/research/military/ww2/d-day"
+    },
+    {
+      "title": "D-Day Explained",
+      "publisher": "Imperial War Museums",
+      "url": "https://www.iwm.org.uk/history/second-world-war/d-day/d-day-explained"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "parachute harness",
+    "subject": "A parachute harness and webbing held in the near foreground at a grass airfield in southern England on a grey June evening, paratroopers in jump kit standing about in groups.",
+    "anchors": [
+      {
+        "object": "twin-engine transport aircraft",
+        "position": "on the left"
+      },
+      {
+        "object": "group of paratroopers in jump kit",
+        "position": "straight ahead"
+      },
+      {
+        "object": "hedgerow along the airfield boundary",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Flattened grass and standing kit bags, chalked helmets, coiled static lines, low grey cloud.",
+    "style": "Wartime press photography, monochrome, soft grain, flat light.",
+    "idle": "The paratroopers stand about in their harness with weight settled, breath and cigarette smoke drifting, a chinstrap swinging loose and the grass bending flat in the wind off the runway.",
+    "travel": "Flattened grass and kit bags slide past underfoot along the line of aircraft, webbing shifting and creaking with each stride as the groups of men part to let the way through.",
+    "guards": [
+      "the aircraft stand parked on the grass with their engines quiet"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "The commander comes over",
+        "detail": "The officer in the service cap walks up to the nearest group, stops and talks with them face to face, the men around him turning inward and one of them answering with a hand raised toward the aircraft.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "2",
+        "name": "The order of the day",
+        "detail": "A folded sheet is unfolded and read aloud to the group, the paper shaking in the wind while the men listen with their helmets under their arms, and then it is folded away again.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "3",
+        "name": "Kit check",
+        "detail": "The hands in the foreground pull the harness straps tight one after another, clip the leg bag to the left thigh and tug the static line hook, settling the weight square across the shoulders.",
+        "sourceIndex": 2
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the flattened grass, clearing the heads of the waiting men for a moment before dropping back down to the airfield.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the kit bags in the grass.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1944,
+    "rotationSpeedDeg": 4
+  }
+}

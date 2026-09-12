@@ -1,0 +1,96 @@
+{
+  "id": "march-on-washington-1963",
+  "headline": "200,000 March For Jobs And Freedom In Orderly Rally",
+  "dateline": "WASHINGTON, 29 AUGUST 1963",
+  "occurredOn": "1963-08-28",
+  "nature": "civil-rights",
+  "summary": "About a quarter of a million people gathered on the National Mall on 28 August 1963 for the March on Washington for Jobs and Freedom, joining demands for employment, fair wages, desegregation, voting rights and federal civil-rights legislation.",
+  "body": "Shuttle buses waited outside Union Station from seven in the morning. People arrived by bus, train, car and plane, gathered around the Washington Monument, and sang before the programme began. A. Philip Randolph and Bayard Rustin had assembled the coalition and, in under three months, the transport, volunteers, marshals, sound system and sanitation that made a crowd of that size peaceful.\n\nThe programme at the Lincoln Memorial included Marian Anderson, Mahalia Jackson, the Eva Jessye Choir, leaders from civil-rights, labour and religious organisations, and a tribute naming women freedom fighters. James Farmer's address was read out because he was jailed in Louisiana, and John Lewis spoke after his text was revised, which exposed real disagreement within the coalition about how hard to press the federal government. Afterwards the leaders met President Kennedy for seventy-five minutes.",
+  "context": "The march grew out of a long campaign against segregation, disenfranchisement, employment discrimination and racial violence, and Randolph had proposed a Washington march as early as the 1940s. Its demands were only partly met. Later oral histories record that participants travelled at real risk, and that women were not given major speaking roles.",
+  "images": [
+    {
+      "id": "reflecting-pool-crowd",
+      "src": "march-on-washington-1963/reflecting-pool-crowd.jpg",
+      "caption": "The crowd along the Reflecting Pool, looking toward the Washington Monument, 28 August 1963.",
+      "credit": "U.S. Information Agency, public domain in the United States, NARA NAID 542045",
+      "role": "anchor"
+    },
+    {
+      "id": "leadership-procession",
+      "src": "march-on-washington-1963/leadership-procession.jpg",
+      "caption": "March leaders walking from the Washington Monument to the Lincoln Memorial, 28 August 1963.",
+      "credit": "U.S. Information Agency, public domain in the United States, NARA NAID 542010",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "March on Washington for Jobs and Freedom",
+      "publisher": "U.S. National Park Service",
+      "url": "https://www.nps.gov/articles/march-on-washington.htm"
+    },
+    {
+      "title": "200,000 March for Civil Rights in Orderly Washington Rally",
+      "publisher": "The New York Times, 29 August 1963"
+    },
+    {
+      "title": "Civil Rights History Project, activist recollections",
+      "publisher": "Library of Congress",
+      "url": "https://www.loc.gov/collections/civil-rights-history-project/"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "raised placard",
+    "subject": "A hand-lettered placard on a wooden stave held up in the near foreground at the edge of the Reflecting Pool, a dense crowd along both banks on a clear late-August morning.",
+    "anchors": [
+      {
+        "object": "stone obelisk of the Washington Monument",
+        "position": "straight ahead beyond the water"
+      },
+      {
+        "object": "row of elms along the bank",
+        "position": "on the left"
+      },
+      {
+        "object": "loudspeaker tower on a scaffold",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Still water reflecting the crowd, trodden grass, church clothes and work clothes, summer haze.",
+    "style": "Press photography of 1963, monochrome, fine grain.",
+    "idle": "The crowd holds its place along the water with shoulders shifting, a paper fan beating slowly, the placard in the foreground tilting in a raised hand and voices rising and settling in a song.",
+    "travel": "Trodden grass and paved kerb slide past underfoot along the bank of the pool, the crowd parting shoulder by shoulder as the placard sways with each stride.",
+    "guards": [
+      "the obelisk stands single and complete at the far end of the water"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "A freedom song",
+        "detail": "The voices around the placard gather into a freedom song, hands linking along the bank, the singing carrying over the water and then easing back into talk.",
+        "sourceIndex": 2
+      },
+      {
+        "key": "2",
+        "name": "Marshals guide the arrivals",
+        "detail": "The marshals in white armbands step into the gap by the kerb, raise their arms and open a lane through the crowd, and a file of new arrivals with placards moves along it toward the memorial steps.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "3",
+        "name": "Raise the placard",
+        "detail": "The placard in the foreground lifts high on its wooden stave, the painted words JOBS AND FREEDOM turning into the light, and other placards go up along the bank in answer before it lowers again.",
+        "sourceIndex": 1
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the trodden grass, clearing the heads of the crowd for a moment before dropping back down to the bank.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low at the edge of the water.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1963,
+    "rotationSpeedDeg": 5
+  }
+}

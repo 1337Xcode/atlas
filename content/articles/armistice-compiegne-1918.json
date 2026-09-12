@@ -1,0 +1,95 @@
+{
+  "id": "armistice-compiegne-1918",
+  "headline": "Armistice Signed; The Guns Cease At Eleven",
+  "dateline": "FOREST OF COMPIEGNE, 11 NOVEMBER 1918",
+  "occurredOn": "1918-11-11",
+  "nature": "end-of-war",
+  "summary": "The Armistice between Germany and the Allied and Associated Powers was agreed at about five in the morning of 11 November 1918 in Marshal Foch's railway carriage in the Forest of Compiegne, and took effect along the Western Front at eleven o'clock.",
+  "body": "The signed text required hostilities to cease by land and air six hours after signing, and the interval was meant to let orders reach the forces along the front. It also required German evacuation of Belgium, France, Luxembourg and Alsace-Lorraine, the delivery of major military equipment, and Allied occupation measures along the Rhine. This was an armistice, not a peace treaty.\n\nBulgaria had come to terms on 29 September, the Ottoman Empire on 30 October and Austria-Hungary on 3 November; Germany was the last of the Central Powers to seek an armistice, and was offered little room to negotiate. For many near the front the change at eleven o'clock was the absence of gunfire rather than any spectacle. In Manchester people left workplaces, flags went up and munitions workers gathered, and the same accounts record tears and a moment of stillness before the processions.",
+  "context": "The delegations met in a railway carriage on a siding in the forest near Rethondes. Fighting continued in some places after the ceasefire hour, blockade and hardship did not end at once, and the settlement of the war remained unresolved until the treaties of 1919 and after. Newspapers of 11 and 12 November combined official confirmation with public feeling and warned that difficult problems of re-establishment lay ahead.",
+  "images": [
+    {
+      "id": "compiegne-railcar",
+      "src": "armistice-compiegne-1918/compiegne-railcar.jpg",
+      "caption": "Allied figures outside the railway carriage at Compiegne after the agreement, 11 November 1918.",
+      "credit": "Anonymous work, public domain per Wikimedia Commons file page",
+      "role": "anchor"
+    },
+    {
+      "id": "london-crowd",
+      "src": "armistice-compiegne-1918/london-crowd.jpg",
+      "caption": "Armistice Day crowd outside Buckingham Palace, London, 11 November 1918.",
+      "credit": "Imperial War Museums Q 47852, public domain mark; rights check required before commercial use",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Armistice agreement, text and terms",
+      "publisher": "Library of Congress",
+      "url": "https://www.loc.gov/"
+    },
+    {
+      "title": "Armistice Signed, End Of The War!",
+      "publisher": "The New York Times, 11 November 1918"
+    },
+    {
+      "title": "Armistice Day, Manchester, from the archive",
+      "publisher": "The Manchester Guardian, 12 November 1918"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "railway carriage",
+    "subject": "A dark wooden railway carriage standing on a single siding cut through bare beech woods near Rethondes on a cold grey November morning, staff officers in greatcoats on the trackbed.",
+    "anchors": [
+      {
+        "object": "dark wooden railway carriage",
+        "position": "straight ahead"
+      },
+      {
+        "object": "pair of rails on the trackbed",
+        "position": "underfoot on the left"
+      },
+      {
+        "object": "stand of bare beech trees",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Wet ballast and fallen leaves, mist among the trunks, breath clouding, cold flat light.",
+    "style": "Glass-plate press photography of 1918, monochrome, soft grain.",
+    "idle": "The officers stand on the ballast beside the carriage with weight settled, breath clouding, a greatcoat hem stirring and a hand resting on the brass rail of the carriage steps.",
+    "travel": "Wet ballast and fallen leaves slide past underfoot along the rails toward the carriage, mist drifting between the trunks as the officers on the trackbed shift aside.",
+    "guards": [
+      "the carriage stands alone on the siding, with the woods close on either side"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "Down the carriage steps",
+        "detail": "The carriage door swings out and the delegation comes down the steps onto the ballast one after another, hats going back on, and they gather in a close group beside the wheels.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "2",
+        "name": "The signed text is carried away",
+        "detail": "An officer takes a leather document case down the steps, holds it against his chest with both hands and walks off along the rails toward the head of the siding, the group watching him go.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "3",
+        "name": "Eleven o'clock",
+        "detail": "The officers on the trackbed stop where they stand and hold still, caps coming off in the cold, and the wood around the siding carries only the drip of water from the branches and a single bird call.",
+        "sourceIndex": 2
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the ballast, lifting to the height of the carriage windows for a moment before dropping back down to the trackbed.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the rails.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1918,
+    "rotationSpeedDeg": 4
+  }
+}

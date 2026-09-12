@@ -4,31 +4,30 @@
   "dateline": "SEA OF TRANQUILLITY, 21 JULY 1969",
   "occurredOn": "1969-07-20",
   "nature": "exploration",
-  "summary": "Apollo 11's lunar module Eagle landed on the Sea of Tranquillity at 20:17 UTC on 20 July 1969. Neil Armstrong stepped onto the surface at 02:56 UTC the following morning, joined nineteen minutes later by Edwin Aldrin.",
-  "body": "Eagle touched down with about twenty-five seconds of descent fuel remaining, roughly six kilometres beyond the intended point, on a plain of fine grey regolith strewn with small craters and blocks. Armstrong descended the ladder and stepped off the footpad at 02:56 UTC on 21 July. The two men spent two hours and thirty-one minutes outside the spacecraft. They planted a United States flag stiffened by a horizontal rod, read a plaque fixed to the ladder strut, deployed a passive seismometer and a laser ranging retroreflector, set out a foil sheet to collect solar wind particles, photographed the site and collected 21.5 kilograms of rock and soil. Michael Collins remained in lunar orbit aboard Columbia.",
-  "context": "The landing came eight years after President Kennedy's commitment to a crewed lunar landing before the decade's end, and followed the Gemini rendezvous programme and the Apollo 8 and 10 lunar flights. The Moon has no atmosphere: the sky above the site is black even in full sunlight, shadows fall hard and unsoftened, and disturbed dust travels in clean ballistic arcs rather than billowing.",
+  "summary": "Apollo 11's lunar module Eagle landed in the Sea of Tranquillity at 20:17:40 UTC on 20 July 1969. Neil Armstrong stepped onto the surface about six and a half hours later, and Edwin Aldrin followed some twenty minutes after him, while Michael Collins stayed in orbit aboard Columbia.",
+  "body": "Armstrong partly flew the final descent by hand to clear a crater, and Eagle came to rest about four miles beyond the predicted point on a level, rock-strewn plain. The two men worked outside for more than two and a half hours: they photographed the site, collected lunar material, deployed experiments, planted a flag stiffened by a horizontal rod and read a plaque fixed to the ladder strut. They were on the surface for twenty-one hours and thirty-six minutes before the ascent stage lifted to rejoin Columbia.\n\nThe mission answered a commitment made in 1961 and was funded inside a Cold War competition. Newspapers made different meanings from the same day: contemporary reporting led with the landing and the scale of television attention, while later retrospectives set the achievement beside Ralph Abernathy's protest at Cape Kennedy over poverty and racial inequality. The landing time, the crew roles and the surface work are recorded facts; the claim that the flight resolved anything on Earth is interpretation.",
+  "context": "The Moon has no atmosphere. The sky above the site stays black in full sunlight, shadows fall hard and unsoftened, there is no wind to move fabric, and disturbed dust travels in clean ballistic arcs before settling. The Sun sat low in the east over the landing area, and the ground is a relatively smooth plain of fragmental debris.",
+  "contentNote": "The world stages the extravehicular activity of 21 July, which is what the anchor photograph documents. The touchdown itself is a separate, earlier moment and is described rather than staged.",
   "images": [
     {
-      "id": "aldrin-on-the-moon",
-      "src": "apollo-11-first-steps/aldrin-on-the-moon.jpg",
-      "caption": "Edwin Aldrin photographed by Neil Armstrong on the Sea of Tranquillity, 21 July 1969.",
-      "credit": "NASA, public domain",
+      "id": "aldrin-full-frame",
+      "src": "apollo-11-first-steps/aldrin-full-frame.jpg",
+      "caption": "Edwin Aldrin photographed by Neil Armstrong near Eagle, Apollo 11, 21 July 1969 (full frame).",
+      "credit": "NASA, public domain in the United States (Wikimedia Commons, AS11-40-5903)",
       "role": "anchor"
+    },
+    {
+      "id": "lunar-module-surface",
+      "src": "apollo-11-first-steps/lunar-module-surface.jpg",
+      "caption": "The Apollo 11 lunar module on the Moon, AS11-40-5915.",
+      "credit": "NASA, attribution required, no endorsement implied",
+      "role": "plate"
     }
   ],
   "sources": [
-    {
-      "title": "Apollo 11 Mission Report, MSC-00171",
-      "publisher": "NASA Manned Spacecraft Center"
-    },
-    {
-      "title": "Apollo 11 Lunar Surface Journal, EVA transcript",
-      "publisher": "NASA History Division"
-    },
-    {
-      "title": "Apollo 11 Preliminary Science Report, SP-214",
-      "publisher": "NASA"
-    }
+    { "title": "Apollo 11 Mission Overview", "publisher": "NASA", "url": "https://www.nasa.gov/missions/apollo/apollo-11/apollo-11-mission-overview/" },
+    { "title": "Apollo 11: The Moon Landing", "publisher": "Smithsonian National Air and Space Museum", "url": "https://airandspace.si.edu/explore/stories/apollo-11-moon-landing" },
+    { "title": "20 July 1969, Prologue", "publisher": "U.S. National Archives", "url": "https://www.archives.gov/publications/prologue/2003/summer/20-july-1969.html" }
   ],
   "world": {
     "kind": "scene",
@@ -44,27 +43,25 @@
     "style": "Hasselblad colour film, high contrast, grain, 1969.",
     "idle": "The suited figure stands still on the regolith, weight settled, the gloved hands steady in the foreground as sunlight glares off the white fabric and a thin film of grey dust clings along the boots.",
     "travel": "Boots press crisp treads into the grey dust in slow low-gravity strides, flicking small arcs of grains that fall straight back onto the surface as the regolith slides past underfoot.",
-    "guards": [
-      "the sky above the horizon stays black in full sunlight, the way an airless sky reads on film"
-    ],
+    "guards": ["the sky above the horizon stays black in full sunlight, the way an airless sky reads on film"],
     "events": [
       {
         "key": "1",
         "name": "Kick the regolith",
-        "detail": "The boot in the foreground scuffs forward through the grey dust and throws a fan of grains ahead of it; the grains travel in clean straight arcs and land in a sharp-edged spray on the surface, then the boot settles back onto the regolith.",
-        "sourceIndex": 1
+        "detail": "The boot in the foreground scuffs forward through the grey dust and throws a fan of grains ahead of it; the grains travel in clean straight arcs and land in a sharp-edged spray, then the boot settles back onto the surface.",
+        "sourceIndex": 0
       },
       {
         "key": "2",
         "name": "Read the ladder plaque",
         "detail": "The gloved hands reach toward the plaque fixed to the ladder strut of the lunar module, the engraved lettering and the two hemispheres of the Earth catching the low sunlight across the brushed metal, and the hands lower again.",
-        "sourceIndex": 1
+        "sourceIndex": 2
       },
       {
         "key": "3",
         "name": "Set out the solar wind collector",
         "detail": "The gloved hands lift the folded foil sheet of the solar wind collector into frame, unroll it and set its frame upright on the regolith, the foil rippling once and holding still in the hard sunlight while the boots stay planted.",
-        "sourceIndex": 2
+        "sourceIndex": 1
       }
     ],
     "vertical": {

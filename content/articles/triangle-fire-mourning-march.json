@@ -1,0 +1,98 @@
+{
+  "id": "triangle-fire-mourning-march",
+  "headline": "The City Walks For The Triangle Dead",
+  "dateline": "NEW YORK, 5 APRIL 1911",
+  "occurredOn": "1911-04-05",
+  "nature": "labour-history",
+  "summary": "A fire on the eighth floor of the Triangle Waist Company in Manhattan on 25 March 1911 killed 146 workers, most of them young immigrant women and girls. On 5 April tens of thousands walked through the city in a demonstration of mourning and protest.",
+  "body": "The factory occupied the eighth, ninth and tenth floors of the ten-storey Asch Building at Washington Place and Greene Street, where about five hundred people made women's shirtwaists. Fire began at about 4:40 in the afternoon and spread quickly through a crowded workspace full of fabric and cuttings. Workers on the ninth floor were cut off by fire and by a stairwell door that was locked.\n\nThe disaster made inadequate exits and fire protection a public matter. New York created investigative commissions, and thirty-eight workplace-safety and labour laws followed. The procession of 5 April carried mourning banners through the streets in the rain, organised by trade unions and community organisations, and it is the part of this history that a learning world can stage without turning loss into spectacle.",
+  "context": "Most of the workers were young immigrant women and girls, many of them Jewish or Italian, with families rooted in southern and eastern Europe. The Asch Building still stands as the Brown Building. The reform record is documented by the New York State Archives, Cornell University's Kheel Center and the National Park Service.",
+  "contentNote": "The fire itself, the building's interior and the deaths are described in the article and are deliberately not staged. The world is the mourning and protest procession of 5 April 1911, which is what the anchor photograph documents.",
+  "images": [
+    {
+      "id": "mourning-demonstration",
+      "src": "triangle-fire-mourning-march/mourning-demonstration.jpg",
+      "caption": "Demonstration of protest and mourning for the Triangle fire victims, 5 April 1911.",
+      "credit": "U.S. National Archives, NAID 5730933, access and use unrestricted",
+      "role": "anchor"
+    },
+    {
+      "id": "asch-building-exterior",
+      "src": "triangle-fire-mourning-march/asch-building-exterior.jpg",
+      "caption": "The Asch Building during the fire of 25 March 1911, first published 26 March 1911.",
+      "credit": "Public domain in the United States per Wikimedia Commons file page; contextual evidence only",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Triangle Shirtwaist Factory fire records and images",
+      "publisher": "Kheel Center, Cornell University",
+      "url": "https://trianglefire.ilr.cornell.edu/"
+    },
+    {
+      "title": "Factory Investigating Commission records",
+      "publisher": "New York State Archives",
+      "url": "https://www.archives.nysed.gov/"
+    },
+    {
+      "title": "Triangle Shirtwaist Factory fire",
+      "publisher": "U.S. National Park Service",
+      "url": "https://www.nps.gov/articles/triangle-shirtwaist-factory-fire.htm"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "mourning banner",
+    "subject": "A black-draped mourning banner on two wooden staves carried in the near foreground along a wet Manhattan street, a dense procession in dark coats filling the roadway.",
+    "anchors": [
+      {
+        "object": "black-draped mourning banner",
+        "position": "straight ahead"
+      },
+      {
+        "object": "line of union marchers in dark coats",
+        "position": "on the left"
+      },
+      {
+        "object": "row of brick shopfronts",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Wet cobbles and streetcar rails, umbrellas and rain-dark coats, mourning crepe on hat bands, a low grey sky.",
+    "style": "Press photography of 1911, monochrome, flat wet-weather light.",
+    "idle": "The marchers hold their places in the roadway with shoulders shifting under the rain, umbrellas tilting, breath clouding faintly and the banner in the foreground sagging slowly between its staves.",
+    "travel": "Wet cobbles and streetcar rails slide past underfoot along the roadway, the marchers closing and parting around the staves as rain runs from the edge of the banner.",
+    "guards": [
+      "the procession fills the roadway between the kerbs, with the shopfronts standing quiet on the right"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "Raise the banner",
+        "detail": "The two staves in the foreground lift high and the mourning banner opens out taut across the roadway, rain beading along its lettering, and the marchers behind steady it before it lowers again.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "2",
+        "name": "Hats off",
+        "detail": "The procession halts where it stands and the men along the roadway take off their hats and hold them against their chests, the drizzle falling on bare heads until the column moves on.",
+        "sourceIndex": 2
+      },
+      {
+        "key": "3",
+        "name": "Sign the petition",
+        "detail": "A trestle table at the kerb on the right carries a petition sheet under an oilcloth, and one marcher after another steps aside, takes the pen and signs a line before rejoining the column.",
+        "sourceIndex": 1
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the wet cobbles, clearing the umbrellas and hat brims for a moment before dropping back down to the roadway.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low over the streetcar rails.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1911,
+    "rotationSpeedDeg": 4
+  }
+}

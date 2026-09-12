@@ -1,0 +1,97 @@
+{
+  "id": "san-francisco-1906-relief-camp",
+  "headline": "The Ground Stopped, The Fire Went On",
+  "dateline": "SAN FRANCISCO, 21 APRIL 1906",
+  "occurredOn": "1906-04-18",
+  "nature": "disaster-and-relief",
+  "summary": "A magnitude 7.9 earthquake ruptured the San Andreas Fault near San Francisco at 5:12 a.m. on 18 April 1906. Shaking lasted under a minute, but broken water mains left the fires that followed to burn for three days.",
+  "body": "A foreshock was felt around the Bay, and twenty to twenty-five seconds later the main shock arrived; strong shaking ran for roughly forty-five to sixty seconds, long enough to crack streets, bring down chimneys and walls, and break the water infrastructure the city was about to need. Later analysis identifies a rupture along the northernmost 296 miles of the fault, from northwest of San Juan Bautista to the Cape Mendocino triple junction. People on 18 April had no such framework: they saw falling masonry, cut transport and communications, and fires beginning almost at once.\n\nBy the third day about half of the city's four hundred thousand residents had no home to return to, and roughly three thousand people died. Relief camps went up in the parks and squares, among them Golden Gate Park, where tents were laid out in rows, field kitchens issued rations and notice boards carried the names of separated families. Relief was organised, but it was not distributed equally.",
+  "context": "Earthquake damage and fire damage produced different patterns across the city, and contemporary casualty figures were provisional and low. The later totals come from government and scientific reconstruction rather than from 1906 reporting.",
+  "contentNote": "The world stages the Golden Gate Park relief camp in the days after the shock, which is what the anchor photograph documents. The earthquake and the fires are described in the article and are not staged.",
+  "images": [
+    {
+      "id": "golden-gate-park-relief-camp",
+      "src": "san-francisco-1906-relief-camp/golden-gate-park-relief-camp.jpg",
+      "caption": "Relief camp in Golden Gate Park, San Francisco, 1906.",
+      "credit": "U.S. National Archives, NAID 2127311, access and use unrestricted",
+      "role": "anchor"
+    },
+    {
+      "id": "city-hall-ruin",
+      "src": "san-francisco-1906-relief-camp/city-hall-ruin.jpg",
+      "caption": "The ruined City Hall tower after the 1906 earthquake.",
+      "credit": "U.S. National Archives, NAID 2127283, access and use unrestricted",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "The 1906 San Francisco earthquake: rupture and magnitude",
+      "publisher": "U.S. Geological Survey",
+      "url": "https://www.usgs.gov/programs/earthquake-hazards/1906-san-francisco-earthquake"
+    },
+    {
+      "title": "Relief camp photographs and records, 1906",
+      "publisher": "U.S. National Archives",
+      "url": "https://catalog.archives.gov/id/2127311"
+    },
+    {
+      "title": "Earthquake and fire reports, April 1906",
+      "publisher": "San Francisco Call"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "canvas tent flap",
+    "subject": "A weathered canvas tent flap held back in the near foreground at a relief camp laid out on the grass of Golden Gate Park, families standing and sitting between the rows.",
+    "anchors": [
+      {
+        "object": "row of army bell tents",
+        "position": "straight ahead"
+      },
+      {
+        "object": "field kitchen with a steaming cauldron",
+        "position": "on the left"
+      },
+      {
+        "object": "handcart piled with salvaged bedding",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Trampled grass and bare earth paths, guy ropes and pegs, tin plates and enamel jugs, smoke haze from the city.",
+    "style": "Glass-plate documentary photography of 1906, monochrome.",
+    "idle": "The families between the rows hold their places, a woman shifting a blanket over her arm, steam rising and folding off the cauldron and the canvas of the nearest tent breathing gently in the wind.",
+    "travel": "Trampled grass and bare earth slide past underfoot along the line of tents, guy ropes passing close on either side as the families between the rows step aside.",
+    "guards": [
+      "the tents stand in ordered rows across the grass, each one pegged out and upright"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "The ration queue",
+        "detail": "A line forms along the left toward the field kitchen, tin plates held out one after another, and the server lifts a ladle from the cauldron and fills them in turn before the line moves on.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "2",
+        "name": "Names on the notice board",
+        "detail": "A hand pins a fresh sheet of names onto the plank notice board beside the path, and people gather close to read down the column, one of them tracing the lines with a finger before stepping back.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "3",
+        "name": "Smoke over the city",
+        "detail": "The haze along the skyline thickens and drifts low across the tops of the tents, the light going flat and brown through it, and the people between the rows turn to look toward it.",
+        "sourceIndex": 0
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the trampled grass, lifting above the ridgelines of the nearest tents for a moment before dropping back down.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the guy ropes.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1906,
+    "rotationSpeedDeg": 4
+  }
+}

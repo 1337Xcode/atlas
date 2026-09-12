@@ -1,0 +1,26 @@
+{
+  "name": "@atlas/wireframe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@atlas/archive": "workspace:*",
+    "@atlas/ingest": "workspace:*",
+    "@atlas/runtime": "workspace:*",
+    "@atlas/schema": "workspace:*",
+    "@atlas/world": "workspace:*",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.11"
+  }
+}

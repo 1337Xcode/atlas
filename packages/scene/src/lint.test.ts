@@ -61,18 +61,32 @@ describe('lintScene', () => {
     expect(isServable(diagnostics)).toBe(true)
   })
 
-  it('warns when an event re-introduces its subject', () => {
+  it('warns when an event re-introduces something the base already cast', () => {
     const brief = authoredBrief({
       events: [
         {
           key: '1',
           name: 'Hammer strike',
-          detail: 'A mason hammer comes down against the top edge of the wall segment.',
+          detail: 'The mason hammer comes down onto a graffitied concrete segment.',
           sourceIndex: 0,
         },
       ],
     } satisfies Partial<AuthoredSceneBrief>)
     expect(rules(lint(brief))).toContain('events/definite-reference')
+  })
+
+  it('allows an event to bring in a prop the scene has not established', () => {
+    const brief = authoredBrief({
+      events: [
+        {
+          key: '1',
+          name: 'Hammer strike',
+          detail: 'A mason hammer swings down against the top edge of the wall segment.',
+          sourceIndex: 0,
+        },
+      ],
+    } satisfies Partial<AuthoredSceneBrief>)
+    expect(rules(lint(brief))).not.toContain('events/definite-reference')
   })
 
   it('warns that a free-prompt brief is lower fidelity but still serves it', () => {

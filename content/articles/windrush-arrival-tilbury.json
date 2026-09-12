@@ -1,0 +1,97 @@
+{
+  "id": "windrush-arrival-tilbury",
+  "headline": "Four Hundred And Ninety-Two Arrive At Tilbury",
+  "dateline": "TILBURY DOCKS, 23 JUNE 1948",
+  "occurredOn": "1948-06-22",
+  "nature": "migration",
+  "summary": "HMT Empire Windrush berthed at Tilbury Docks in Essex on 22 June 1948. A dispatch filed from the quay the next day counted 492 men from Jamaica and Trinidad; the ship's manifest records 1,027 passengers and two stowaways, more than 800 of whom gave a Caribbean country as their last residence.",
+  "body": "The two counts are not a contradiction to be resolved by picking one. A 1948 Assistance Board memorandum held by The National Archives records a boarding party dealing with 492 passengers and 20 stowaways, sorted into three administrative groups: 52 Armed Forces volunteers, 236 accommodated in the Clapham South deep shelter and 204 dispersed from Tilbury to places they already had to go. The manifest counts the ship's passengers; the memorandum counts an arrival-management cohort.\n\nReasons for travel varied: post-war labour shortages in Britain, Caribbean wartime service, unemployment in Jamaica, and the position of Citizens of the United Kingdom and Colonies under the British Nationality Act of 1948. The route had run through Trinidad, Kingston, Tampico, Havana and Bermuda. A pre-arrival telegram recorded 350 people with no accommodation arranged and listed hopes of work in engineering, building, factories, farming, mining and re-enlistment.",
+  "context": "This arrival sits inside longer histories of Caribbean mobility rather than beginning them: the Ormonde reached Liverpool in March 1947 and the Almanzora Southampton in December 1947. Work followed in ironworks, railway works, tinplate works and catering, alongside documented racism in employment and housing. Two days after the docking, eleven Members of Parliament wrote to call for a halt to the arrivals.",
+  "contentNote": "The anchor photograph is a profile of the ship taken between 1945 and 1954, not a photograph of the Tilbury arrival. The quayside world is built from the ship's documented appearance and from written accounts of the morning.",
+  "images": [
+    {
+      "id": "empire-windrush-profile",
+      "src": "windrush-arrival-tilbury/empire-windrush-profile.jpg",
+      "caption": "HMT Empire Windrush, photographed between 1945 and 1954.",
+      "credit": "Royal Navy official photographer, public domain",
+      "role": "anchor"
+    },
+    {
+      "id": "passenger-list-header",
+      "src": "windrush-arrival-tilbury/passenger-list-header.jpg",
+      "caption": "Header of the passenger list for the Empire Windrush, Tilbury, June 1948.",
+      "credit": "Wikimedia Commons contributor, CC BY-SA 4.0",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Windrush records: passengers, nationality law and employment",
+      "publisher": "The National Archives (UK)",
+      "url": "https://www.nationalarchives.gov.uk/"
+    },
+    {
+      "title": "HMT Empire Windrush: passengers and arrival",
+      "publisher": "Royal Museums Greenwich",
+      "url": "https://www.rmg.co.uk/"
+    },
+    {
+      "title": "Dispatch from Tilbury, 23 June 1948",
+      "publisher": "The Manchester Guardian"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "ship's hull",
+    "subject": "The tall riveted steel hull of a grey troopship alongside a concrete quay at Tilbury on a damp June morning, passengers at the rail above and suitcases stacked below.",
+    "anchors": [
+      {
+        "object": "grey steel troopship hull",
+        "position": "straight ahead along the quay"
+      },
+      {
+        "object": "gangway lowered to the stones",
+        "position": "on the left"
+      },
+      {
+        "object": "brick customs shed",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Wet concrete quay stones, mooring ropes on bollards, dockside cranes, chalk-marked trunks, coal smoke and river mist.",
+    "style": "Press photography of 1948, monochrome, flat overcast light.",
+    "idle": "The people on the quay hold their places beside the stacked cases, a coat collar turned up against the damp, mooring ropes creaking on the bollards and river mist drifting along the hull.",
+    "travel": "Wet quay stones slide past underfoot along the line of the hull, stacked cases and mooring bollards passing close as the groups on the quay step aside.",
+    "guards": [
+      "the ship lies alongside with one gangway down to the quay"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "Down the gangway",
+        "detail": "The file on the gangway starts down to the quay, hands on the rope handrail and suitcases held level, and the arrivals set their cases on the stones and look along the length of the shed.",
+        "sourceIndex": 2
+      },
+      {
+        "key": "2",
+        "name": "The labour exchange desk",
+        "detail": "Under the shed on the right a trestle desk is set out with forms weighted against the draught, a queue forming at its end, and the clerk behind it writes down answers one at a time.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "3",
+        "name": "Names against the list",
+        "detail": "At the foot of the gangway an officer holds a long printed list on a board and runs a pencil down the column, checking each name aloud and marking it before waving the next person through.",
+        "sourceIndex": 1
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the quay stones, lifting above the stacked cases for a moment before dropping back down.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the mooring bollard.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1948,
+    "rotationSpeedDeg": 4
+  }
+}

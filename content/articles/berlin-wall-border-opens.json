@@ -1,0 +1,98 @@
+{
+  "id": "berlin-wall-border-opens",
+  "headline": "East Germany Opens Its Frontier; Thousands Cross",
+  "dateline": "BERLIN, 10 NOVEMBER 1989",
+  "occurredOn": "1989-11-09",
+  "nature": "political-change",
+  "summary": "Crowds gathered at Berlin's border crossings on the evening of 9 November 1989 after an East German announcement of new travel rules said to take effect immediately. The Bornholmer Strasse checkpoint was opened for all Berliners at about 23:30, and further crossings followed over the next days.",
+  "body": "The opening was an administrative failure as much as a celebration. East Berliners came to the checkpoints to ask whether the travel news was real, more people arrived, and guards working from incomplete instructions eventually let them through without bloodshed. Families, friends and strangers walked across a border that had divided the city for twenty-eight years.\n\nThe pressure had built well beyond any one checkpoint: an East German opposition movement, frustration with economic stagnation and pollution, rising applications to emigrate, Soviet reform and Hungary's dismantling of its own border fence in May 1989. What followed on 9 November was movement rather than demolition. People began chipping small pieces from the Wall, thousands gathered at the Brandenburg Gate the next morning, new crossings were cut in the days after, and formal dismantling came later.",
+  "context": "The Wall stood between the two Berlins from 13 August 1961. Its earlier history includes enforced separation, repression and deaths at the border. On the night the crossings opened the Wall itself was still materially present, and the story is a civilian one: uncertainty, relief and reunions rather than a state ceremony.",
+  "contentNote": "The world stages the opening of a new crossing at Potsdamer Platz on 14 November 1989, which is what the anchor photograph documents. The first opening at Bornholmer Strasse on 9 November is described in the article and not restaged.",
+  "images": [
+    {
+      "id": "potsdamer-platz-opening",
+      "src": "berlin-wall-border-opens/potsdamer-platz-opening.jpg",
+      "caption": "Crowds at a newly created opening in the Wall at Potsdamer Platz, 14 November 1989.",
+      "credit": "U.S. National Archives, NAID 6460115, released to public, use unrestricted",
+      "role": "anchor"
+    },
+    {
+      "id": "checkpoint-charlie-night",
+      "src": "berlin-wall-border-opens/checkpoint-charlie-night.jpg",
+      "caption": "Checkpoint Charlie on the night of 10 November 1989.",
+      "credit": "Bundesarchiv Bild 183-1989-1110-018 / Oberst, Klaus / CC BY-SA 3.0 DE",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "The Fall of the Berlin Wall in 1989",
+      "publisher": "Stiftung Berliner Mauer",
+      "url": "https://www.stiftung-berliner-mauer.de/en/topics/berlin-wall"
+    },
+    {
+      "title": "9 November - a historically significant date",
+      "publisher": "German Federal Government",
+      "url": "https://www.bundesregierung.de/breg-en/service/archive/archive/9-november-a-historically-signficant-date-411370"
+    },
+    {
+      "title": "East Germany Opens Frontier to the West for Migration or Travel; Thousands Cross",
+      "publisher": "The New York Times, 10 November 1989",
+      "url": "https://www.nytimes.com/1989/11/10/world/clamor-east-east-germany-opens-frontier-west-for-migration-travel-thousands.html"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "gap in the wall",
+    "subject": "A gap cut clean through a painted concrete wall on a floodlit Berlin street, crowds pressed along both sides of it on a cold November night.",
+    "anchors": [
+      {
+        "object": "gap cut through the concrete wall",
+        "position": "straight ahead"
+      },
+      {
+        "object": "border guard in a grey greatcoat",
+        "position": "on the left"
+      },
+      {
+        "object": "row of standing wall segments",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Wet asphalt and cobbles, breath clouding under floodlights, hand-lettered placards, press flashbulbs.",
+    "style": "Documentary night photography, harsh floodlight falloff, grain.",
+    "idle": "The crowd holds its place along the concrete, shoulders shifting as breath clouds in the floodlight, a raised placard tilting slowly and a flashbulb firing somewhere in the press of people.",
+    "travel": "Wet cobbles slide past underfoot toward the cut in the concrete, the crowd parting shoulder by shoulder as floodlight glare sweeps across the painted surface.",
+    "guards": [
+      "the wall stands its full height on either side of the cut, with only that one gap through it"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "Chip a piece from the wall",
+        "detail": "A hammer swings down against the top edge of the concrete beside the gap, grey dust bursting off the impact and a painted chip tumbling onto the cobbles below, where a hand picks it up.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "2",
+        "name": "A car comes through",
+        "detail": "A small two-stroke saloon rolls slowly through the gap with its headlights on and its horn sounding, the crowd pressing back to either side and hands reaching out to slap the roof as it passes.",
+        "sourceIndex": 2
+      },
+      {
+        "key": "3",
+        "name": "Waved through",
+        "detail": "The guard in the grey greatcoat lowers his hand and waves the people nearest the gap forward, and they walk through in a steady file while others behind them raise their arms and call out.",
+        "sourceIndex": 1
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the cobbles, clearing the heads of the crowd for a moment before dropping back down to street level.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low against the base of the concrete.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1989,
+    "rotationSpeedDeg": 5
+  }
+}

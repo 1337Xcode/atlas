@@ -1,0 +1,95 @@
+{
+  "id": "bandung-conference-1955",
+  "headline": "Twenty-Nine Governments Meet On Their Own Terms",
+  "dateline": "BANDUNG, 18 APRIL 1955",
+  "occurredOn": "1955-04-18",
+  "nature": "diplomacy",
+  "summary": "Representatives of twenty-nine Asian and African governments met in the Merdeka Building in Bandung from 18 to 24 April 1955, sponsored by Burma, Ceylon, India, Indonesia and Pakistan, to discuss cooperation, self-determination, racial discrimination, colonial rule, economic development and the risk of wider war.",
+  "body": "The former Societeit Concordia on Jalan Asia Afrika had been prepared as an international venue and renamed Merdeka. President Soekarno opened the conference on 18 April; delegations then worked through political, economic and cultural sections, with the economic plenary meeting on 20 April and a gala dinner at the Savoy Homann Hotel on 19 April.\n\nThe Final Communique of 24 April set out ten principles for peaceful relations, alongside practical proposals for economic and cultural cooperation. Bandung did not erase the differences among its participants, several of whom were aligned with opposing Cold War blocs, and it is not a simple origin story for later non-alignment. What it demonstrated was that recently independent states could convene on their own terms and shape international debate.",
+  "context": "Many of the governments present had become independent within the previous decade, and the agenda named colonialism and racial discrimination directly. The documentary outcome is the Final Communique itself; claims about Bandung's later influence are interpretation and should be read as such.",
+  "images": [
+    {
+      "id": "soekarno-opening-address",
+      "src": "bandung-conference-1955/soekarno-opening-address.jpg",
+      "caption": "President Soekarno opens the Asian-African Conference, Merdeka Building, Bandung, 18 April 1955.",
+      "credit": "Government of Indonesia, PD-IDGov per Wikimedia Commons file page",
+      "role": "anchor"
+    },
+    {
+      "id": "economic-section-plenary",
+      "src": "bandung-conference-1955/economic-section-plenary.jpg",
+      "caption": "Plenary meeting of the Economic Section, Merdeka Building, 20 April 1955.",
+      "credit": "Government of Indonesia, PD-IDGov; source UNESCO",
+      "role": "plate"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Final Communique of the Asian-African Conference, Bandung, 24 April 1955",
+      "publisher": "Asian-African Conference"
+    },
+    {
+      "title": "Asian-African Conference records and photographs",
+      "publisher": "Government of Indonesia via UNESCO"
+    },
+    {
+      "title": "The Bandung Conference, 1955",
+      "publisher": "Office of the Historian, U.S. Department of State",
+      "url": "https://history.state.gov/milestones/1953-1960/bandung-conf"
+    }
+  ],
+  "world": {
+    "kind": "scene",
+    "viewpoint": "first-person",
+    "focus": "wooden rostrum",
+    "subject": "A carved wooden rostrum with a cluster of microphones at the front of the Merdeka Building assembly hall, delegations seated at long tables across the floor.",
+    "anchors": [
+      {
+        "object": "carved wooden rostrum with microphones",
+        "position": "straight ahead"
+      },
+      {
+        "object": "row of delegation nameplates on the long tables",
+        "position": "on the left"
+      },
+      {
+        "object": "tall shuttered window",
+        "position": "on the right"
+      }
+    ],
+    "environment": "Polished terrazzo floor, white walls and slender columns, water glasses and papers, ceiling fans.",
+    "style": "Official conference photography of 1955, monochrome, flashbulb light.",
+    "idle": "The seated delegates hold their places at the long tables, a hand turning a page, water glasses catching the light and the ceiling fans turning steadily above the floor.",
+    "travel": "The polished floor slides past underfoot between the long tables toward the rostrum, chairs and nameplates passing close on either side as the seated delegates lean back to let the way through.",
+    "guards": [
+      "the hall holds one rostrum at its front, with the delegation tables ranged across the floor"
+    ],
+    "events": [
+      {
+        "key": "1",
+        "name": "The hall takes its seats",
+        "detail": "The delegates along the tables settle into their chairs and set out their papers, nameplates squared to the front, and the talk across the floor drops away to a low murmur.",
+        "sourceIndex": 1
+      },
+      {
+        "key": "2",
+        "name": "The ten principles",
+        "detail": "The speaker at the rostrum lifts a bound text to the microphones and reads out the ten principles one after another, pausing between each, while pens move along the tables below.",
+        "sourceIndex": 0
+      },
+      {
+        "key": "3",
+        "name": "The press bench",
+        "detail": "The photographers along the rail on the right raise their cameras together, flashbulbs firing in a ragged series that whitens the front of the hall, and then they lower them again.",
+        "sourceIndex": 1
+      }
+    ],
+    "vertical": {
+      "jump": "The view rises sharply off the polished floor, lifting above the heads of the seated delegates for a moment before dropping back down.",
+      "crouch": "The camera lowers toward the ground as the viewpoint crouches down low beside the delegation tables.",
+      "stand": "The viewpoint straightens back up out of the crouch."
+    },
+    "seed": 1955,
+    "rotationSpeedDeg": 4
+  }
+}
