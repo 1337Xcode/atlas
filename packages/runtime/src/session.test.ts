@@ -112,14 +112,35 @@ describe('staging a world', () => {
     expect(failing.snapshot().error).toMatch(/404/)
   })
 
-  it('closes the world, rather than holding a gpu, if no chunk ever arrives', async () => {
+  it('closes the world, rather than holding a gpu, if no video ever arrives', async () => {
     await stage()
     expect(session.snapshot().phase).toBe('warming')
 
-    await vi.advanceTimersByTimeAsync(30_000)
+    await vi.advanceTimersByTimeAsync(45_000)
     expect(session.snapshot().phase).toBe('closed')
     expect(session.snapshot().endedReason).toBe('failed')
-    expect(session.snapshot().error).toMatch(/did not start generating/)
+    expect(session.snapshot().error).toMatch(/never sent any video/)
+  })
+
+  // why: a streaming world must never be killed just because chunk reports are late or absent
+  it('unlocks the controls from the video stream when no chunk is reported', async () => {
+    await stage()
+    transport.emitTrack('main_video')
+    await vi.advanceTimersByTimeAsync(9_000)
+
+    expect(session.snapshot().phase).toBe('live')
+    expect(session.snapshot().notices.at(-1)).toMatch(/video stream/)
+
+    await vi.advanceTimersByTimeAsync(40_000)
+    expect(session.snapshot().phase).not.toBe('closed')
+  })
+
+  it('keeps a streaming world open past the no-video deadline', async () => {
+    await stage()
+    transport.emitTrack('main_video')
+    await vi.advanceTimersByTimeAsync(45_000)
+
+    expect(session.snapshot().endedReason).toBeUndefined()
   })
 })
 

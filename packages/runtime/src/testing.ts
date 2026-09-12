@@ -61,8 +61,10 @@ export function createFakeTransport(options: FakeTransportOptions = {}): FakeTra
     emitStatus,
     emitMessage,
     emitChunk: (chunkIndex) => emitMessage('chunk_complete', { chunk_index: chunkIndex }),
+    // note: jsdom has no MediaStream, and the session only ever passes it through
     emitTrack: (name) => {
-      for (const handler of handlers.track) handler(name, new MediaStream())
+      const stream = { id: 'fake-stream' } as unknown as MediaStream
+      for (const handler of handlers.track) handler(name, stream)
     },
     emitStats: (stats) => {
       for (const handler of handlers.stats) handler(stats)

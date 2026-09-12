@@ -30,8 +30,11 @@ export interface WorldSession {
   markActivity: () => void
 }
 
-// why: a world that never reports a first chunk is a gpu we are paying for and nobody can see
-const FIRST_CHUNK_TIMEOUT_MS = 25_000
+// why: video arriving is proof the world works, so the controls unlock on it even with no chunk report
+const VIDEO_WARMUP_MS = 8_000
+
+// why: no video at all means a gpu we are paying for that nobody can see, so it is released
+const NO_VIDEO_TIMEOUT_MS = 40_000
 
 // fn: run one world — stage it, keep its inputs on the wire, and report what it is doing
 export function createWorldSession(options: CreateWorldSessionOptions): WorldSession {
@@ -56,6 +59,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   let warmupTimer: ReturnType<typeof setTimeout> | undefined
   let stream: MediaStream | undefined
   let video: HTMLVideoElement | null = null
+  let videoWarmupTimer: ReturnType<typeof setTimeout> | undefined
   const subscriptions: Unsubscribe[] = []
 
   const send = async (command: Command): Promise<ModelEvent | undefined> => {
@@ -136,7 +140,9 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
 
   const goLive = () => {
     clearTimeout(warmupTimer)
+    clearTimeout(videoWarmupTimer)
     warmupTimer = undefined
+    videoWarmupTimer = undefined
     store.update({ phase: 'live' })
     // why: billing starts at the first frame, so the clock on an unattended world starts here too
     guard.begin()
@@ -147,6 +153,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     if (store.snapshot().phase === 'closed') return
     guard.dispose()
     clearTimeout(warmupTimer)
+    clearTimeout(videoWarmupTimer)
     input.clear()
     store.update({ phase: 'closed', endedReason: reason, countdown: null })
     await transport.disconnect().catch(() => undefined)
@@ -206,11 +213,12 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     acked = { ...idleWire(), prompt }
     heldSignature = input.heldEventKeys().join(',')
     store.update({ phase: 'warming', prompt })
-    // why: rather than hold a gpu that is producing nothing, close it and let the reader retry
+    // why: a world with no video at all is worth nothing and still costs, so it is released
     warmupTimer = setTimeout(() => {
-      store.update({ error: 'the world did not start generating, so it was closed' })
+      if (stream) return
+      store.update({ error: 'the world never sent any video, so it was closed' })
       void closeSession('failed')
-    }, FIRST_CHUNK_TIMEOUT_MS)
+    }, NO_VIDEO_TIMEOUT_MS)
   }
 
   const bindVideo = () => {
@@ -229,6 +237,14 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         if (name !== 'main_video') return
         stream = received
         bindVideo()
+        // why: some sessions stream before they report a chunk, and the reader should still walk
+        if (store.snapshot().phase === 'warming' && !videoWarmupTimer) {
+          videoWarmupTimer = setTimeout(() => {
+            if (store.snapshot().phase !== 'warming') return
+            store.notice('controls unlocked from the video stream')
+            goLive()
+          }, VIDEO_WARMUP_MS)
+        }
       }),
       ...pageLifecycle(),
     )
