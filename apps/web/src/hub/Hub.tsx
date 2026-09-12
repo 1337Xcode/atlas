@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import OpenSeadragon from 'openseadragon'
 import { motion } from 'framer-motion'
+import { localPaths } from '../data/paths'
 import type { Cluster } from '../data/types'
 
 export interface HubHandoff {
@@ -8,7 +9,8 @@ export interface HubHandoff {
   pageId: string
 }
 
-/** Three DZI pages in a row, controls hidden, animationTime 2.4, springStiffness 3. On selection the viewport is captured and returned so the PagePlane can be placed at the same framing. */
+// note: the pages sit in a row, controls hidden, and selecting one hands its framing back
+// note: flat scans with the `image` tile source; swap in a `.dzi` pyramid once tiles are generated
 export function Hub({
   cluster,
   resolved,
@@ -34,7 +36,7 @@ export function Hub({
     })
     cluster.pages.forEach((p, i) =>
       viewer.addTiledImage({
-        tileSource: p.thumb.replace(/\.(png|jpg)$/, '.dzi'),
+        tileSource: { type: 'image', url: localPaths.asset(p.thumb) },
         x: i * 1.12,
         y: 0,
         width: 1,

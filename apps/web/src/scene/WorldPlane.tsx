@@ -11,7 +11,8 @@ export interface WorldPlaneProps {
   visible: boolean
 }
 
-/** A VideoTexture over the illustration crop. Hidden until the world phase. The dot dissolve runs in the composer pass. */
+// note: a video texture over the illustration crop, hidden until there is actually a world to show
+// why: with no video the page stays visible, instead of the reader facing a black rectangle
 export function WorldPlane({ video, x, y, w, h, mix, visible }: WorldPlaneProps) {
   const tex = useMemo(() => (video ? new THREE.VideoTexture(video) : null), [video])
   useEffect(() => {
@@ -33,7 +34,7 @@ export function WorldPlane({ video, x, y, w, h, mix, visible }: WorldPlaneProps)
     <mesh
       position={[x + w / 2, -(y + h / 2), 0.002]}
       scale={[w, h, 1]}
-      visible={visible && mix > 0.001}
+      visible={visible && mix > 0.001 && tex !== null}
       material={mat}
     >
       <planeGeometry args={[1, 1]} />

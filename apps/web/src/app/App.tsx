@@ -246,12 +246,17 @@ export function App() {
         ev.push({
           t: b.t - 2,
           run: () => {
-            const src: WorldSource =
-              new URLSearchParams(location.search).get('live') === '0'
-                ? new FallbackSource(localPaths.asset(`assets/${sc.id}/video/pass.mp4`))
-                : new LiveReactorSource()
+            // note: the live source is a placeholder until @atlas/runtime is wired in, so it is opt in
+            const live = new URLSearchParams(location.search).get('live') === '1'
+            const src: WorldSource = live
+              ? new LiveReactorSource()
+              : new FallbackSource(localPaths.asset(`assets/${sc.id}/video/pass.mp4`))
             world.current = src
-            void src.open(sc.world.seed ?? '').then(setVideo)
+            // why: a world that cannot open must not break the journey, the page carries the beat
+            void src
+              .open(sc.world.seed ?? '')
+              .then(setVideo)
+              .catch(() => setVideo(null))
           },
         })
       if (b.phase === 'return')
