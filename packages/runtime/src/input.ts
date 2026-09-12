@@ -43,6 +43,7 @@ export type InputStore = {
   // note: consumed exactly when the pose that carries it is built
   // note: a cap spends only what one chunk can rotate and keeps the rest for the next one
   consumeLook: (cap?: LookDelta) => LookDelta
+  hasLook: () => boolean
   consumeCrouchDip: () => 'down' | 'up' | null
   jumpLatents: (count: number) => number[]
   advanceJump: (latents: number) => void
@@ -149,6 +150,7 @@ export function createInputStore(): InputStore {
       heldEventKeys: heldEvents,
       vertical: jumping ? 'jump' : crouching ? 'crouch' : 'stand',
     }),
+    hasLook: () => look.dxPx !== 0 || look.dyPx !== 0,
     consumeLook: (cap) => {
       if (!cap) {
         const all = look

@@ -56,6 +56,35 @@ afterEach(() => {
 })
 
 describe('staging a world', () => {
+  it('never stages after Exit interrupts an unfinished connection', async () => {
+    const fake = createFakeTransport()
+    let connected = () => {}
+    const connection = new Promise<void>((resolve) => {
+      connected = resolve
+    })
+    const closing = createWorldSession({
+      plan: plan(),
+      transport: { ...fake, connect: () => connection },
+      fetchAnchorImage: async () => new Blob(['image']),
+    })
+    const started = closing.start()
+    await closing.stop()
+    connected()
+    await vi.advanceTimersByTimeAsync(5_000)
+    await started
+    expect(fake.names()).toEqual([])
+    expect(closing.snapshot().phase).toBe('closed')
+  })
+
+  it('counts a held movement key as activity without repeated keydown events', async () => {
+    await startLive()
+    session.input.press('forward')
+    session.nudge()
+    await vi.advanceTimersByTimeAsync(65_000)
+    expect(session.snapshot().phase).toBe('live')
+    await session.stop()
+  })
+
   it('reports provider capacity without retrying or sending model commands', async () => {
     const fake = createFakeTransport()
     const connect = vi

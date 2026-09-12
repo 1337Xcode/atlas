@@ -64,6 +64,38 @@ afterEach(() => {
 })
 
 describe('bindControls', () => {
+  it('takes keyboard ownership when the live viewport receives focus', () => {
+    bind()
+    surface.focus()
+    surface.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', bubbles: true }))
+    expect(input.intent(5).longitudinal).toBe('forward')
+  })
+
+  it('flushes trackpad look without needing a chunk event and does not scroll the page', () => {
+    bind()
+    surface.focus()
+    const event = new WheelEvent('wheel', {
+      deltaX: 12,
+      deltaY: -4,
+      bubbles: true,
+      cancelable: true,
+    })
+    surface.dispatchEvent(event)
+    vi.advanceTimersByTime(120)
+    expect(input.consumeLook()).toEqual({ dxPx: 12, dyPx: -4 })
+    expect(event.defaultPrevented).toBe(true)
+    expect(changes).toBeGreaterThan(0)
+  })
+
+  // fix: a browser window without system focus defers the focus event but still moves
+  // fix: activeElement, so a world that already holds focus must not wait for an event
+  it('owns the keyboard when the viewport is already focused at bind time', () => {
+    surface.focus()
+    bind()
+    key('keydown', 'KeyW')
+    expect(input.intent(5).longitudinal).toBe('forward')
+  })
+
   it('ignores the keyboard until the reader clicks the world', () => {
     bind()
     key('keydown', 'KeyW')
@@ -95,6 +127,60 @@ describe('bindControls', () => {
     enter()
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', key: 'z', bubbles: true }))
     expect(input.intent(5).longitudinal).toBe('forward')
+  })
+
+  // fix: remote desktops, virtual keyboards and some IMEs send a keydown with no `code` at all,
+  // why: and reading only `event.code` there leaves every control silently dead
+  it('falls back to the character when the browser reports no physical key', () => {
+    bind()
+    enter()
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'w', code: '', bubbles: true }))
+    expect(input.intent(5).longitudinal).toBe('forward')
+
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'w', code: '', bubbles: true }))
+    expect(input.intent(5).longitudinal).toBe('idle')
+  })
+
+  it('holds a scene event from the character when there is no physical key', () => {
+    bind()
+    enter()
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', code: '', bubbles: true }))
+    expect(input.heldEventKeys()).toEqual(['1'])
+  })
+
+  // why: the world chrome has an exit button, and a focused button must not swallow walking
+  it('keeps walking while a world button holds the focus', () => {
+    bind()
+    surface.focus()
+    const exit = document.createElement('button')
+    surface.append(exit)
+    exit.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', bubbles: true }))
+    expect(input.intent(5).longitudinal).toBe('forward')
+    exit.remove()
+  })
+
+  // why: space activates a focused button, so it must not also jump
+  it('leaves space to a focused button', () => {
+    bind()
+    surface.focus()
+    const exit = document.createElement('button')
+    surface.append(exit)
+    const event = new KeyboardEvent('keydown', { code: 'Space', bubbles: true, cancelable: true })
+    exit.dispatchEvent(event)
+    expect(input.isJumping()).toBe(false)
+    expect(event.defaultPrevented).toBe(false)
+    exit.remove()
+  })
+
+  // why: the reader tabs to the exit button, and the world must not lose the keyboard for it
+  it('takes the keyboard when focus lands anywhere inside the world', () => {
+    bind()
+    const child = document.createElement('button')
+    surface.append(child)
+    child.focus()
+    key('keydown', 'KeyW')
+    expect(input.intent(5).longitudinal).toBe('forward')
+    child.remove()
   })
 
   it('routes A and D through turning when the model has no lateral axis', () => {

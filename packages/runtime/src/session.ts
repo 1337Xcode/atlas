@@ -51,7 +51,9 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   const { plan } = options
   const model = getWorldModel(plan.model.id)
   const transport = options.transport ?? createReactorTransport(plan)
-  const fetchAnchorImage = options.fetchAnchorImage ?? fetchImage
+  const abort = new AbortController()
+  const fetchAnchorImage =
+    options.fetchAnchorImage ?? ((url: string) => fetchImage(url, abort.signal))
   const input = createInputStore()
   const store = createSessionStore(transport.status())
   const usePose = plan.capabilities.look.mode === 'camera-pose'
@@ -75,10 +77,17 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   let video: HTMLVideoElement | null = null
   let videoWarmupTimer: ReturnType<typeof setTimeout> | undefined
   const subscriptions: Unsubscribe[] = []
+  let releasePromise: Promise<void> | undefined
+  let controlClock: ReturnType<typeof setInterval> | undefined
+  let lastChunkAt = Date.now()
+  // fix: every asynchronous staging step checks whether the reader has already left
+  const ensureOpen = () => abort.signal.throwIfAborted()
 
   // fn: send and wait for the model's own reply, used while staging where each step is confirmed
   const send = async (command: Command): Promise<ModelEvent | undefined> => {
+    ensureOpen()
     const reply = await transport.sendCommand(command)
+    ensureOpen()
     const event = reply ? readModelMessage(reply) : undefined
     // why: sendCommand never rejects — a refused command comes back as a command_error reply
     if (event?.kind === 'command-error') store.notice(`${event.command}: ${event.reason}`)
@@ -157,11 +166,22 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     idleWarningMs: plan.controls.idleWarningMs,
     idleStopMs: plan.controls.idleStopMs,
     maxSessionMs: plan.controls.maxSessionMs,
+    isActive: () => {
+      if (store.snapshot().phase !== 'live') return true
+      const intent = input.intent(plan.scene.rotationSpeedDeg)
+      return (
+        input.sceneInput().moving ||
+        intent.lookHorizontal !== 'idle' ||
+        intent.lookVertical !== 'idle' ||
+        input.sceneInput().vertical !== 'stand'
+      )
+    },
     onCountdown: (countdown) => store.update({ countdown }),
     onExpire: (reason) => void closeSession(reason),
   })
 
   const goLive = () => {
+    if (abort.signal.aborted || store.snapshot().phase === 'live') return
     clearTimeout(warmupTimer)
     clearTimeout(videoWarmupTimer)
     warmupTimer = undefined
@@ -169,20 +189,46 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     store.update({ phase: 'live' })
     // why: start the interaction timeout when the controls become available
     guard.begin()
+    guard.markActivity()
+    // fix: late chunk notifications must not leave mouse rotation latched indefinitely
+    lastChunkAt = Date.now()
+    controlClock = setInterval(() => {
+      if (Date.now() - lastChunkAt >= plan.capabilities.chunkMs * 2) {
+        input.advanceJump(plan.capabilities.chunkLatents)
+        void flush()
+      }
+    }, plan.capabilities.chunkMs)
   }
 
   // fn: stop every clock and hand the gpu back, whatever the outcome was
-  const releaseGpu = async () => {
+  const releaseGpu = () => {
+    if (releasePromise) return releasePromise
+    abort.abort()
     guard.dispose()
     clearTimeout(warmupTimer)
     clearTimeout(videoWarmupTimer)
+    clearInterval(controlClock)
+    for (const unsubscribe of subscriptions.splice(0)) unsubscribe()
     input.clear()
-    await transport.disconnect().catch(() => undefined)
+    if (video) {
+      video.pause()
+      video.srcObject = null
+    }
+    stream = undefined
+    releasePromise = transport.disconnect().then(
+      () => {
+        store.update({ status: 'disconnected' })
+      },
+      (cause: unknown) => {
+        store.notice(describeSessionError(cause))
+      },
+    )
+    return releasePromise
   }
 
   // fn: release the gpu and say why, so the ui can offer the right way back in
   const closeSession = async (reason: SessionEndReason) => {
-    if (store.snapshot().phase === 'closed') return
+    if (store.snapshot().phase === 'closed') return releaseGpu()
     store.update({ phase: 'closed', endedReason: reason, countdown: null })
     await releaseGpu()
   }
@@ -190,6 +236,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   const onEvent = (event: ModelEvent) => {
     switch (event.kind) {
       case 'chunk-complete':
+        lastChunkAt = Date.now()
         // note: chunk_complete is the model's own clock for everything chunk-granular
         input.advanceJump(plan.capabilities.chunkLatents)
         store.update({ chunkIndex: event.chunkIndex })
@@ -231,22 +278,29 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     }
   }
 
-  // fn: resolve true when the model confirms, false when the wait runs out
+  // fn: resolve on confirmation, timeout or cancellation and release every listener
   const waitFor = (kind: ModelEvent['kind'], timeoutMs: number) =>
     new Promise<boolean>((resolve) => {
-      const timer = setTimeout(() => {
-        off()
+      if (abort.signal.aborted) {
         resolve(false)
-      }, timeoutMs)
-      const off = transport.on('message', (message) => {
-        if (readModelMessage(message).kind !== kind) return
+        return
+      }
+      const finish = (confirmed: boolean) => {
         clearTimeout(timer)
         off()
-        resolve(true)
+        abort.signal.removeEventListener('abort', cancelled)
+        resolve(confirmed)
+      }
+      const cancelled = () => finish(false)
+      const timer = setTimeout(cancelled, timeoutMs)
+      const off = transport.on('message', (message) => {
+        if (readModelMessage(message).kind === kind) finish(true)
       })
+      abort.signal.addEventListener('abort', cancelled, { once: true })
     })
 
   const stage = async () => {
+    ensureOpen()
     store.update({ phase: 'staging', error: undefined })
 
     const prompt = await stageWorld({
@@ -255,13 +309,16 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       input,
       send,
       waitFor,
-      delay,
+      delay: (ms) => delay(ms, abort.signal),
       uploadAnchorImage: async () => {
+        ensureOpen()
         const blob = await fetchAnchorImage(plan.anchorImage.url)
+        ensureOpen()
         return transport.uploadFile(blob, `${plan.articleId}-anchor`)
       },
     })
 
+    ensureOpen()
     acked = { ...blankWire(), prompt }
     heldSignature = input.heldEventKeys().join(',')
     store.update({ phase: 'warming', prompt })
@@ -271,6 +328,17 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       store.update({ error: 'the world never sent any video, so it was closed' })
       void closeSession('failed')
     }, NO_VIDEO_TIMEOUT_MS)
+    scheduleVideoWarmup()
+  }
+
+  // fix: a track may arrive during connection, before the staging phase completes
+  const scheduleVideoWarmup = () => {
+    if (!stream || store.snapshot().phase !== 'warming' || videoWarmupTimer) return
+    videoWarmupTimer = setTimeout(() => {
+      if (store.snapshot().phase !== 'warming') return
+      store.notice('controls unlocked from the video stream')
+      goLive()
+    }, VIDEO_WARMUP_MS)
   }
 
   const bindVideo = () => {
@@ -281,7 +349,14 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
 
   const attach = () => {
     subscriptions.push(
-      transport.on('status', (status) => store.update({ status })),
+      transport.on('status', (status) => {
+        store.update({ status })
+        if (status === 'ready') guard.begin()
+        if (status === 'disconnected' && store.snapshot().phase === 'live') {
+          store.update({ error: 'The world connection ended.' })
+          void closeSession('failed')
+        }
+      }),
       transport.on('message', (message) => onEvent(readModelMessage(message))),
       transport.on('stats', (stats) => store.update({ stats })),
       transport.on('error', (error) => store.notice(describeSessionError(error))),
@@ -290,13 +365,7 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         stream = received
         bindVideo()
         // why: some sessions stream before they report a chunk, and the reader should still walk
-        if (store.snapshot().phase === 'warming' && !videoWarmupTimer) {
-          videoWarmupTimer = setTimeout(() => {
-            if (store.snapshot().phase !== 'warming') return
-            store.notice('controls unlocked from the video stream')
-            goLive()
-          }, VIDEO_WARMUP_MS)
-        }
+        scheduleVideoWarmup()
       }),
       ...pageLifecycle(),
     )
@@ -338,22 +407,30 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
       try {
         store.update({ phase: 'connecting' })
         await transport.connect()
+        if (abort.signal.aborted) {
+          await transport.disconnect()
+          return
+        }
         await stage()
       } catch (cause) {
         // why: a failed world names the reason and releases the gpu, it never takes the page down
+        if (abort.signal.aborted) return
         store.update({ phase: 'error', error: describeSessionError(cause), endedReason: 'failed' })
         await releaseGpu()
       }
     },
     restage: async () => {
+      if (abort.signal.aborted || store.snapshot().phase !== 'live') return
       try {
         input.clear()
         acked = blankWire()
         await send(model.commands.lifecycle('reset'))
-        await delay(plan.controls.resetSettleMs)
+        await delay(plan.controls.resetSettleMs, abort.signal)
         await stage()
       } catch (cause) {
+        if (abort.signal.aborted) return
         store.update({ phase: 'error', error: describeSessionError(cause) })
+        await releaseGpu()
       }
     },
     stop: async (reason = 'user') => {
@@ -363,12 +440,24 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
   }
 }
 
-async function fetchImage(url: string): Promise<Blob> {
-  const response = await fetch(url, { cache: 'force-cache' })
+async function fetchImage(url: string, signal: AbortSignal): Promise<Blob> {
+  const response = await fetch(url, { cache: 'force-cache', signal })
   if (!response.ok) throw new Error(`anchor image request failed: ${response.status}`)
   return response.blob()
 }
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+function delay(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve()
+      return
+    }
+    const finish = () => {
+      clearTimeout(timer)
+      signal.removeEventListener('abort', finish)
+      resolve()
+    }
+    const timer = setTimeout(finish, ms)
+    signal.addEventListener('abort', finish, { once: true })
+  })
 }

@@ -16,6 +16,7 @@ export type LifecycleGuardOptions = {
   maxSessionMs: number
   hiddenGraceMs?: number
   tickMs?: number
+  isActive?: () => boolean
   onCountdown: (countdown: LifecycleCountdown | null) => void
   onExpire: (reason: SessionLimitReason) => void
 }
@@ -82,6 +83,7 @@ export function createLifecycleGuard(options: LifecycleGuardOptions): LifecycleG
       }
     }
 
+    if (options.isActive?.()) lastActivityAt = now
     const idleFor = now - lastActivityAt
     if (idleFor >= options.idleStopMs) {
       expire('idle')
