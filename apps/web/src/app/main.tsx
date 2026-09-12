@@ -1,7 +1,18 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { App } from './App';
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { App } from './App'
+
+// feat: ?studio=1 opens the theatre timeline for authoring the beats by hand
 if (new URLSearchParams(location.search).get('studio') === '1') {
-  const studio = (await import('@theatre/studio')).default; const { extension } = await import('@theatre/r3f'); studio.extend(extension); studio.initialize();
+  const studio = (await import('@theatre/studio')).default
+  studio.initialize()
 }
-createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
+
+const root = document.getElementById('root')
+if (!root) throw new Error('no #root element to mount into')
+
+createRoot(root).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)

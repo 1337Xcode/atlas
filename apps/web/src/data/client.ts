@@ -31,7 +31,11 @@ export class LocalEventClient implements CatalogueClient {
 }
 
 export class CompositeClient implements CatalogueClient {
-  constructor(private clients: CatalogueClient[]) {}
+  private readonly clients: CatalogueClient[]
+
+  constructor(clients: CatalogueClient[]) {
+    this.clients = clients
+  }
   async listClusters() { return (await Promise.all(this.clients.map((c) => c.listClusters()))).flat(); }
   async getScenario(id: string) { for (const c of this.clients) { try { return await c.getScenario(id); } catch { /* next */ } } throw new Error('no scenario ' + id); }
   async getManifest(id: string) { for (const c of this.clients) { try { return await c.getManifest(id); } catch { /* next */ } } throw new Error('no manifest ' + id); }

@@ -110,7 +110,7 @@ export function App() {
   const mix = prov ? 0 : sample('world.mix', t);
   const s = window.innerHeight / (2 * Math.tan((17.5 * Math.PI) / 180)) / cam.z; const proj = (u: number, v: number): [number, number] => [window.innerWidth / 2 + (u - cam.x) * s, window.innerHeight / 2 + (v - cam.y) * s];
   const focusNdc = proj(focus.x, focus.y);
-  const marks: ProjectedMark[] = sc.marks.map((m) => { const p = sc.pages[m.page]!; const [x0, y0] = proj(p.x + m.x * p.w, p.y + m.y * p.h); const [x1, y1] = proj(p.x + (m.x + m.w) * p.w, p.y + (m.y + m.h) * p.h); return { label: m.label, source: m.source, x: x0, y: y0, w: x1 - x0, h: y1 - y0, outline: m.outline, visible: !m.provenanceOnly && running && m.from != null && t >= m.from && phase !== 'hub' && phase !== 'world' }; });
+  const marks: ProjectedMark[] = sc.marks.map((m) => { const p = sc.pages[m.page]!; const [x0, y0] = proj(p.x + m.x * p.w, p.y + m.y * p.h); const [x1, y1] = proj(p.x + (m.x + m.w) * p.w, p.y + (m.y + m.h) * p.h); return { label: m.label, source: m.source, x: x0, y: y0, w: x1 - x0, h: y1 - y0, outline: m.outline ?? false, visible: !m.provenanceOnly && running && m.from != null && t >= m.from && phase !== 'hub' && phase !== 'world' }; });
   const cluster = clusters.find((c) => c.id === sc.id)!; const lb = sample('letterbox', t);
   const readLine = cur?.driftLine != null ? sc.readLines?.[Math.min((sc.readLines?.length ?? 1) - 1, Math.floor((cur.driftLine / align.length) * (sc.readLines?.length ?? 1)))] : cur?.w.line != null ? lines[sc.readPage]?.[cur.w.line]?.text : undefined;
 

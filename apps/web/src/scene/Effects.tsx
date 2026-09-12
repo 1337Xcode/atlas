@@ -11,7 +11,7 @@ class WarmthEffect extends Effect {
 }
 class RadialFocusEffect extends Effect {
   constructor() { super('RadialFocus', focusFrag, { blendFunction: BlendFunction.NORMAL, uniforms: new Map<string, Uniform>([['center', new Uniform(new Vector2(0.5, 0.5))], ['radius', new Uniform(1)], ['softness', new Uniform(0.15)], ['enabled', new Uniform(1)]]) }); }
-  update(_r: unknown, _i: unknown, _d: number) { /* uniforms set from the rig */ }
+  override update(_r: unknown, _i: unknown, _d: number) { /* uniforms set from the rig */ }
   setFocus(cx: number, cy: number, radius: number, enabled: boolean) { (this.uniforms.get('center')!.value as Vector2).set(cx, cy); this.uniforms.get('radius')!.value = radius; this.uniforms.get('enabled')!.value = enabled ? 1 : 0; }
 }
 
