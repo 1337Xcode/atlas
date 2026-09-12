@@ -144,9 +144,7 @@ view the original negative never held. Along the bottom edge sit the three detai
 the landing. The hold keys here are the commander coming over, the order of the day, and a kit
 check, and the content note in the article says in as many words what this world does not stage.
 
-![The loading state: the archival photograph blurred behind the event title and a sentence of context, with a spinner reading Preparing the world](documentation/media/world-preparing.jpg)
-
-Staging takes eight to fifteen seconds, so the wait shows the photograph, the dateline and a
+Staging takes eight to fifteen seconds, and the wait shows the photograph, the dateline and a
 sourced sentence of context rather than a spinner on its own. If the provider has no free GPU
 the same panel says exactly that, and no world is started.
 
