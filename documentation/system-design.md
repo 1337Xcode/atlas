@@ -72,6 +72,19 @@ that the shipped archive produces a clean, in budget, fully sourced prompt for a
 without ever spending a cent. Everything below it is I/O that can fail, and every failure has a
 named, readable outcome rather than a black screen.
 
+## Staging next to the harm, not on it
+
+![The D-Day eve world running live: a black and white first person view standing inside a crowd of paratroopers in helmets and jump smocks on an airfield, with the hold keys reading the commander comes over, the order of the day, and kit check](media/world-dday-eve.jpg)
+
+The D-Day world is Greenham Common on the evening of 5 June 1944, which is exactly what the
+anchor photograph documents: Eisenhower among the paratroopers of the 101st Airborne, hours
+before the drop. The landings and their casualties are in the article, in prose, with sources.
+They are not staged, and the article says so in its content note rather than leaving a reader to
+discover the omission.
+
+That rule generalises. The Triangle fire world is the mourning march ten days later, not the
+building. A world is allowed to be the moment the archive photographed, and nothing else.
+
 ## Failure is a first class output
 
 A generated world has many more ways to fail than a web page. The runtime treats each one as a

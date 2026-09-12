@@ -93,6 +93,8 @@ flowchart LR
   A --> D
 ```
 
+![The Apollo 11 world running live: a first person view on the lunar surface, an astronaut in a white suit with a gold visor standing in the middle distance, and the control legend along the bottom edge](media/world-apollo-11.jpg)
+
 Three decisions in there are worth calling out.
 
 **Top of stack wins.** Press `W`, then `S`, then release `S`, and the reader keeps walking

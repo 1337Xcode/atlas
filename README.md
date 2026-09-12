@@ -10,6 +10,7 @@
   <img alt="pnpm workspace" src="https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-230%20unit%20%2B%208%20browser-2ea043">
   <img alt="world model" src="https://img.shields.io/badge/world%20model-LingBot%20World%202-6f42c1">
+  <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue">
 </p>
 
 <p align="center">
@@ -126,12 +127,22 @@ credited to the library that holds it.
 
 ### Inside a world
 
-![The Apollo 11 world running live: a first person view of the lunar surface, having walked forward from the anchor photograph, with the control legend and the three sourced hold keys along the bottom edge](documentation/media/world-live.jpg)
+One click on the photograph opens the world in place, over the paper. These are real frames from
+live sessions, not concept art.
 
-One click on the photograph opens the world in place, over the paper. The frame above is the
-Apollo 11 world after walking forward from the anchor photograph, which is the whole point: the
-reader has moved somewhere the original frame does not show. Along the bottom are the sourced
-details bound to `1`, `2` and `3`, each one citing the source that attests it.
+![The Apollo 11 world running live: a first person view on the lunar surface, an astronaut in a white suit with a gold visor standing in the middle distance, the lunar module and the black sky behind, and the control legend with three sourced hold keys along the bottom edge](documentation/media/world-apollo-11.jpg)
+
+**Apollo 11, the Sea of Tranquillity.** Anchored on Neil Armstrong's photograph of Edwin Aldrin,
+AS11-40-5903. The reader has walked away from where that shutter fired, so the frame above is a
+view the original negative never held. Along the bottom edge sit the three details bound to `1`,
+`2` and `3`, each one citing the source that attests it.
+
+![The D-Day eve world running live: a black and white first person view standing inside a crowd of paratroopers in helmets and jump smocks on an airfield, with the hold keys reading the commander comes over, the order of the day, and kit check](documentation/media/world-dday-eve.jpg)
+
+**D-Day eve, Greenham Common.** Standing inside the crowd of the 101st Airborne on the evening of
+5 June 1944, hours before the drop. The world is the airfield the night before, deliberately, not
+the landing. The hold keys here are the commander coming over, the order of the day, and a kit
+check, and the content note in the article says in as many words what this world does not stage.
 
 ![The loading state: the archival photograph blurred behind the event title and a sentence of context, with a spinner reading Preparing the world](documentation/media/world-preparing.jpg)
 
@@ -313,6 +324,12 @@ const bindSurface = useWorldControls(session, plan)
 | [Authoring an article](content/README.md)        | how to add an event to the archive                               |
 
 ---
+
+## Licence
+
+The code is [MIT](LICENSE). The archival photographs and page scans are not ours to license:
+each one is public domain or openly licensed by the institution that holds it, and carries that
+institution's credit in the article JSON and on screen.
 
 ## Credits
 
