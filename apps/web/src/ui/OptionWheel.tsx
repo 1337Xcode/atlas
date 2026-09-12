@@ -8,10 +8,10 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react'
 
-// vendored from reactbits.dev. Two changes only, both required by this workspace's compiler
-// and neither altering behaviour: the type-only React imports above, and `?? ''` on the
-// label handed to onChange, because noUncheckedIndexedAccess types an index read as possibly
-// undefined even though the modulo above keeps it in range.
+// note: adapted from the react bits source supplied for this project
+// note: type-only imports and a guarded label read support the workspace compiler
+// perf: keep one animation clock running through bursts of trackpad input
+// fix: an empty option list must not calculate a modulo by zero
 
 type Side = 'left' | 'right'
 
@@ -185,9 +185,7 @@ const OptionWheel = ({
   }, [])
 
   const startLoop = useCallback(() => {
-    if (rafRef.current != null) {
-      cancelAnimationFrame(rafRef.current)
-    }
+    if (rafRef.current !== null) return
     lastRef.current = performance.now()
     rafRef.current = requestAnimationFrame(runFrame)
   }, [runFrame])
@@ -214,6 +212,7 @@ const OptionWheel = ({
   const applyTarget = useCallback(
     (value: number, snap: boolean) => {
       const cfg = cfgRef.current
+      if (cfg.count === 0) return
       let v = value
       if (!cfg.loop) v = Math.min(Math.max(v, 0), Math.max(cfg.count - 1, 0))
       if (snap) v = Math.round(v)

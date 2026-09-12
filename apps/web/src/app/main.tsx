@@ -1,6 +1,8 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { App } from './App'
+import { Reader as App } from './Reader'
+import '@fontsource-variable/geist/wght.css'
+import './reader.css'
 import { ErrorBoundary } from './ErrorNotice'
 import './index.css'
 

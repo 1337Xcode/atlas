@@ -14,7 +14,7 @@ body,
 
 /* note: the reading surface, sized in rem so it scales with the reader's own settings */
 .ui {
-  font-family: 'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Geist Variable', 'Helvetica Neue', Helvetica, sans-serif;
   font-size: clamp(0.72rem, 0.62rem + 0.35vw, 0.95rem);
   letter-spacing: 0.04em;
   color: rgb(235 230 220 / 72%);

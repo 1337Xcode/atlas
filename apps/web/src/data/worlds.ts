@@ -13,5 +13,9 @@ const WORLD_ORIGIN = import.meta.env.VITE_WORLD_ORIGIN ?? 'http://localhost:3000
 // fn: where the reader goes to stand inside this event, or nothing if no world is built for it
 export function worldUrlFor(eventId: string): string | null {
   const article = ARTICLE_BY_EVENT[eventId]
-  return article ? `${WORLD_ORIGIN}/articles/${article}` : null
+  return article ? worldUrlForArticle(article) : null
+}
+
+export function worldUrlForArticle(articleId: string): string {
+  return `${WORLD_ORIGIN}/articles/${encodeURIComponent(articleId)}`
 }
