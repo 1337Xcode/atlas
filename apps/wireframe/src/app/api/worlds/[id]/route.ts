@@ -26,9 +26,10 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
     const token = await mintSessionToken({
       apiKey: config.reactorApiKey,
       models: [model.slug],
-      // note: one reader, one world — a short cap keeps a forgotten tab from burning gpu time
-      maxSessions: 2,
-      maxSessionDurationSeconds: 900,
+      // note: the client closes a world after two minutes; this is the server side backstop
+      // why: a few sessions per token covers a reader who resumes after an idle close
+      maxSessions: 4,
+      maxSessionDurationSeconds: 180,
     })
 
     const { plan, diagnostics } = buildWorldSessionPlan({

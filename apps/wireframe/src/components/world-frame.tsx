@@ -2,9 +2,11 @@
 
 import { useWorldControls, useWorldSession, useWorldViewport } from '@atlas/runtime/react'
 import { WorldSessionPlanSchema, type WorldSessionPlan } from '@atlas/schema'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+// note: extensionless, because turbopack does not resolve an explicit .tsx specifier
+import { WorldStatus } from './world-status'
 
-// note: wireframe only — the production newspaper replaces this, the hooks are the contract
+// note: wireframe only, the production newspaper replaces this; the hooks are the contract
 
 export type WorldFrameProps = {
   articleId: string
@@ -16,59 +18,123 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
   const [plan, setPlan] = useState<WorldSessionPlan>()
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState<string>()
+  const [expanded, setExpanded] = useState(false)
+  const shell = useRef<HTMLDivElement>(null)
 
   const { session, snapshot } = useWorldSession(plan, { autoStart: true })
   const bindVideo = useWorldViewport(session)
   const bindSurface = useWorldControls(session, plan)
 
-  const open = async () => {
+  // fn: fetch a fresh plan, which mints the token and therefore starts the clock
+  const open = useCallback(async () => {
     setOpening(true)
     setError(undefined)
-    const response = await fetch(`/api/worlds/${articleId}`, { method: 'POST' })
-    const body: unknown = await response.json()
-    setOpening(false)
+    try {
+      const response = await fetch(`/api/worlds/${articleId}`, { method: 'POST' })
+      const body: unknown = await response.json()
+      if (!response.ok) {
+        setError(readError(body))
+        return
+      }
+      const parsed = WorldSessionPlanSchema.safeParse((body as { plan: unknown }).plan)
+      if (!parsed.success) {
+        setError('the world plan did not match the contract')
+        return
+      }
+      setPlan(parsed.data)
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'could not reach the world service')
+    } finally {
+      setOpening(false)
+    }
+  }, [articleId])
 
-    if (!response.ok) {
-      setError(readError(body))
+  const leave = useCallback(() => {
+    void session?.stop('user')
+    setPlan(undefined)
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined)
+  }, [session])
+
+  // feat: expand puts the reader inside the world with nothing else on screen
+  const toggleExpand = useCallback(() => {
+    const element = shell.current
+    if (!element) return
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => undefined)
       return
     }
-    const parsed = WorldSessionPlanSchema.safeParse((body as { plan: unknown }).plan)
-    if (!parsed.success) {
-      setError('the world plan did not match the contract')
-      return
+    void element.requestFullscreen?.().catch(() => undefined)
+  }, [])
+
+  useEffect(() => {
+    const onChange = () => setExpanded(Boolean(document.fullscreenElement))
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
+  // note: a closed world leaves fullscreen, so the reader is never stuck in a black rectangle
+  useEffect(() => {
+    if (snapshot?.phase === 'closed' && document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => undefined)
     }
-    setPlan(parsed.data)
-  }
+  }, [snapshot?.phase])
 
   if (!plan) {
     return (
       <figure className="world">
         <img src={anchorImageUrl} alt={anchorCaption} />
         <figcaption>{anchorCaption}</figcaption>
-        <button type="button" onClick={() => void open()} disabled={opening}>
-          {opening ? 'opening the world...' : 'enter the world'}
-        </button>
+        <div className="actions">
+          <button type="button" onClick={() => void open()} disabled={opening}>
+            {opening ? 'opening the world' : 'enter the world'}
+          </button>
+        </div>
+        <p className="legend">
+          The world runs for up to two minutes, and closes itself if you stop moving.
+        </p>
         {error ? <p className="error">{error}</p> : null}
       </figure>
     )
   }
 
+  const closed = snapshot?.phase === 'closed'
+
   return (
-    <section className="world">
+    <section className="world" ref={shell} data-expanded={expanded}>
       <div className="viewport" ref={bindSurface} tabIndex={0}>
-        <video ref={bindVideo} muted playsInline autoPlay />
-        <p className="hud">
-          {snapshot?.phase ?? 'idle'} · chunk {snapshot?.chunkIndex ?? 0} ·{' '}
-          {snapshot?.stats?.framesPerSecond ?? '--'} fps · {snapshot?.stats?.rtt ?? '--'} ms rtt
-        </p>
+        <video ref={bindVideo} muted playsInline autoPlay poster={plan.anchorImage.url} />
+        <WorldStatus
+          phase={snapshot?.phase ?? 'idle'}
+          chunkIndex={snapshot?.chunkIndex ?? 0}
+          fps={snapshot?.stats?.framesPerSecond}
+          rtt={snapshot?.stats?.rtt}
+        />
+
+        {snapshot?.countdown ? (
+          <p className="countdown">
+            {snapshot.countdown.kind === 'idle'
+              ? `Still there? Closing in ${snapshot.countdown.secondsLeft}s to save credits. Move to stay.`
+              : `Two minute limit reached, closing in ${snapshot.countdown.secondsLeft}s.`}
+          </p>
+        ) : null}
+
+        {closed ? (
+          <div className="closed">
+            <p>{endedMessage(snapshot?.endedReason)}</p>
+            <button type="button" onClick={() => void open()}>
+              open it again
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <p className="legend">
-        click to look · <kbd>W</kbd>
+        click the frame, then <kbd>W</kbd>
         <kbd>A</kbd>
         <kbd>S</kbd>
-        <kbd>D</kbd> walk · <kbd>arrows</kbd> look · <kbd>space</kbd> jump · <kbd>c</kbd> crouch ·{' '}
-        <kbd>esc</kbd> release the mouse
+        <kbd>D</kbd> to walk, move the mouse to look around, <kbd>space</kbd> to hop, <kbd>C</kbd>{' '}
+        to crouch, <kbd>esc</kbd> to release the mouse. The arrow keys also look around if you would
+        rather not use the mouse.
       </p>
 
       <dl className="annotations">
@@ -76,6 +142,7 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
           <div key={annotation.key}>
             <dt>
               <kbd>{annotation.key}</kbd> {annotation.name}
+              {snapshot?.heldEventKeys.includes(annotation.key) ? ' (holding)' : ''}
             </dt>
             <dd>
               attested by {annotation.source.title}
@@ -86,16 +153,13 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
       </dl>
 
       <div className="actions">
-        <button type="button" onClick={() => void session?.restage()}>
-          restage from a clean frame
+        <button type="button" onClick={toggleExpand}>
+          {expanded ? 'shrink' : 'expand'}
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            void session?.stop()
-            setPlan(undefined)
-          }}
-        >
+        <button type="button" onClick={() => void session?.restage()} disabled={closed}>
+          restage
+        </button>
+        <button type="button" onClick={leave}>
           leave
         </button>
       </div>
@@ -115,6 +179,14 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
       </details>
     </section>
   )
+}
+
+function endedMessage(reason: string | undefined): string {
+  if (reason === 'idle') return 'The world closed because nothing was pressed for a minute.'
+  if (reason === 'limit') return 'The world reached its two minute limit and closed.'
+  if (reason === 'hidden') return 'The world closed because this tab was left in the background.'
+  if (reason === 'failed') return 'The world did not start generating, so it was closed.'
+  return 'The world is closed.'
 }
 
 function readError(body: unknown): string {

@@ -20,7 +20,9 @@ pnpm dev                    # http://localhost:3000
 pnpm verify                 # lint, typecheck, 125 tests
 ```
 
-Open an article, click **enter the world**, then click the frame to capture the mouse.
+Open an article, click **enter the world**, then click the frame once to give it the keyboard
+and the mouse. A world runs for up to two minutes, warns you at 45 seconds of no input, and
+closes itself rather than hold a GPU nobody is watching.
 
 | Control               | Does                                  |
 | --------------------- | ------------------------------------- |
@@ -30,6 +32,10 @@ Open an article, click **enter the world**, then click the frame to capture the 
 | `space` / `C`         | jump / crouch                         |
 | `1`–`9`               | hold a sourced event from the article |
 | `esc`                 | release the mouse                     |
+| expand                | real fullscreen, just the world       |
+
+Keys are read by physical position, so WASD works on any keyboard layout. Pointer lock is used
+when the browser grants it, and dragging looks around when it does not.
 
 ## Packages
 

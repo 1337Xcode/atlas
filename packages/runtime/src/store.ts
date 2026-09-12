@@ -1,4 +1,8 @@
+import type { LifecycleCountdown, SessionLimitReason } from './lifecycle.ts'
 import type { TransportStats, TransportStatus, Unsubscribe } from './transport.ts'
+
+// note: why a world is no longer running, so the ui can offer the right way back in
+export type SessionEndReason = SessionLimitReason | 'user' | 'failed'
 
 export type SessionPhase =
   | 'idle'
@@ -21,6 +25,9 @@ export type SessionSnapshot = {
   notices: string[]
   error: string | undefined
   stats: TransportStats | undefined
+  // note: set while the world is about to close itself, for the banner
+  countdown: LifecycleCountdown | null
+  endedReason: SessionEndReason | undefined
 }
 
 export type SessionStore = {
@@ -46,6 +53,8 @@ export function createSessionStore(status: TransportStatus): SessionStore {
     notices: [],
     error: undefined,
     stats: undefined,
+    countdown: null,
+    endedReason: undefined,
   }
 
   const update: SessionStore['update'] = (patch) => {

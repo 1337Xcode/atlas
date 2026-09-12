@@ -59,15 +59,75 @@ button {
   width: 100%;
   aspect-ratio: 1664 / 960;
   background: #000;
-  object-fit: cover;
+  /* note: contain, so a world is never cropped by a container that is not 16 by 9 */
+  object-fit: contain;
 }
 
 .viewport {
   position: relative;
+  cursor: crosshair;
 }
 
 .viewport:focus-visible {
   outline: 2px solid currentColor;
+}
+
+/* feat: expanded puts the world on the whole screen and hides the page around it */
+.world[data-expanded='true'] {
+  border: none;
+  padding: 0;
+  background: #000;
+  display: grid;
+  place-items: center;
+}
+
+.world[data-expanded='true'] .viewport {
+  width: 100vw;
+  height: 100vh;
+}
+
+.world[data-expanded='true'] video {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+}
+
+.world[data-expanded='true'] .legend,
+.world[data-expanded='true'] .annotations,
+.world[data-expanded='true'] details,
+.world[data-expanded='true'] .notices {
+  display: none;
+}
+
+.world[data-expanded='true'] .actions {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+.countdown {
+  position: absolute;
+  top: 2.25rem;
+  left: 0;
+  margin: 0;
+  padding: 0.35rem 0.6rem;
+  background: #000;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.closed {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  justify-items: center;
+  background: rgb(0 0 0 / 72%);
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
 }
 
 .hud {

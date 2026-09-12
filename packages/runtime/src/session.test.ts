@@ -112,13 +112,14 @@ describe('staging a world', () => {
     expect(failing.snapshot().error).toMatch(/404/)
   })
 
-  it('goes live anyway if the world never reports a chunk', async () => {
+  it('closes the world, rather than holding a gpu, if no chunk ever arrives', async () => {
     await stage()
     expect(session.snapshot().phase).toBe('warming')
 
-    await vi.advanceTimersByTimeAsync(20_000)
-    expect(session.snapshot().phase).toBe('live')
-    expect(session.snapshot().notices.at(-1)).toMatch(/first chunk/)
+    await vi.advanceTimersByTimeAsync(30_000)
+    expect(session.snapshot().phase).toBe('closed')
+    expect(session.snapshot().endedReason).toBe('failed')
+    expect(session.snapshot().error).toMatch(/did not start generating/)
   })
 })
 
@@ -291,6 +292,71 @@ describe('the live control loop', () => {
   it('keeps webrtc stats for the operator', async () => {
     transport.emitStats({ rtt: 42, framesPerSecond: 48, packetLossRatio: 0 })
     expect(session.snapshot().stats?.framesPerSecond).toBe(48)
+  })
+})
+
+describe('closing the world', () => {
+  beforeEach(async () => {
+    await startLive()
+  })
+
+  it('warns before closing an idle world, then closes it', async () => {
+    await vi.advanceTimersByTimeAsync(46_000)
+    expect(session.snapshot().countdown).toMatchObject({ kind: 'idle' })
+    expect(session.snapshot().phase).toBe('live')
+
+    await vi.advanceTimersByTimeAsync(15_000)
+    expect(session.snapshot().phase).toBe('closed')
+    expect(session.snapshot().endedReason).toBe('idle')
+  })
+
+  it('keeps the world open while the reader is pressing keys', async () => {
+    for (let second = 0; second < 70; second += 1) {
+      await vi.advanceTimersByTimeAsync(1_000)
+      session.input.press('forward')
+      session.nudge()
+      session.input.release('forward')
+    }
+
+    expect(session.snapshot().phase).toBe('live')
+    expect(session.snapshot().endedReason).toBeUndefined()
+  })
+
+  it('counts mouse movement as activity', async () => {
+    for (let second = 0; second < 70; second += 1) {
+      await vi.advanceTimersByTimeAsync(1_000)
+      session.input.accumulateLook({ dxPx: 2, dyPx: 0 })
+      session.markActivity()
+    }
+
+    expect(session.snapshot().phase).toBe('live')
+  })
+
+  it('closes at the two minute ceiling however active the reader is', async () => {
+    for (let second = 0; second < 130; second += 1) {
+      await vi.advanceTimersByTimeAsync(1_000)
+      session.markActivity()
+    }
+
+    expect(session.snapshot().phase).toBe('closed')
+    expect(session.snapshot().endedReason).toBe('limit')
+  })
+
+  it('stops sending commands once closed', async () => {
+    await session.stop('user')
+    transport.sent.length = 0
+
+    session.input.press('forward')
+    session.nudge()
+    await settle()
+
+    expect(transport.names()).toEqual([])
+    expect(transport.status()).toBe('disconnected')
+  })
+
+  it('records why the world ended when the reader leaves', async () => {
+    await session.stop('user')
+    expect(session.snapshot().endedReason).toBe('user')
   })
 })
 

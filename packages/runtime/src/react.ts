@@ -26,10 +26,14 @@ export function useWorldSession(
       ...(transport ? { transport } : {}),
     } satisfies CreateWorldSessionOptions)
     setSession(created)
-    if (autoStart) void created.start()
+
+    // why: strict mode mounts twice in development, and connecting twice opens two billed sessions
+    const scheduled = autoStart ? setTimeout(() => void created.start(), 0) : undefined
+
     return () => {
+      clearTimeout(scheduled)
       setSession(undefined)
-      void created.stop()
+      void created.stop('user')
     }
   }, [plan, autoStart, transport])
 
@@ -73,6 +77,7 @@ export function useWorldControls(
       capabilities: plan.capabilities,
       eventKeys: plan.annotations.map((annotation) => annotation.key),
       onChange: session.nudge,
+      onActivity: session.markActivity,
     })
   }, [surface, session, plan])
 

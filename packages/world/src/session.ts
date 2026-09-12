@@ -26,6 +26,11 @@ export const DEFAULT_CONTROL_SETTINGS: WorldControlSettings = {
   strafeMode: 'lateral',
   maxHoldMs: 6000,
   invertLookY: false,
+  // note: 45 seconds of nothing earns a warning, 60 closes the world
+  idleWarningMs: 45_000,
+  idleStopMs: 60_000,
+  // note: two minutes per world, so a forgotten tab cannot run up a bill
+  maxSessionMs: 120_000,
 }
 
 export class SceneNotServableError extends Error {

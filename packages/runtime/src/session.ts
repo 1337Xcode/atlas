@@ -2,10 +2,11 @@ import { composePrompt } from '@atlas/scene'
 import type { WorldSessionPlan } from '@atlas/schema'
 import { getWorldModel, planCommands, type Command, type WireState } from '@atlas/world'
 import { createInputStore, type InputStore } from './input.ts'
+import { createLifecycleGuard } from './lifecycle.ts'
 import { readModelMessage, type ModelEvent } from './messages.ts'
 import { buildCameraPose } from './pose.ts'
 import { stageWorld } from './staging.ts'
-import { createSessionStore, type SessionSnapshot } from './store.ts'
+import { createSessionStore, type SessionEndReason, type SessionSnapshot } from './store.ts'
 import { createReactorTransport, type Unsubscribe, type WorldTransport } from './transport.ts'
 
 export type CreateWorldSessionOptions = {
@@ -19,16 +20,18 @@ export interface WorldSession {
   snapshot: () => SessionSnapshot
   subscribe: (listener: (snapshot: SessionSnapshot) => void) => Unsubscribe
   start: () => Promise<void>
-  stop: () => Promise<void>
+  stop: (reason?: SessionEndReason) => Promise<void>
   // feat: re-stage from a clean frame, the documented cure for a world that has drifted
   restage: () => Promise<void>
   attachVideo: (element: HTMLVideoElement | null) => void
   // note: input bindings call this so a press lands without waiting for the chunk clock
   nudge: () => void
+  // note: any input at all, including mouse movement, so the idle timer stays honest
+  markActivity: () => void
 }
 
-// why: if a world never reports a chunk, the controls must still come alive
-const WARMUP_FALLBACK_MS = 15_000
+// why: a world that never reports a first chunk is a gpu we are paying for and nobody can see
+const FIRST_CHUNK_TIMEOUT_MS = 25_000
 
 // fn: run one world — stage it, keep its inputs on the wire, and report what it is doing
 export function createWorldSession(options: CreateWorldSessionOptions): WorldSession {
@@ -123,10 +126,30 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     }
   }
 
+  const guard = createLifecycleGuard({
+    idleWarningMs: plan.controls.idleWarningMs,
+    idleStopMs: plan.controls.idleStopMs,
+    maxSessionMs: plan.controls.maxSessionMs,
+    onCountdown: (countdown) => store.update({ countdown }),
+    onExpire: (reason) => void closeSession(reason),
+  })
+
   const goLive = () => {
     clearTimeout(warmupTimer)
     warmupTimer = undefined
     store.update({ phase: 'live' })
+    // why: billing starts at the first frame, so the clock on an unattended world starts here too
+    guard.begin()
+  }
+
+  // fn: release the gpu and say why, so the ui can offer the right way back in
+  const closeSession = async (reason: SessionEndReason) => {
+    if (store.snapshot().phase === 'closed') return
+    guard.dispose()
+    clearTimeout(warmupTimer)
+    input.clear()
+    store.update({ phase: 'closed', endedReason: reason, countdown: null })
+    await transport.disconnect().catch(() => undefined)
   }
 
   const onEvent = (event: ModelEvent) => {
@@ -183,10 +206,11 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     acked = { ...idleWire(), prompt }
     heldSignature = input.heldEventKeys().join(',')
     store.update({ phase: 'warming', prompt })
+    // why: rather than hold a gpu that is producing nothing, close it and let the reader retry
     warmupTimer = setTimeout(() => {
-      store.notice('world took longer than expected to report its first chunk')
-      goLive()
-    }, WARMUP_FALLBACK_MS)
+      store.update({ error: 'the world did not start generating, so it was closed' })
+      void closeSession('failed')
+    }, FIRST_CHUNK_TIMEOUT_MS)
   }
 
   const bindVideo = () => {
@@ -206,12 +230,32 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         stream = received
         bindVideo()
       }),
+      ...pageLifecycle(),
     )
+  }
+
+  // why: a closed tab or a laptop lid would otherwise leave a gpu running until the server cap
+  const pageLifecycle = (): Unsubscribe[] => {
+    if (typeof document === 'undefined') return []
+
+    const onHide = () => void closeSession('user')
+    const onVisibility = () => guard.setHidden(document.visibilityState === 'hidden')
+
+    window.addEventListener('pagehide', onHide)
+    document.addEventListener('visibilitychange', onVisibility)
+    return [
+      () => window.removeEventListener('pagehide', onHide),
+      () => document.removeEventListener('visibilitychange', onVisibility),
+    ]
   }
 
   return {
     input,
-    nudge: () => void flush(),
+    nudge: () => {
+      guard.markActivity()
+      void flush()
+    },
+    markActivity: guard.markActivity,
     snapshot: store.snapshot,
     subscribe: store.subscribe,
     attachVideo: (element) => {
@@ -220,15 +264,17 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     },
     start: async () => {
       const phase = store.snapshot().phase
-      if (phase !== 'idle' && phase !== 'closed') return
+      // why: a second start would open a second gpu session for the same reader
+      if (phase !== 'idle') return
       attach()
       try {
         store.update({ phase: 'connecting' })
         await transport.connect()
         await stage()
       } catch (cause) {
-        // why: a failed world shows a reason, it never takes the page down
+        // why: a failed world shows a reason and releases the gpu, it never takes the page down
         store.update({ phase: 'error', error: describe(cause) })
+        await transport.disconnect().catch(() => undefined)
       }
     },
     restage: async () => {
@@ -242,12 +288,9 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         store.update({ phase: 'error', error: describe(cause) })
       }
     },
-    stop: async () => {
-      clearTimeout(warmupTimer)
+    stop: async (reason = 'user') => {
+      await closeSession(reason)
       for (const unsubscribe of subscriptions.splice(0)) unsubscribe()
-      input.clear()
-      await transport.disconnect().catch(() => undefined)
-      store.update({ phase: 'closed' })
     },
   }
 }

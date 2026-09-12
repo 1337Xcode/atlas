@@ -44,6 +44,11 @@ export const WorldControlSettingsSchema = z.object({
   // why: long continuous holds accumulate drift, so a hold is capped and allowed to settle
   maxHoldMs: z.number().int().positive(),
   invertLookY: z.boolean(),
+  // why: a held gpu is billed by the second, so an unattended world closes itself
+  idleWarningMs: z.number().int().positive(),
+  idleStopMs: z.number().int().positive(),
+  // note: the hard ceiling on one world, counted from its first frame
+  maxSessionMs: z.number().int().positive(),
 })
 
 export const WorldModelRefSchema = z.object({
