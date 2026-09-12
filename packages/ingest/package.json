@@ -1,0 +1,19 @@
+{
+  "name": "@atlas/ingest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@atlas/schema": "workspace:*",
+    "@atlas/scene": "workspace:*",
+    "@atlas/world": "workspace:*",
+    "@mozilla/readability": "0.6.0",
+    "linkedom": "0.18.13"
+  }
+}
