@@ -28,6 +28,8 @@ export function PagePlane({ src, x, y, w, h, opacity, visible = true }: PagePlan
     () => new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false }),
     [tex],
   )
+  // why: turning to another front page would otherwise strand a material on the gpu
+  useEffect(() => () => mat.dispose(), [mat])
   mat.opacity = opacity
   return (
     <mesh

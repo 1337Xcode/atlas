@@ -29,6 +29,8 @@ export function WorldPlane({ video, x, y, w, h, mix, visible }: WorldPlaneProps)
       }),
     [tex],
   )
+  // why: a session can be opened repeatedly, and each one built a fresh material
+  useEffect(() => () => mat.dispose(), [mat])
   mat.opacity = mix
   return (
     <mesh

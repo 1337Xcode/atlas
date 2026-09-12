@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useLoader } from '@react-three/fiber'
 import frag from '../shaders/highlight.frag?raw'
@@ -65,6 +65,8 @@ export function HighlightPlane({
         m[3],
       ),
     )
+  // why: the shader material holds compiled program state, so it is released with the plane
+  useEffect(() => () => material.dispose(), [material])
   material.uniforms.uMarkCount!.value = Math.min(8, marks.length)
   material.uniforms.uProvenance!.value = provenance ? 1 : 0
   return (

@@ -1,5 +1,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { motion } from 'framer-motion'
 import { catalogue } from '../data/client'
 import { localPaths } from '../data/paths'
 import { createProjector } from '../scene/projection'
@@ -136,9 +137,13 @@ function Clock({
 
 export function App() {
   const viewport = useViewport()
+  // note: the tailwind lg breakpoint, so the sidebar behaves the same way the classes do
+  const narrow = viewport.width < 1024
   const [failure, setFailure] = useState<string | null>(null)
   // note: the catalogue is the front door, and escape returns to it from any phase
   const [browsing, setBrowsing] = useState(true)
+  // note: set while another front page is loading, so the turn can be covered by a fade
+  const [turning, setTurning] = useState(false)
   const [translated, setTranslated] = useState<string | null>(null)
   const [clusters, setClusters] = useState<Cluster[]>([])
   const [sc, setSc] = useState<Scenario | null>(null)
@@ -487,101 +492,130 @@ export function App() {
 
   return (
     <div className="fixed inset-0 bg-black" onClick={advanceStop}>
-      {/* perf: 1.5 keeps the scan legible while halving the fragment work of the effect chain */}
-      <Canvas
-        dpr={[1, 1.5]}
-        gl={{ alpha: true, antialias: false }}
-        style={{ position: 'fixed', inset: 0 }}
+      {/* why: a fade covers the load, which reads better than a half-built page turning */}
+      <motion.div
+        className="fixed inset-0"
+        animate={{ opacity: turning ? 0.12 : 1, x: narrow && browsing ? '86vw' : 0 }}
+        transition={{ duration: turning ? 0.45 : 0.6, ease: [0.4, 0, 0.2, 1] }}
       >
-        <Clock
-          running={running}
-          paused={paused}
-          speed={Number(new URLSearchParams(location.search).get('speed')) || 1}
-          onTick={onTick}
-        />
-        <CameraRig target={cam} time={t} />
-        <Suspense fallback={null}>
-          {Object.entries(sc.pages).map(([id, p]) => {
-            const slide =
-              p.slideFrom !== undefined
-                ? p.slideFrom + (p.x - p.slideFrom) * sample('plane.' + id + '.slide', t)
-                : p.x
-            return (
-              <PagePlane
-                key={id}
-                src={localPaths.asset(p.src)}
-                x={slide}
-                y={p.y}
-                w={p.w}
-                h={p.h}
-                opacity={sample('plane.' + id + '.o', t)}
-              />
-            )
-          })}
-          <HighlightPlane
-            src={localPaths.asset(page.src)}
-            x={page.x}
-            y={page.y}
-            w={page.w}
-            h={page.h}
-            box={
-              cur && cur.page === sc.readPage && !prov
-                ? [cur.w.x, cur.w.y, cur.w.width, cur.w.height]
-                : [0, 0, 0, 0]
-            }
-            strength={cur ? 1 : 0}
-            desat={sample('desat', t)}
-            marks={sc.marks
-              .filter(
-                (m) => m.page === sc.readPage && (prov || (m.from !== undefined && t >= m.from)),
+        {/* perf: 1.5 keeps the scan legible while halving the fragment work of the effect chain */}
+        <Canvas
+          dpr={[1, 1.5]}
+          gl={{ alpha: true, antialias: false }}
+          style={{ position: 'absolute', inset: 0 }}
+        >
+          <Clock
+            running={running}
+            paused={paused}
+            speed={Number(new URLSearchParams(location.search).get('speed')) || 1}
+            onTick={onTick}
+          />
+          <CameraRig target={cam} time={t} />
+          <Suspense fallback={null}>
+            {Object.entries(sc.pages).map(([id, p]) => {
+              const slide =
+                p.slideFrom !== undefined
+                  ? p.slideFrom + (p.x - p.slideFrom) * sample('plane.' + id + '.slide', t)
+                  : p.x
+              return (
+                <PagePlane
+                  key={id}
+                  src={localPaths.asset(p.src)}
+                  x={slide}
+                  y={p.y}
+                  w={p.w}
+                  h={p.h}
+                  opacity={sample('plane.' + id + '.o', t)}
+                />
               )
-              .map((m) => [m.x, m.y, m.w, m.h])}
-            provenance={prov}
-          />
-          {!prov && (
-            <PagePlane
-              src={localPaths.asset(beat?.ghost?.src ?? sc.ghost.src)}
-              x={page.x + sc.ghost.x * page.w}
-              y={page.y + sc.ghost.y * page.w}
-              w={sc.ghost.w * page.w * sample('ghost.scale', t)}
-              h={sc.ghost.h * page.w * sample('ghost.scale', t)}
-              opacity={Math.min(0.35, sample('ghost.opacity', t))}
+            })}
+            <HighlightPlane
+              src={localPaths.asset(page.src)}
+              x={page.x}
+              y={page.y}
+              w={page.w}
+              h={page.h}
+              box={
+                cur && cur.page === sc.readPage && !prov
+                  ? [cur.w.x, cur.w.y, cur.w.width, cur.w.height]
+                  : [0, 0, 0, 0]
+              }
+              strength={cur ? 1 : 0}
+              desat={sample('desat', t)}
+              marks={sc.marks
+                .filter(
+                  (m) => m.page === sc.readPage && (prov || (m.from !== undefined && t >= m.from)),
+                )
+                .map((m) => [m.x, m.y, m.w, m.h])}
+              provenance={prov}
             />
-          )}
-          <WorldPlane
-            video={video}
-            x={cam.x - 0.5}
-            y={cam.y - 0.3}
-            w={1}
-            h={0.6}
-            mix={mix}
-            visible={!prov}
+            {!prov && (
+              <PagePlane
+                src={localPaths.asset(beat?.ghost?.src ?? sc.ghost.src)}
+                x={page.x + sc.ghost.x * page.w}
+                y={page.y + sc.ghost.y * page.w}
+                w={sc.ghost.w * page.w * sample('ghost.scale', t)}
+                h={sc.ghost.h * page.w * sample('ghost.scale', t)}
+                opacity={Math.min(0.35, sample('ghost.opacity', t))}
+              />
+            )}
+            <WorldPlane
+              video={video}
+              x={cam.x - 0.5}
+              y={cam.y - 0.3}
+              w={1}
+              h={0.6}
+              mix={mix}
+              visible={!prov}
+            />
+          </Suspense>
+          <Effects
+            grain={prov ? 0.04 : sample('post.grain', t)}
+            vignette={prov ? 0.15 : sample('post.vignette', t)}
+            aberration={prov ? 0 : sample('post.aberration', t)}
+            warmth={prov ? 0 : sample('warmth', t)}
+            focus={{
+              cx: projector.toUnit(focusNdc[0], focusNdc[1])[0],
+              cy: projector.toUnit(focusNdc[0], focusNdc[1])[1],
+              radius: focus.radius * 0.5,
+              enabled: !prov && mix < 0.5 && focus.radius < 0.98,
+            }}
           />
-        </Suspense>
-        <Effects
-          grain={prov ? 0.04 : sample('post.grain', t)}
-          vignette={prov ? 0.15 : sample('post.vignette', t)}
-          aberration={prov ? 0 : sample('post.aberration', t)}
-          warmth={prov ? 0 : sample('warmth', t)}
-          focus={{
-            cx: projector.toUnit(focusNdc[0], focusNdc[1])[0],
-            cy: projector.toUnit(focusNdc[0], focusNdc[1])[1],
-            radius: focus.radius * 0.5,
-            enabled: !prov && mix < 0.5 && focus.radius < 0.98,
-          }}
-        />
-      </Canvas>
+        </Canvas>
+      </motion.div>
       <Catalogue
-        visible={browsing}
+        visible
+        open={browsing}
+        onClose={() => setBrowsing(false)}
         onOpen={(eventId) => {
           setBrowsing(false)
-          if (eventId !== sc.id) {
-            choose(eventId).catch((cause: unknown) => {
+          if (eventId === sc.id) return
+          setTurning(true)
+          choose(eventId)
+            .catch((cause: unknown) => {
               setFailure(cause instanceof Error ? cause.message : 'that event could not be opened')
             })
-          }
+            .finally(() => setTurning(false))
         }}
       />
+
+      {/* note: the way back to the catalogue once it has been dismissed */}
+      <button
+        type="button"
+        onClick={() => setBrowsing(true)}
+        className="ui fixed left-6 top-6 z-10"
+        style={{
+          background: 'none',
+          border: '1px solid rgba(235,230,220,0.22)',
+          padding: '0.45rem 0.8rem',
+          color: 'inherit',
+          opacity: browsing ? 0 : 0.7,
+          pointerEvents: browsing ? 'none' : 'auto',
+          transition: 'opacity 400ms',
+        }}
+      >
+        catalogue
+      </button>
       <Hub
         cluster={cluster}
         resolved={resolvedMarks}
