@@ -28,7 +28,9 @@ export async function POST(request: Request) {
 }
 
 function isUrlSubmission(body: unknown): body is { url: string } {
-  return typeof body === 'object' && body !== null && typeof (body as { url?: unknown }).url === 'string'
+  return (
+    typeof body === 'object' && body !== null && typeof (body as { url?: unknown }).url === 'string'
+  )
 }
 
 function statusFor(status: string): number {

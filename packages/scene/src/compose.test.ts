@@ -25,7 +25,9 @@ describe('composePrompt', () => {
   it('appends an event clause only while its key is held', () => {
     const detail = scene.layers.events[0]?.static ?? ''
     expect(composePrompt(scene, IDLE_SCENE_INPUT_STATE)).not.toContain(detail)
-    expect(composePrompt(scene, { ...IDLE_SCENE_INPUT_STATE, heldEventKeys: ['1'] })).toContain(detail)
+    expect(composePrompt(scene, { ...IDLE_SCENE_INPUT_STATE, heldEventKeys: ['1'] })).toContain(
+      detail,
+    )
   })
 
   it('ignores unknown held keys', () => {

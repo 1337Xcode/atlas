@@ -1,4 +1,10 @@
-import { compileScene, composeStagingPrompt, isServable, lintScene, type SceneDiagnostic } from '@atlas/scene'
+import {
+  compileScene,
+  composeStagingPrompt,
+  isServable,
+  lintScene,
+  type SceneDiagnostic,
+} from '@atlas/scene'
 import {
   WorldSessionPlanSchema,
   type Article,

@@ -23,12 +23,16 @@ describe('buildWorldSessionPlan', () => {
 
   it('compiles the scene against the target model prompt budget', () => {
     expect(build().plan.scene.promptCharBudget).toBe(2000)
-    expect(build(sampleArticle({ world: promptBrief() }), LINGBOT).plan.scene.promptCharBudget).toBe(1000)
+    expect(
+      build(sampleArticle({ world: promptBrief() }), LINGBOT).plan.scene.promptCharBudget,
+    ).toBe(1000)
   })
 
   it('routes sideways motion through turning when the model has no lateral axis', () => {
     expect(build().plan.controls.strafeMode).toBe('lateral')
-    expect(build(sampleArticle({ world: promptBrief() }), LINGBOT).plan.controls.strafeMode).toBe('turn')
+    expect(build(sampleArticle({ world: promptBrief() }), LINGBOT).plan.controls.strafeMode).toBe(
+      'turn',
+    )
   })
 
   it('pairs every hold key with the source that attests it', () => {
@@ -53,7 +57,9 @@ describe('buildWorldSessionPlan', () => {
 
   it('names the failing rules on refusal, so content can be fixed before a demo', () => {
     const article = sampleArticle({
-      world: authoredBrief({ events: [{ key: '1', name: 'Unsourced', detail: 'The hammer swings.', sourceIndex: 7 }] }),
+      world: authoredBrief({
+        events: [{ key: '1', name: 'Unsourced', detail: 'The hammer swings.', sourceIndex: 7 }],
+      }),
     })
     try {
       build(article)

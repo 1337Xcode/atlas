@@ -6,11 +6,7 @@ import { readModelMessage, type ModelEvent } from './messages.ts'
 import { buildCameraPose } from './pose.ts'
 import { stageWorld } from './staging.ts'
 import { createSessionStore, type SessionSnapshot } from './store.ts'
-import {
-  createReactorTransport,
-  type Unsubscribe,
-  type WorldTransport,
-} from './transport.ts'
+import { createReactorTransport, type Unsubscribe, type WorldTransport } from './transport.ts'
 
 export type CreateWorldSessionOptions = {
   plan: WorldSessionPlan

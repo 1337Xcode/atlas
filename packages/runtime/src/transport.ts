@@ -49,17 +49,18 @@ export function createReactorTransport(plan: WorldSessionPlan): WorldTransport {
     return () => reactor.off(event, handler)
   }
 
-  const subscribe: { [K in keyof TransportEvents]: (handler: TransportEvents[K]) => Unsubscribe } = {
-    status: (handler) => listen('statusChanged', handler),
-    message: (handler) => listen('message', handler),
-    error: (handler) => listen('error', handler),
-    // note: the sdk resolves the track before emitting; the viewport only needs the stream
-    track: (handler) => listen('trackReceived', (name, _track, stream) => handler(name, stream)),
-    stats: (handler) =>
-      listen('statsUpdate', ({ rtt, framesPerSecond, packetLossRatio }) =>
-        handler({ rtt, framesPerSecond, packetLossRatio }),
-      ),
-  }
+  const subscribe: { [K in keyof TransportEvents]: (handler: TransportEvents[K]) => Unsubscribe } =
+    {
+      status: (handler) => listen('statusChanged', handler),
+      message: (handler) => listen('message', handler),
+      error: (handler) => listen('error', handler),
+      // note: the sdk resolves the track before emitting; the viewport only needs the stream
+      track: (handler) => listen('trackReceived', (name, _track, stream) => handler(name, stream)),
+      stats: (handler) =>
+        listen('statsUpdate', ({ rtt, framesPerSecond, packetLossRatio }) =>
+          handler({ rtt, framesPerSecond, packetLossRatio }),
+        ),
+    }
 
   return {
     status: () => reactor.getStatus(),

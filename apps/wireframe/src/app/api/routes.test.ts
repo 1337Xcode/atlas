@@ -5,7 +5,7 @@ import { POST as postIngest } from './ingest/route.ts'
 import { POST as postWorld } from './worlds/[id]/route.ts'
 
 // note: the handlers are plain functions, so the api is tested without running a server
-const params = <T,>(value: T) => ({ params: Promise.resolve(value) })
+const params = <T>(value: T) => ({ params: Promise.resolve(value) })
 
 beforeEach(() => {
   vi.stubEnv('REACTOR_API_KEY', 'rk_test')
@@ -57,9 +57,7 @@ describe('POST /api/worlds/[id]', () => {
   it('mints a scoped token and returns a runnable plan', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(
-        Response.json({ jwt: 'jwt-token', expires_at: 1_800_000_000 }),
-      ),
+      vi.fn().mockResolvedValue(Response.json({ jwt: 'jwt-token', expires_at: 1_800_000_000 })),
     )
 
     const response = await postWorld(request, params({ id: 'apollo-11-first-steps' }))

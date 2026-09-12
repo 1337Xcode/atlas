@@ -27,7 +27,8 @@ export function buildCameraPose(input: PoseInput): number[] | null {
 
   // why: mouse deltas accumulate between sends and convert to one velocity, so a fling cannot over-rotate
   const yaw = clamp(
-    input.look.dxPx * settings.lookSensitivity + direction(input.lookHorizontal, 'right') * KEY_LOOK_RAD_PER_LATENT,
+    input.look.dxPx * settings.lookSensitivity +
+      direction(input.lookHorizontal, 'right') * KEY_LOOK_RAD_PER_LATENT,
     limit,
   )
   const pitchSign = settings.invertLookY ? -1 : 1

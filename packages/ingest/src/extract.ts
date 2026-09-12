@@ -25,7 +25,7 @@ export async function extractArticle(url: string): Promise<DraftOutcome> {
   if (!response.ok) return { status: 'failed', reason: `fetch failed: ${response.status}` }
 
   const { document } = parseHTML(await response.text())
-  const parsed = new Readability(document as unknown as Document).parse()
+  const parsed = new Readability(document).parse()
   if (!parsed?.textContent) return { status: 'failed', reason: 'no article content found' }
 
   return {

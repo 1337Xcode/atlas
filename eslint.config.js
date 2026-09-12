@@ -2,14 +2,21 @@ import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/*.d.ts'] },
+  // note: this file configures the linter, so it is not itself linted with type information
+  { ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/*.d.ts', 'eslint.config.js'] },
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
-      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      parserOptions: {
+        // note: vitest.config.ts sits outside every package tsconfig
+        projectService: { allowDefaultProject: ['vitest.config.ts'] },
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
+      // why: an async function with no await is the normal way to satisfy an async port
+      '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': ['error', { allow: ['warn', 'error'] }],

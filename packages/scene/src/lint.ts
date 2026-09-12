@@ -26,15 +26,35 @@ const CAMERA_LANGUAGE =
   /\b(first-person|third-person|point of view|viewpoint)\b|\bcamera\s+(holds|lowers|rises|orbits|moves|tracks|pans|rotates|arcs|circles|stays|sweeps|is)\b/i
 
 // why: anything the base describes as moving keeps moving after the reader releases the key
-const MOTION_VERB = /\b(walk|walks|walking|run|runs|running|move|moves|moving|drift|drifts|fly|flies|orbit|orbits|pan|pans|zoom|zooms)\b/i
+const MOTION_VERB =
+  /\b(walk|walks|walking|run|runs|running|move|moves|moving|drift|drifts|fly|flies|orbit|orbits|pan|pans|zoom|zooms)\b/i
 
 // why: intent words are invisible to a renderer
 const INTENT_QUALIFIER = /\b(make sure|correctly|properly|accurately|be sure|without cutting)\b/i
 
 // note: words that end the noun phrase an article governs, so the head noun can be found without a parser
 const PHRASE_BREAKS = new Set([
-  'the', 'a', 'an', 'of', 'from', 'in', 'on', 'with', 'and', 'to', 'at', 'through', 'over',
-  'under', 'into', 'by', 'for', 'across', 'along', 'beside', 'against',
+  'the',
+  'a',
+  'an',
+  'of',
+  'from',
+  'in',
+  'on',
+  'with',
+  'and',
+  'to',
+  'at',
+  'through',
+  'over',
+  'under',
+  'into',
+  'by',
+  'for',
+  'across',
+  'along',
+  'beside',
+  'against',
 ])
 
 type Rule = {
@@ -57,7 +77,8 @@ const RULES: readonly Rule[] = [
         over.push(oversize('guards', layers.guards, budget.guards))
       }
       for (const [variant, text] of Object.entries(layers.camera)) {
-        if (text.length > budget.camera) over.push(oversize(`camera.${variant}`, text, budget.camera))
+        if (text.length > budget.camera)
+          over.push(oversize(`camera.${variant}`, text, budget.camera))
       }
       for (const [variant, text] of Object.entries(layers.movement)) {
         if (text.length > budget.movement) {
@@ -66,7 +87,8 @@ const RULES: readonly Rule[] = [
       }
       for (const event of layers.events) {
         const longest = Math.max(event.static.length, event.dynamic.length)
-        if (longest > budget.event) over.push(`event "${event.name}" is ${longest} chars, budget ${budget.event}`)
+        if (longest > budget.event)
+          over.push(`event "${event.name}" is ${longest} chars, budget ${budget.event}`)
       }
       return over
     },
@@ -94,19 +116,23 @@ const RULES: readonly Rule[] = [
   {
     name: 'prose/negation',
     severity: 'error',
-    run: (input) => flagFragments(input, NEGATION, 'describes absence; state what is present instead'),
+    run: (input) =>
+      flagFragments(input, NEGATION, 'describes absence; state what is present instead'),
   },
   {
     name: 'prose/camera-language',
     severity: 'error',
-    run: (input) => flagFragments(input, CAMERA_LANGUAGE, 'carries camera language outside the camera layer'),
+    run: (input) =>
+      flagFragments(input, CAMERA_LANGUAGE, 'carries camera language outside the camera layer'),
   },
   {
     name: 'prose/motion-verb-in-base',
     severity: 'warning',
     run: ({ brief }) => {
       const base = brief.kind === 'scene' ? `${brief.subject} ${brief.environment}` : brief.prompt
-      return MOTION_VERB.test(base) ? ['base layer carries a motion verb; motion runs regardless of input'] : []
+      return MOTION_VERB.test(base)
+        ? ['base layer carries a motion verb; motion runs regardless of input']
+        : []
     },
   },
   {
@@ -129,7 +155,10 @@ const RULES: readonly Rule[] = [
       if (brief.kind !== 'scene') return []
       return brief.events
         .filter((event) => event.sourceIndex >= sourceCount)
-        .map((event) => `event "${event.name}" cites source ${event.sourceIndex}, which does not exist`)
+        .map(
+          (event) =>
+            `event "${event.name}" cites source ${event.sourceIndex}, which does not exist`,
+        )
     },
   },
   {
@@ -140,11 +169,15 @@ const RULES: readonly Rule[] = [
       const established = establishedNouns(brief.subject, brief.anchors)
       return brief.events.flatMap((event) => {
         const details =
-          typeof event.detail === 'string' ? [event.detail] : [event.detail.static, event.detail.dynamic]
+          typeof event.detail === 'string'
+            ? [event.detail]
+            : [event.detail.static, event.detail.dynamic]
         const repeated = details.flatMap((detail) => reintroduced(detail, established))
         return repeated.length === 0
           ? []
-          : [`event "${event.name}" re-introduces "${repeated[0]}"; a re-description spawns a duplicate`]
+          : [
+              `event "${event.name}" re-introduces "${repeated[0]}"; a re-description spawns a duplicate`,
+            ]
       })
     },
   },
@@ -180,9 +213,10 @@ function authorFragments(brief: SceneBrief): { label: string; text: string }[] {
     { label: 'idle', text: brief.idle },
     { label: 'travel', text: brief.travel },
     ...brief.events.flatMap((event) =>
-      (typeof event.detail === 'string' ? [event.detail] : [event.detail.static, event.detail.dynamic]).map(
-        (text) => ({ label: `event "${event.name}"`, text }),
-      ),
+      (typeof event.detail === 'string'
+        ? [event.detail]
+        : [event.detail.static, event.detail.dynamic]
+      ).map((text) => ({ label: `event "${event.name}"`, text })),
     ),
   ]
 }

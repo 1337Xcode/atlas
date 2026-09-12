@@ -60,15 +60,15 @@ export function createInputStore(): InputStore {
   let look: LookDelta = { dxPx: 0, dyPx: 0 }
 
   // why: top of stack wins, so pressing W then S then releasing S resumes forward
-  const push = <T,>(stack: T[], value: T) => {
+  const push = <T>(stack: T[], value: T) => {
     if (!stack.includes(value)) stack.push(value)
   }
-  const drop = <T,>(stack: T[], value: T) => {
+  const drop = <T>(stack: T[], value: T) => {
     const index = stack.indexOf(value)
     if (index >= 0) stack.splice(index, 1)
   }
 
-  const hold = <T,>(stack: T[], value: T) => ({
+  const hold = <T>(stack: T[], value: T) => ({
     on: () => push(stack, value),
     off: () => drop(stack, value),
   })

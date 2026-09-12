@@ -63,9 +63,7 @@
     "style": "Press photography of 1948, monochrome, flat overcast light.",
     "idle": "The people on the quay hold their places beside the stacked cases, a coat collar turned up against the damp, mooring ropes creaking on the bollards and river mist drifting along the hull.",
     "travel": "Wet quay stones slide past underfoot along the line of the hull, stacked cases and mooring bollards passing close as the groups on the quay step aside.",
-    "guards": [
-      "the ship lies alongside with one gangway down to the quay"
-    ],
+    "guards": ["the ship lies alongside with one gangway down to the quay"],
     "events": [
       {
         "key": "1",

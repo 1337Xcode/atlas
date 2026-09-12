@@ -61,9 +61,7 @@
     "style": "Glass-plate press photography of 1918, monochrome, soft grain.",
     "idle": "The officers stand on the ballast beside the carriage with weight settled, breath clouding, a greatcoat hem stirring and a hand resting on the brass rail of the carriage steps.",
     "travel": "Wet ballast and fallen leaves slide past underfoot along the rails toward the carriage, mist drifting between the trunks as the officers on the trackbed shift aside.",
-    "guards": [
-      "the carriage stands alone on the siding, with the woods close on either side"
-    ],
+    "guards": ["the carriage stands alone on the siding, with the woods close on either side"],
     "events": [
       {
         "key": "1",

@@ -1,6 +1,11 @@
 import { composePrompt } from '@atlas/scene'
 import type { WorldSessionPlan } from '@atlas/schema'
-import { stagingCommands, type Command, type FileRefLike, type WorldModelDescriptor } from '@atlas/world'
+import {
+  stagingCommands,
+  type Command,
+  type FileRefLike,
+  type WorldModelDescriptor,
+} from '@atlas/world'
 import type { InputStore } from './input.ts'
 import type { ModelEvent } from './messages.ts'
 

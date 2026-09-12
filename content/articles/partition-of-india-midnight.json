@@ -56,9 +56,7 @@
     "style": "Press photography of 1947, monochrome, available light indoors.",
     "idle": "The seated men hold still on the platform with their shoulders rising and falling slowly, a hand resting on folded cloth, dust turning in the light from the shutters and papers lifting at one corner.",
     "travel": "The swept stone floor slides past underfoot across the room, the seated group shifting aside and the light from the shutters sweeping along the bare plaster wall.",
-    "guards": [
-      "the room holds one low platform, with the group seated on the floor around it"
-    ],
+    "guards": ["the room holds one low platform, with the group seated on the floor around it"],
     "events": [
       {
         "key": "1",

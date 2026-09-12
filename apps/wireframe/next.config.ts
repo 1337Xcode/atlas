@@ -8,7 +8,16 @@ if (existsSync(rootEnv)) process.loadEnvFile(rootEnv)
 
 // note: the atlas packages ship typescript source, so next compiles them with the app
 const config: NextConfig = {
-  transpilePackages: ['@atlas/archive', '@atlas/ingest', '@atlas/runtime', '@atlas/schema', '@atlas/scene', '@atlas/world'],
+  transpilePackages: [
+    '@atlas/archive',
+    '@atlas/ingest',
+    '@atlas/runtime',
+    '@atlas/schema',
+    '@atlas/scene',
+    '@atlas/world',
+  ],
+  // note: lets a loopback browser preview reach the dev server's hot-reload channel
+  allowedDevOrigins: ['127.0.0.1'],
 }
 
 export default config

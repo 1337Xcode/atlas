@@ -12,9 +12,10 @@ function bind(capabilities = LINGBOT_WORLD_2.capabilities, settings = DEFAULT_CO
   unbind = bindControls({
     surface,
     input,
-    settings: settings.strafeMode === 'lateral' && !capabilities.move.lateral
-      ? { ...settings, strafeMode: 'turn' }
-      : settings,
+    settings:
+      settings.strafeMode === 'lateral' && !capabilities.move.lateral
+        ? { ...settings, strafeMode: 'turn' }
+        : settings,
     capabilities,
     eventKeys: ['1'],
     onChange: () => {

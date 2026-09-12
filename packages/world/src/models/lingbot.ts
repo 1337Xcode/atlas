@@ -20,7 +20,10 @@ export const LINGBOT: WorldModelDescriptor = {
     setPrompt: (prompt) => ({ name: 'set_prompt', data: { prompt } }),
     setImage: (image) => ({ name: 'set_image', data: { image } }),
     setSeed: (seed) => ({ name: 'set_seed', data: { seed } }),
-    setRotationSpeed: (deg) => ({ name: 'set_rotation_speed_deg', data: { rotation_speed_deg: deg } }),
+    setRotationSpeed: (deg) => ({
+      name: 'set_rotation_speed_deg',
+      data: { rotation_speed_deg: deg },
+    }),
     lifecycle: (action) => ({ name: action, data: {} }),
     // why: one axis only, so forward wins over strafing — it is the more stable direction
     move: (prev, next) => {
@@ -31,7 +34,10 @@ export const LINGBOT: WorldModelDescriptor = {
     look: (prev, next) => {
       const commands = []
       if (next.lookHorizontal !== prev.lookHorizontal) {
-        commands.push({ name: 'set_look_horizontal', data: { look_horizontal: next.lookHorizontal } })
+        commands.push({
+          name: 'set_look_horizontal',
+          data: { look_horizontal: next.lookHorizontal },
+        })
       }
       if (next.lookVertical !== prev.lookVertical) {
         commands.push({ name: 'set_look_vertical', data: { look_vertical: next.lookVertical } })

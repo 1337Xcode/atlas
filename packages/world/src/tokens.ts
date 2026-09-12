@@ -76,11 +76,15 @@ export async function mintSessionToken(input: MintSessionTokenInput): Promise<Wo
 
   if (!response.ok) {
     const detail = await response.text().catch(() => '')
-    throw new ReactorTokenError(`token request rejected: ${response.status} ${detail}`, response.status)
+    throw new ReactorTokenError(
+      `token request rejected: ${response.status} ${detail}`,
+      response.status,
+    )
   }
 
   const parsed = TokenResponseSchema.safeParse(await response.json().catch(() => null))
-  if (!parsed.success) throw new ReactorTokenError('token response did not match the documented shape')
+  if (!parsed.success)
+    throw new ReactorTokenError('token response did not match the documented shape')
 
   // note: the server clamps expiry silently, so the returned value is the one to trust
   return WorldSessionTokenSchema.parse({ jwt: parsed.data.jwt, expiresAt: parsed.data.expires_at })

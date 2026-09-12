@@ -6,7 +6,10 @@ import type { ModelMessage } from './transport.ts'
 
 const ImageAccepted = z.looseObject({ width: z.number(), height: z.number() })
 const ChunkComplete = z.looseObject({ chunk_index: z.number() })
-const CommandError = z.looseObject({ command: z.string().optional(), reason: z.string().optional() })
+const CommandError = z.looseObject({
+  command: z.string().optional(),
+  reason: z.string().optional(),
+})
 const State = z.looseObject({
   running: z.boolean(),
   started: z.boolean(),

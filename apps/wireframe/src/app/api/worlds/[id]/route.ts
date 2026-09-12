@@ -1,4 +1,9 @@
-import { buildWorldSessionPlan, mintSessionToken, ReactorTokenError, SceneNotServableError } from '@atlas/world'
+import {
+  buildWorldSessionPlan,
+  mintSessionToken,
+  ReactorTokenError,
+  SceneNotServableError,
+} from '@atlas/world'
 import { getArchive, getModel } from '@/server/archive.ts'
 import { readConfig } from '@/server/config.ts'
 
@@ -40,7 +45,10 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
   } catch (cause) {
     // why: the reader sees why a world refused to open, never a blank frame
     if (cause instanceof SceneNotServableError) {
-      return Response.json({ error: cause.message, diagnostics: cause.diagnostics }, { status: 422 })
+      return Response.json(
+        { error: cause.message, diagnostics: cause.diagnostics },
+        { status: 422 },
+      )
     }
     if (cause instanceof ReactorTokenError) {
       return Response.json({ error: cause.message }, { status: cause.status ?? 502 })

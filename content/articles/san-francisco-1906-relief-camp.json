@@ -63,9 +63,7 @@
     "style": "Glass-plate documentary photography of 1906, monochrome.",
     "idle": "The families between the rows hold their places, a woman shifting a blanket over her arm, steam rising and folding off the cauldron and the canvas of the nearest tent breathing gently in the wind.",
     "travel": "Trampled grass and bare earth slide past underfoot along the line of tents, guy ropes passing close on either side as the families between the rows step aside.",
-    "guards": [
-      "the tents stand in ordered rows across the grass, each one pegged out and upright"
-    ],
+    "guards": ["the tents stand in ordered rows across the grass, each one pegged out and upright"],
     "events": [
       {
         "key": "1",

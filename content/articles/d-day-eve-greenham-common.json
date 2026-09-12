@@ -64,9 +64,7 @@
     "style": "Wartime press photography, monochrome, soft grain, flat light.",
     "idle": "The paratroopers stand about in their harness with weight settled, breath and cigarette smoke drifting, a chinstrap swinging loose and the grass bending flat in the wind off the runway.",
     "travel": "Flattened grass and kit bags slide past underfoot along the line of aircraft, webbing shifting and creaking with each stride as the groups of men part to let the way through.",
-    "guards": [
-      "the aircraft stand parked on the grass with their engines quiet"
-    ],
+    "guards": ["the aircraft stand parked on the grass with their engines quiet"],
     "events": [
       {
         "key": "1",

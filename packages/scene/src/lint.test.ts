@@ -5,7 +5,11 @@ import { authoredBrief, promptBrief } from '@atlas/schema/testing'
 import type { AuthoredSceneBrief, SceneBrief } from '@atlas/schema'
 
 function lint(brief: SceneBrief, sourceCount = 1): SceneDiagnostic[] {
-  return lintScene({ brief, compiled: compileScene(brief, { promptCharBudget: 2000 }), sourceCount })
+  return lintScene({
+    brief,
+    compiled: compileScene(brief, { promptCharBudget: 2000 }),
+    sourceCount,
+  })
 }
 
 function rules(diagnostics: readonly SceneDiagnostic[]): string[] {
@@ -20,7 +24,9 @@ describe('lintScene', () => {
   })
 
   it('rejects prose that describes absence', () => {
-    const brief = authoredBrief({ environment: 'An empty street with no traffic and no onlookers.' })
+    const brief = authoredBrief({
+      environment: 'An empty street with no traffic and no onlookers.',
+    })
     expect(rules(lint(brief))).toContain('prose/negation')
     expect(isServable(lint(brief))).toBe(false)
   })
@@ -54,7 +60,8 @@ describe('lintScene', () => {
 
   it('warns about a motion verb in the base without blocking the scene', () => {
     const brief = authoredBrief({
-      subject: 'A crowd walking along a graffitied concrete wall segment on a floodlit Berlin street.',
+      subject:
+        'A crowd walking along a graffitied concrete wall segment on a floodlit Berlin street.',
     })
     const diagnostics = lint(brief)
     expect(rules(diagnostics)).toContain('prose/motion-verb-in-base')

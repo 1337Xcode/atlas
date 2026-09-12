@@ -31,7 +31,8 @@ export function compileScene(brief: SceneBrief, options: CompileSceneOptions): C
 
   return {
     viewpoint,
-    layers: brief.kind === 'scene' && brief.vertical ? { ...layers, vertical: brief.vertical } : layers,
+    layers:
+      brief.kind === 'scene' && brief.vertical ? { ...layers, vertical: brief.vertical } : layers,
     seed: brief.seed,
     rotationSpeedDeg: brief.rotationSpeedDeg,
     promptCharBudget: options.promptCharBudget,
@@ -49,7 +50,10 @@ function compileBase(brief: SceneBrief): string {
 }
 
 function compileEvent(event: SceneEvent): SceneLayers['events'][number] {
-  const detail = typeof event.detail === 'string' ? { static: event.detail, dynamic: event.detail } : event.detail
+  const detail =
+    typeof event.detail === 'string'
+      ? { static: event.detail, dynamic: event.detail }
+      : event.detail
   return { key: event.key, name: event.name, static: detail.static, dynamic: detail.dynamic }
 }
 

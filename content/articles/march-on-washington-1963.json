@@ -62,9 +62,7 @@
     "style": "Press photography of 1963, monochrome, fine grain.",
     "idle": "The crowd holds its place along the water with shoulders shifting, a paper fan beating slowly, the placard in the foreground tilting in a raised hand and voices rising and settling in a song.",
     "travel": "Trodden grass and paved kerb slide past underfoot along the bank of the pool, the crowd parting shoulder by shoulder as the placard sways with each stride.",
-    "guards": [
-      "the obelisk stands single and complete at the far end of the water"
-    ],
+    "guards": ["the obelisk stands single and complete at the far end of the water"],
     "events": [
       {
         "key": "1",

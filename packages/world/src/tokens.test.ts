@@ -2,10 +2,20 @@ import { describe, expect, it, vi } from 'vitest'
 import { mintSessionToken, ReactorTokenError } from './tokens.ts'
 
 function jsonResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
 }
 
 const ok = { jwt: 'jwt-token', expires_at: 1_800_000_000 }
+
+// fn: the request body as the string it always is here, without stringifying an object by accident
+function sentBody(init?: RequestInit): string {
+  const body = init?.body
+  if (typeof body !== 'string') throw new Error('expected a json string body')
+  return body
+}
 
 describe('mintSessionToken', () => {
   it('scopes the token to the requested models', async () => {
@@ -23,7 +33,7 @@ describe('mintSessionToken', () => {
     expect(url).toBe('https://api.reactor.inc/tokens')
     expect(init?.method).toBe('POST')
     expect(new Headers(init?.headers).get('Reactor-API-Key')).toBe('rk_test')
-    expect(JSON.parse(String(init?.body))).toEqual({
+    expect(JSON.parse(sentBody(init))).toEqual({
       authorization_details: [
         {
           type: 'session',
@@ -37,7 +47,7 @@ describe('mintSessionToken', () => {
   it('never puts the api key in the request body', async () => {
     const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(ok))
     await mintSessionToken({ apiKey: 'rk_test', models: ['reactor/lingbot'], fetchImpl })
-    expect(String(fetchImpl.mock.calls[0]?.[1]?.body)).not.toContain('rk_test')
+    expect(sentBody(fetchImpl.mock.calls[0]?.[1])).not.toContain('rk_test')
   })
 
   it('passes optional constraints through when given', async () => {
@@ -50,7 +60,7 @@ describe('mintSessionToken', () => {
       maxSessionDurationSeconds: 600,
       fetchImpl,
     })
-    expect(JSON.parse(String(fetchImpl.mock.calls[0]?.[1]?.body))).toMatchObject({
+    expect(JSON.parse(sentBody(fetchImpl.mock.calls[0]?.[1]))).toMatchObject({
       expires_after: 900,
       authorization_details: [
         { constraints: { max_sessions: 2, max_session_duration_seconds: 600 } },
@@ -65,7 +75,9 @@ describe('mintSessionToken', () => {
   })
 
   it('reports the upstream status on rejection', async () => {
-    const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(new Response('bad key', { status: 401 }))
+    const fetchImpl = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response('bad key', { status: 401 }))
     await expect(
       mintSessionToken({ apiKey: 'rk_bad', models: ['reactor/lingbot'], fetchImpl }),
     ).rejects.toMatchObject({ name: 'ReactorTokenError', status: 401 })

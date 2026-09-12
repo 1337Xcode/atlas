@@ -41,7 +41,9 @@ describe('the archive in this repository', () => {
 
   it('carries no fidelity warnings either', async () => {
     const warnings = (await archive.entries()).flatMap((entry) =>
-      entry.diagnostics.map((diagnostic) => `${entry.article.id} ${diagnostic.rule}: ${diagnostic.message}`),
+      entry.diagnostics.map(
+        (diagnostic) => `${entry.article.id} ${diagnostic.rule}: ${diagnostic.message}`,
+      ),
     )
     expect(warnings).toEqual([])
   })

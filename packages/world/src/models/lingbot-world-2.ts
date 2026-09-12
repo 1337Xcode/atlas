@@ -21,7 +21,10 @@ export const LINGBOT_WORLD_2: WorldModelDescriptor = {
     setPrompt: (prompt) => ({ name: 'set_prompt', data: { prompt } }),
     setImage: (image) => ({ name: 'set_image', data: { image } }),
     setSeed: (seed) => ({ name: 'set_seed', data: { seed } }),
-    setRotationSpeed: (deg) => ({ name: 'set_rotation_speed_deg', data: { rotation_speed_deg: deg } }),
+    setRotationSpeed: (deg) => ({
+      name: 'set_rotation_speed_deg',
+      data: { rotation_speed_deg: deg },
+    }),
     lifecycle: (action) => ({ name: action, data: {} }),
     // feat: two independent axes, so W+A drives a diagonal
     move: (prev, next) => {
@@ -41,7 +44,10 @@ export const LINGBOT_WORLD_2: WorldModelDescriptor = {
     look: (prev, next) => {
       const commands = []
       if (next.lookHorizontal !== prev.lookHorizontal) {
-        commands.push({ name: 'set_look_horizontal', data: { look_horizontal: next.lookHorizontal } })
+        commands.push({
+          name: 'set_look_horizontal',
+          data: { look_horizontal: next.lookHorizontal },
+        })
       }
       if (next.lookVertical !== prev.lookVertical) {
         commands.push({ name: 'set_look_vertical', data: { look_vertical: next.lookVertical } })

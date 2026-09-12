@@ -320,7 +320,6 @@ describe('a model without a pose channel', () => {
 })
 
 function lastMove(): unknown {
-  return transport.sent
-    .filter((command) => command.name === 'set_move_longitudinal')
-    .at(-1)?.data.move_longitudinal
+  return transport.sent.filter((command) => command.name === 'set_move_longitudinal').at(-1)?.data
+    .move_longitudinal
 }
