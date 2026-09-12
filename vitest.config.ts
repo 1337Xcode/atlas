@@ -9,7 +9,7 @@ export default defineConfig({
         test: {
           name: 'server',
           environment: 'node',
-          include: ['packages/{schema,scene,archive,world,ingest}/src/**/*.test.ts'],
+          include: ['packages/{schema,scene,archive,world,ingest,briefs}/src/**/*.test.ts'],
         },
       },
       {

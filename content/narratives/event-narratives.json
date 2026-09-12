@@ -1,0 +1,363 @@
+{
+  "meta": {
+    "title": "Historical 3D Learning Pack — Narratives",
+    "updated": "2026-09-12",
+    "purpose": "Source-led event stories for interactive learning worlds. Each narrative weaves multiple newspaper perspectives into one readable arc.",
+    "editorial_rule": "A newspaper is a perspective and a historical artefact, not an omniscient narrator. Angles below are interpretive summaries of documented press roles—labelled as contemporary reporting, editorial, archive reproduction, or later retrospective. They are not verbatim page dumps.",
+    "event_count": 10
+  },
+  "events": [
+    {
+      "id": "01-apollo-11",
+      "tier": "popular",
+      "title": "Apollo 11 Moon Landing",
+      "date": "1969-07-20",
+      "date_display": "20 July 1969",
+      "primary_scene": "Eagle touchdown, Sea of Tranquility",
+      "research_file": "research/01-apollo-11.md",
+      "image_files": [
+        "assets/images/01-apollo-aldrin-near-eagle.jpg",
+        "assets/images/02-apollo-aldrin-full-frame.jpg",
+        "assets/images/03-apollo-lm-surface.jpg"
+      ],
+      "newspapers": ["The New York Times", "The Guardian", "The Washington Post"],
+      "summary": "On 20 July 1969 the lunar module Eagle landed in the Sea of Tranquility. Armstrong and Aldrin walked on the Moon while Collins orbited above. U.S. and British papers covered the feat as science, Cold War prestige, and a shared human milestone—each with a different emphasis.",
+      "narrative": "Late on 20 July 1969, mission clocks and Earth clocks briefly felt out of step. In Houston, controllers tracked Eagle’s fuel margin as Neil Armstrong flew past boulder fields toward a flatter patch of the Sea of Tranquility. Touchdown was not a parade moment; it was a piloting decision under radio delay, with the world listening for a single phrase that meant the machine had stopped falling.\n\nThe New York Times treated the landing as front-page history and engineering detail at once: who was where, what the timeline was, how the lunar module and command module split roles. Its coverage framed the event as a U.S. achievement measured in procedures, call signs, and the long Cold War race that had funded them. Readers got a chronology they could follow hour by hour—launch heritage, descent, and the planned EVA—less as myth than as a mission log written for a mass audience.\n\nThe Guardian, reporting for British and international readers, kept the technical spine but widened the lens. Alongside the landing itself it asked what the spectacle meant outside American borders: wonder, cost, and the odd intimacy of watching another nation’s flag planted on a shared sky. Where the Times often sounded like a neighbour to NASA’s press office, the Guardian sounded like a witness in another capital—impressed, analytical, and slightly cooler about national ownership of the Moon.\n\nThe Washington Post sat closer to policy. Its pages mixed mission narrative with Washington’s political weather: presidential timing, congressional pride, and the question of what Apollo proved about U.S. power after a decade of crisis. The Post’s value in this story is not a different landing site; it is a different gravity well—Capitol Hill and Foggy Bottom reading the same broadcast the Times treated as science news.\n\nRead together, the three papers build a full arc: Times for sequence and craft, Guardian for international meaning, Post for political stakes. The reconstructed learning world should freeze the touchdown window, keep Eagle’s state honest, and let visitors compare those press lenses as media literacy—not as interchangeable headlines for the same cheer.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "Mission chronology, engineering detail, U.S.-centred achievement frame",
+          "story_beat": "What happened, in order, and how the machines worked"
+        },
+        {
+          "outlet": "The Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "International and interpretive distance from NASA’s national narrative",
+          "story_beat": "What the landing meant beyond U.S. borders"
+        },
+        {
+          "outlet": "The Washington Post",
+          "type": "contemporary reporting",
+          "role_in_story": "Washington politics, prestige, and policy context around Apollo",
+          "story_beat": "How power in the capital read the same broadcast"
+        }
+      ],
+      "caveat": "World state is touchdown / early surface ops—not later EVA photo moments. Do not invent astronaut dialogue. NASA imagery must not imply endorsement."
+    },
+    {
+      "id": "02-berlin-wall",
+      "tier": "popular",
+      "title": "Fall of the Berlin Wall",
+      "date": "1989-11-09",
+      "date_display": "9 November 1989",
+      "primary_scene": "Bornholmer Straße crossing",
+      "research_file": "research/02-berlin-wall.md",
+      "image_files": [
+        "assets/images/04-berlin-potsdamer-platz-opening.jpeg",
+        "assets/images/05-berlin-people-walking.jpg",
+        "assets/images/06-berlin-checkpoint-charlie.jpg"
+      ],
+      "newspapers": ["The New York Times", "The Guardian"],
+      "summary": "On the night of 9 November 1989, confused travel rules and crowd pressure opened East Berlin’s border. Bornholmer Straße became an early crossing. U.S. and British papers caught the improvisation, joy, and geopolitical aftershock—without yet knowing the full end of the Cold War.",
+      "narrative": "The Wall did not fall by scheduled ceremony. It frayed when a bungled press conference, vague new travel language, and thousands of East Berliners testing the rules met border officers who no longer knew what order still held. At Bornholmer Straße, pressure and judgement—not a single heroic charge—opened a crossing. People walked, climbed, and wept in a night that felt sudden only if you ignored months of Leipzig marches and regime crack.\n\nThe New York Times reported the opening as breaking geopolitical news: checkpoints, crowds, and the meaning for U.S.–Soviet relations. Its early copy stressed surprise and scale—East Germans moving west, West Berliners answering, a barrier that had defined a generation suddenly porous. The Times voice is the foreign desk on deadline: map the places, name the officials, ask what Washington and Moscow do next.\n\nThe Guardian’s reporting, closer to European streets and left-of-centre readers, lingered on human weather—queues, confusion, celebration—and on Europe’s unfinished politics. It was less a cable about superpower chess and more a dispatch about people who had lived with the Wall as daily architecture. Later Guardian retrospectives would tidy the arc; contemporary pages still carried the night’s uncertainty.\n\nTogether the papers make a complete teaching story: Times for global stakes and named nodes on the map; Guardian for lived experience and continental consequence. The learning world should hold 9 November at Bornholmer—not later Potsdamer openings—and label press takes as first drafts of history, not final verdicts.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "Geopolitical stakes, checkpoints, superpower framing",
+          "story_beat": "What the opening meant for the Cold War map"
+        },
+        {
+          "outlet": "The Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "Street-level confusion, joy, and European political weather",
+          "story_beat": "How the night felt to people living the border"
+        }
+      ],
+      "caveat": "Primary scene is Bornholmer Straße on 9 November. Later openings (e.g. Potsdamer Platz days after) are not the same time-state. Avoid combat or escape-game mechanics."
+    },
+    {
+      "id": "03-d-day",
+      "tier": "popular",
+      "title": "D-Day Normandy Landings",
+      "date": "1944-06-06",
+      "date_display": "6 June 1944",
+      "primary_scene": "Omaha Beach, Easy Red",
+      "research_file": "research/03-d-day.md",
+      "image_files": [
+        "assets/images/07-dday-into-the-jaws.jpg",
+        "assets/images/08-dday-eisenhower-paratroopers.jpg",
+        "assets/images/09-dday-approaching-omaha.jpg"
+      ],
+      "newspapers": ["The New York Times", "The Guardian"],
+      "summary": "Allied forces landed across Normandy on 6 June 1944. Omaha Beach, especially Easy Red, saw fierce resistance and costly gains. Wartime papers told a censored, incomplete story—victory language mixed with delayed casualty truth.",
+      "narrative": "Before dawn on 6 June 1944, landing craft pushed toward a coast the Allies had studied on maps and models. At Omaha Beach the plan met underwater obstacles, strongpoints, and fire that shredded the first waves. Easy Red was not a tidy textbook arrow; it was smoke, wet sand, and units trying to find exits inland while the timetable tore.\n\nThe New York Times, working under wartime censorship and Allied communiqués, offered American readers a controlled window: invasion confirmed, beaches named as release allowed, progress claimed in broad strokes. Early pages could not show the full butcher’s bill. The Times story in this pack is the home-front paper of record—proud, incomplete, and bound to official language even when correspondents knew more.\n\nThe Guardian (then still often remembered in this era through its Manchester Guardian lineage in British wartime reading) carried the British and Commonwealth stake: Channel crossing, coalition command, and a European liberation frame that was not only an American epic. Its wartime voice stressed alliance and endurance as much as any single beach’s agony.\n\nA full story for learners needs both: the U.S. paper’s Omaha-centred American narrative and the British paper’s coalition horizon—plus an explicit caveat that neither page is a body-camera. The world should teach Easy Red as hard fighting under incomplete information, never as a playable shooter.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "U.S. home-front invasion narrative under censorship",
+          "story_beat": "What American readers were allowed to know on day one"
+        },
+        {
+          "outlet": "The Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "British/coalition frame of the Channel invasion",
+          "story_beat": "Normandy as allied campaign, not only U.S. beach drama"
+        }
+      ],
+      "caveat": "Trauma-adjacent. Provide low-stimulation route. No heroic combat gameplay. Press pages were censored—label them as such."
+    },
+    {
+      "id": "04-march-on-washington",
+      "tier": "popular",
+      "title": "March on Washington for Jobs and Freedom",
+      "date": "1963-08-28",
+      "date_display": "28 August 1963",
+      "primary_scene": "National Mall and Lincoln Memorial",
+      "research_file": "research/04-march-on-washington.md",
+      "image_files": [
+        "assets/images/10-march-leadership-procession.jpg",
+        "assets/images/12-march-reflecting-pool-crowd.jpg"
+      ],
+      "source_only_images": [
+        {
+          "manifest_row": 11,
+          "note": "LOC 2013650621 Lincoln Memorial crowd (Leffler); host returned 403",
+          "source_page": "https://www.loc.gov/pictures/item/2013650621/"
+        }
+      ],
+      "newspapers": ["The New York Times", "The Washington Post"],
+      "summary": "On 28 August 1963 hundreds of thousands gathered on the National Mall for jobs and freedom. Speeches at the Lincoln Memorial—including King’s—met careful planning and heavy press. New York and Washington papers covered crowd, programme, and political risk from different desks.",
+      "narrative": "The Mall filled under a disciplined plan: trains, buses, marshals, a programme built to prove mass dignity as political argument. At the Lincoln Memorial the day moved through music, speeches, and labour–civil rights coalition demands for jobs and freedom—not a spontaneous flash mob.\n\nThe New York Times covered the march as national news: estimates of size, named leaders, the speech list, and how the demonstration sat inside the Kennedy-era civil rights fight. Its New York desk watched a capital event that was also a countrywide mobilisation, measuring orderliness and message for readers far from the Reflecting Pool.\n\nThe Washington Post covered the same day as a local–national hybrid: how the city prepared, how crowds moved along the Mall, what officials feared and what they saw. Being the hometown paper of the capital, the Post’s texture is logistics and atmosphere—heat, routes, police posture—beside the policy stakes the Times also tracked.\n\nTogether they form a complete narrative: Times for national meaning and programme; Post for place, crowd flow, and Washington’s nervous hospitality. The learning world should keep the Mall’s geography honest and treat press takes as competing lenses on the same afternoon—not as a single mythic caption.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "National civil-rights and labour story, programme and leadership",
+          "story_beat": "Why the march mattered beyond Washington"
+        },
+        {
+          "outlet": "The Washington Post",
+          "type": "contemporary reporting",
+          "role_in_story": "Capital logistics, crowd movement, local–national hybrid coverage",
+          "story_beat": "How the city experienced the Mall that day"
+        }
+      ],
+      "caveat": "Do not invent speech text beyond public-domain or licensed sources. Named figures are historical persons—no AI likeness without review."
+    },
+    {
+      "id": "05-partition-india",
+      "tier": "popular",
+      "title": "Independence and Partition of India",
+      "date": "1947-08-15",
+      "date_display": "14–15 August 1947",
+      "primary_scene": "Delhi, Lahore, and Punjab atlas nodes",
+      "research_file": "research/05-partition-india.md",
+      "image_files": ["assets/images/13-partition-gandhi-suhrawardy.jpg"],
+      "newspapers": ["The New York Times", "Manchester Guardian", "Dawn"],
+      "summary": "In mid-August 1947 British India became independent India and Pakistan. Celebrations and catastrophe ran together as borders, migrations, and violence reshaped Punjab and beyond. U.S., British, and Muslim League-linked press told overlapping but non-identical stories.",
+      "narrative": "Independence arrived on a split clock: Pakistan’s ceremonies on 14 August, India’s on 15 August, with Radcliffe’s boundary work still raw. Delhi and Lahore were not one scene. They were linked nodes in an atlas of transfer of power, refugee movement, and communal violence that no single parade photograph can hold.\n\nThe New York Times reported Partition as world news: dominion status, Mountbatten’s timetable, and early dispatches on disorder. Distance made some copy schematic—maps, ministers, casualty guesses—but it placed the crisis on a global front page for U.S. readers who had not lived the subcontinent’s politics.\n\nThe Manchester Guardian carried British imperial hangover and liberal anxiety: end of empire, responsibility, and reports of mass flight. Its voice often wrestled with what Britain had left behind, not only what new flags meant.\n\nDawn, closely tied to the Muslim League’s political world, read the same fortnight through Pakistan’s birth narrative—legitimacy, leadership, and the costs borne by Muslim refugees—while still existing inside a press field of competing communal claims. Using Dawn beside the Times and Guardian is how the learning story avoids a single metropolitan narrator.\n\nA full narrative therefore moves between three desks: American overview, British reckoning, and Pakistani nationalist press. The world must label trauma, refuse spectacle, and keep Delhi/Lahore/Punjab as distinct nodes—not one generic “Partition street.”",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "Global overview of transfer of power and early violence reports",
+          "story_beat": "How a distant foreign desk mapped independence week"
+        },
+        {
+          "outlet": "Manchester Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "British end-of-empire frame and refugee catastrophe coverage",
+          "story_beat": "Responsibility and aftermath as seen from Britain"
+        },
+        {
+          "outlet": "Dawn",
+          "type": "contemporary reporting",
+          "role_in_story": "Pakistan-centred political narrative around independence",
+          "story_beat": "Birth of Pakistan as lived press story, not only London/New York copy"
+        }
+      ],
+      "caveat": "High trauma risk. Low-stimulation route required. Limited rights-cleared stills (one in pack). No violence or escape gameplay. Distinguish celebration from mass displacement."
+    },
+    {
+      "id": "06-armistice-1918",
+      "tier": "popular",
+      "title": "Armistice of 11 November 1918",
+      "date": "1918-11-11",
+      "date_display": "11 November 1918",
+      "primary_scene": "Compiègne, with city context windows",
+      "research_file": "research/06-armistice-1918.md",
+      "image_files": [
+        "assets/images/14-armistice-nyc-celebration.jpg",
+        "assets/images/15-armistice-train.jpg",
+        "assets/images/16-armistice-london-crowd.jpg"
+      ],
+      "newspapers": ["The New York Times", "Manchester Guardian", "New-York Tribune"],
+      "summary": "Fighting on the Western Front ceased at 11 a.m. on 11 November 1918 after terms signed in a Compiègne railcar. Cities erupted; grief and flu still ran. New York and Manchester papers captured different tones of relief, politics, and street noise.",
+      "narrative": "In a forest clearing near Compiègne, Allied and German delegates sealed an armistice whose public face was a clock time: the eleventh hour. Guns fell quiet on the Western Front while telegraphs outran understanding. Celebration in capitals was real; so were empty chairs and the influenza already killing civilians.\n\nThe New York Times announced peace-with-conditions to a U.S. audience that had entered late and loudly: headlines of victory, Wilsonian language, and city celebration. Its story beat is national relief wired to presidential diplomacy.\n\nThe Manchester Guardian spoke from a Britain exhausted by four years of industrial war—relief edged with reckoning about cost, reconstruction, and what “victory” owed the dead. Its pages help learners hear a European weariness the American victory chorus sometimes skipped.\n\nThe New-York Tribune, a competing New York voice, sharpens media literacy: same city, same hour, different paper habit—emphasis, headline heat, and which parade detail led. Pairing Tribune with Times shows that even one city’s joy was edited more than once.\n\nThe full story therefore needs Compiègne’s sealed car (exterior context only) plus city windows: NYC celebration is not London’s crowd is not a universal mood. Press perspectives disagree on tone more than on the ceasefire time.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "U.S. victory/relief frame and diplomatic headline narrative",
+          "story_beat": "Armistice as American front-page triumph and policy moment"
+        },
+        {
+          "outlet": "Manchester Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "British exhaustion, cost, and reconstruction anxiety",
+          "story_beat": "Peace after attrition, not only parade"
+        },
+        {
+          "outlet": "New-York Tribune",
+          "type": "contemporary reporting",
+          "role_in_story": "Second New York desk—comparison for media literacy",
+          "story_beat": "Same city celebration, different editorial temperature"
+        }
+      ],
+      "caveat": "Do not invent private railcar dialogue. City celebrations are context windows, not proof of universal joy. Flu and mourning belong in the source layer."
+    },
+    {
+      "id": "07-san-francisco-1906",
+      "tier": "niche",
+      "title": "1906 San Francisco Earthquake and Fire",
+      "date": "1906-04-18",
+      "date_display": "18–21 April 1906",
+      "primary_scene": "Golden Gate Park relief camp",
+      "research_file": "research/07-san-francisco-1906.md",
+      "image_files": [
+        "assets/images/17-sf-devastation.gif",
+        "assets/images/18-sf-city-hall-ruin.jpg",
+        "assets/images/19-sf-golden-gate-relief-camp.jpg"
+      ],
+      "newspapers": ["San Francisco Call", "The New York Times"],
+      "summary": "On 18 April 1906 earthquake and fire wrecked much of San Francisco. Relief camps rose in Golden Gate Park. Local and distant papers told survival, rumour, and civic order under stress.",
+      "narrative": "The shock hit before dawn. Chimneys failed, water mains broke, and fire moved where pumps could not. For days the city was a map of burned blocks and improvised authority. Golden Gate Park became canvas, queues, and governance—tents as policy, not scenery.\n\nThe San Francisco Call wrote from inside the disaster: local streets, missing persons energy, martial order, and the fight to sound civic continuity while presses themselves were disrupted. Its perspective is proximity—sometimes accurate, sometimes rumour-speed—which learners should treat as primary colour, not gospel.\n\nThe New York Times reported across a continent: magnitude estimates, death figures that moved, railroad and wire stories about a Pacific city Americans knew as spectacle. Distance produced summary and error risk; it also produced a national charity and curiosity frame the local paper did not need.\n\nRead as one story: Call for ground truth texture and local institutions; Times for how the rest of the country narrated San Francisco’s fall and relief. The learning world stays in the relief-camp time-state—not the kite aerial of later ruins alone—and keeps earthquake damage distinct from fire damage.",
+      "press_perspectives": [
+        {
+          "outlet": "San Francisco Call",
+          "type": "contemporary reporting",
+          "role_in_story": "Local disaster desk—streets, order, survival logistics",
+          "story_beat": "How the city narrated itself while burning and rebuilding shelter"
+        },
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "National wire overview and distant casualty/charity narrative",
+          "story_beat": "How New York readers met a California catastrophe"
+        }
+      ],
+      "caveat": "Relief camp is not a generic refugee aesthetic. Distinguishing quake vs fire damage matters for accuracy. Avoid disaster-tourism framing."
+    },
+    {
+      "id": "08-triangle-fire",
+      "tier": "niche",
+      "title": "Triangle Shirtwaist Factory Fire",
+      "date": "1911-03-25",
+      "date_display": "25 March 1911",
+      "primary_scene": "Asch Building / Brown Building",
+      "research_file": "research/08-triangle-fire.md",
+      "image_files": [
+        "assets/images/20-triangle-fire-exterior.jpg",
+        "assets/images/21-triangle-mourning-demonstration.jpg"
+      ],
+      "source_only_images": [
+        {
+          "manifest_row": 22,
+          "note": "Pier morgue crowd; LOC 403 — retrieve only after content note check",
+          "source_page": "https://commons.wikimedia.org/wiki/File:Triangle_Waist_Co._fire,_N.Y.C.-Crowds_outside_pier_morgue_LCCN96513967.jpg"
+        }
+      ],
+      "newspapers": ["New-York Tribune", "The Washington Herald", "New York Times"],
+      "summary": "Fire swept the Triangle Waist Company floors on 25 March 1911, killing 146 workers—mostly young immigrant women. New York and out-of-town papers covered horror, blame, and the reform fight that followed.",
+      "narrative": "Late Saturday afternoon, fire took the upper floors of the Asch Building. Locked exits, inadequate escapes, and a factory system built for speed turned a workplace into a trap. Bodies on the pavement and grief at the pier morgue became the public evidence that sweatshop rules had a body count.\n\nThe New-York Tribune’s contemporary reporting pushed scene and outrage—what witnesses said they saw, how quickly blame sought locked doors and owners, how a city paper made industrial death undeniable on Monday morning.\n\nThe Washington Herald carried the story beyond New York: a capital-region mirror that turned a local factory crime into national labour news. Its role in the full narrative is transmission—Triangle as American industrial warning, not only a Manhattan tragedy.\n\nThe New York Times added the paper-of-record spine: confirmed counts, names as they emerged, official inquiries, and the reform politics that used the fire as proof. Comparing Times and Tribune on the same streets teaches that even local coverage split between ledger and cry.\n\nThe complete learning story is therefore three desks on one building: Tribune’s urgency, Herald’s national echo, Times’s institutional follow-through—always with content notes, never as a dramatic backdrop for play.",
+      "press_perspectives": [
+        {
+          "outlet": "New-York Tribune",
+          "type": "contemporary reporting",
+          "role_in_story": "Immediate New York scene coverage and moral urgency",
+          "story_beat": "Making locked doors and factory death visible"
+        },
+        {
+          "outlet": "The Washington Herald",
+          "type": "contemporary reporting",
+          "role_in_story": "Out-of-town amplification into national labour news",
+          "story_beat": "Triangle beyond Manhattan’s borough line"
+        },
+        {
+          "outlet": "New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "Counts, inquiry, and reform follow-through",
+          "story_beat": "From fire day to factory-law politics"
+        }
+      ],
+      "caveat": "Trauma-adjacent. Never use fire imagery as spectacle. Pier-morgue material needs content notes. Prefer aftermath/labour-history sequence for interactions."
+    },
+    {
+      "id": "09-bandung-1955",
+      "tier": "niche",
+      "title": "Bandung Conference",
+      "date": "1955-04-18",
+      "date_display": "18–24 April 1955",
+      "primary_scene": "Merdeka Building, Bandung",
+      "research_file": "research/09-bandung-1955.md",
+      "image_files": [
+        "assets/images/23-bandung-economic-plenary.jpg",
+        "assets/images/24-bandung-soekarno-opening.jpg",
+        "assets/images/25-bandung-savoy-homann-dinner.jpg"
+      ],
+      "newspapers": ["The New York Times", "The Guardian"],
+      "summary": "In April 1955 Asian and African nations met in Bandung to assert postcolonial solidarity and non-alignment. Western papers covered Soekarno’s stagecraft, Cold War suspicion, and a diplomacy that was not Washington- or London-led.",
+      "narrative": "Delegates filled Bandung’s Merdeka Building under Indonesia’s hosting: speeches, committees, dinners, and a public claim that formerly colonised peoples would write their own diplomatic script. The Asian–African Conference was theatre and substance—economic sessions beside anti-colonial language that made Cold War capitals uneasy.\n\nThe New York Times covered Bandung through a U.S. Cold War filter: who attended, how communist and neutralist currents mixed, what the meeting meant for American strategy in Asia and Africa. Its contemporary tone often measured threat and curiosity more than celebration.\n\nThe Guardian’s coverage, from a British press culture living late empire’s aftertaste, tracked Afro-Asian assertion with a different nervous system—interested in postcolonial politics and Britain’s fading centrality. Read beside the Times, it helps learners escape a single Washington reading of Merdeka’s halls.\n\nFull story = conference choreography on the ground + two Western desks arguing meaning. Indonesian government photographs in the asset pack document place; they are not licences to invent private delegate dialogue or AI Soekarno speech.",
+      "press_perspectives": [
+        {
+          "outlet": "The New York Times",
+          "type": "contemporary reporting",
+          "role_in_story": "U.S. Cold War reading of Afro-Asian non-alignment",
+          "story_beat": "Bandung as strategic puzzle for Washington"
+        },
+        {
+          "outlet": "The Guardian",
+          "type": "contemporary reporting",
+          "role_in_story": "British/post-imperial angle on Asian–African assertion",
+          "story_beat": "A conference that recentred diplomacy away from old empires"
+        }
+      ],
+      "caveat": "No invented private conversations. Do not turn Soekarno into a speaking likeness avatar. Keep plenary vs dinner spaces distinct."
+    },
+    {
+      "id": "10-windrush-1948",
+      "tier": "niche",
+      "title": "Arrival of HMT Empire Windrush",
+      "date": "1948-06-22",
+      "date_display": "22 June 1948",
+      "primary_scene": "Tilbury Docks",
+      "research_file": "research/10-windrush-1948.md",
+      "image_files": [
+        "assets/images/26-windrush-vessel-profile.jpg",
+        "assets/images/27-windrush-passenger-list-header.jpg",
+        "assets/images/28-windrush-monte-rosa.jpg"
+      ],
+      "newspapers": ["The Guardian", "The Independent"],
+      "summary": "On 22 June 1948 HMT Empire Windrush docked at Tilbury carrying passengers from the Caribbean among others. Contemporary and later British press framed labour need, race, belonging, and—decades on—the Windrush generation’s citizenship crisis.",
+      "narrative": "Windrush’s arrival at Tilbury was a dockside moment inside a longer story: wartime service, British nationality law, labour shortages, and Caribbean migrants who expected belonging in the “mother country.” The ship’s profile is not the whole truth; passenger lists and later politics matter as much as the quay.\n\nThe Guardian’s historical role here spans contemporary postwar reporting culture and later revisitations: labour, race, and Britain’s changing streets. In a learning narrative it supplies the British broadsheet habit of tying Tilbury to national self-image—sometimes progressive, sometimes blind.\n\nThe Independent, founded long after 1948, enters as later retrospective and campaign-era journalism around Windrush generation rights. Its contribution is explicitly not a 1948 eyewitness page; it is how late-twentieth- and twenty-first-century British media reframed the landing as origin story for a citizenship scandal. Labelling that gap is the point.\n\nTogether they make a full arc: Guardian for British press continuity around migration and race; Independent for modern reckoning. The world must keep Tilbury 1948 as the scene while teaching that “Windrush” as public keyword is also a later editorial invention layered onto a real docking.",
+      "press_perspectives": [
+        {
+          "outlet": "The Guardian",
+          "type": "contemporary reporting / later retrospective",
+          "role_in_story": "British broadsheet frame for arrival, labour, and race over time",
+          "story_beat": "Tilbury inside Britain’s postwar migration narrative"
+        },
+        {
+          "outlet": "The Independent",
+          "type": "later retrospective",
+          "role_in_story": "Modern reframing—Windrush generation and citizenship crisis",
+          "story_beat": "How later media named and fought over the landing’s legacy"
+        }
+      ],
+      "caveat": "Vessel profile photos are not Tilbury arrival shots. Monte Rosa images must never be captioned as 1948 Tilbury. Independent coverage is retrospective—label it."
+    }
+  ]
+}
