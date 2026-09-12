@@ -66,10 +66,16 @@ export const BeatSchema = z.object({
   phase: PhaseSchema,
   track: z.boolean().optional(),
   drift: z.boolean().optional(),
-  camera: move({ x: z.number().optional(), y: z.number().optional(), z: z.number().optional() })
-    .optional(),
-  focus: move({ x: z.number().optional(), y: z.number().optional(), radius: z.number().optional() })
-    .optional(),
+  camera: move({
+    x: z.number().optional(),
+    y: z.number().optional(),
+    z: z.number().optional(),
+  }).optional(),
+  focus: move({
+    x: z.number().optional(),
+    y: z.number().optional(),
+    radius: z.number().optional(),
+  }).optional(),
   post: move({
     grain: z.number().optional(),
     vignette: z.number().optional(),
@@ -227,3 +233,6 @@ export type WordBox = {
 }
 
 export type AlignedWord = { w: string; start: number; end: number }
+
+// note: one typeset line on a page scan, in page-relative units
+export type LineBox = { text: string; y: number; h: number; x?: number; w?: number }

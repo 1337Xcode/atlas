@@ -1,29 +1,73 @@
-import { useEffect, useRef } from 'react';
-import OpenSeadragon from 'openseadragon';
-import { motion } from 'framer-motion';
-import type { Cluster } from '../data/types';
+import { useEffect, useRef } from 'react'
+import OpenSeadragon from 'openseadragon'
+import { motion } from 'framer-motion'
+import type { Cluster } from '../data/types'
 
-export interface HubHandoff { bounds: { x: number; y: number; width: number; height: number }; pageId: string }
+export interface HubHandoff {
+  bounds: { x: number; y: number; width: number; height: number }
+  pageId: string
+}
 
 /** Three DZI pages in a row, controls hidden, animationTime 2.4, springStiffness 3. On selection the viewport is captured and returned so the PagePlane can be placed at the same framing. */
-export function Hub({ cluster, resolved, visible, onSelect }: { cluster: Cluster; resolved: string[]; visible: boolean; onSelect: (h: HubHandoff) => void }) {
-  const el = useRef<HTMLDivElement>(null);
+export function Hub({
+  cluster,
+  resolved,
+  visible,
+  onSelect,
+}: {
+  cluster: Cluster
+  resolved: string[]
+  visible: boolean
+  onSelect: (h: HubHandoff) => void
+}) {
+  const el = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (!el.current) return;
-    const viewer = OpenSeadragon({ element: el.current, showNavigationControl: false, showNavigator: false, animationTime: 2.4, springStiffness: 3, visibilityRatio: 1, gestureSettingsMouse: { clickToZoom: false } });
-    cluster.pages.forEach((p, i) => viewer.addTiledImage({ tileSource: p.thumb.replace(/\.(png|jpg)$/, '.dzi'), x: i * 1.12, y: 0, width: 1 }));
+    if (!el.current) return
+    const viewer = OpenSeadragon({
+      element: el.current,
+      showNavigationControl: false,
+      showNavigator: false,
+      animationTime: 2.4,
+      springStiffness: 3,
+      visibilityRatio: 1,
+      gestureSettingsMouse: { clickToZoom: false },
+    })
+    cluster.pages.forEach((p, i) =>
+      viewer.addTiledImage({
+        tileSource: p.thumb.replace(/\.(png|jpg)$/, '.dzi'),
+        x: i * 1.12,
+        y: 0,
+        width: 1,
+      }),
+    )
     viewer.addHandler('canvas-click', (e) => {
-      const point = viewer.viewport.pointFromPixel(e.position); const idx = Math.floor(point.x / 1.12); const page = cluster.pages[idx]; if (!page) return;
-      const b = viewer.viewport.getBounds(); onSelect({ bounds: { x: b.x, y: b.y, width: b.width, height: b.height }, pageId: page.id });
-    });
-    return () => viewer.destroy();
-  }, [cluster, onSelect]);
+      const point = viewer.viewport.pointFromPixel(e.position)
+      const idx = Math.floor(point.x / 1.12)
+      const page = cluster.pages[idx]
+      if (!page) return
+      const b = viewer.viewport.getBounds()
+      onSelect({ bounds: { x: b.x, y: b.y, width: b.width, height: b.height }, pageId: page.id })
+    })
+    return () => viewer.destroy()
+  }, [cluster, onSelect])
   return (
-    <motion.div className="fixed inset-0" animate={{ opacity: visible ? 1 : 0 }} transition={{ duration: 1.2 }} style={{ pointerEvents: visible ? 'auto' : 'none' }}>
+    <motion.div
+      className="fixed inset-0"
+      animate={{ opacity: visible ? 1 : 0 }}
+      transition={{ duration: 1.2 }}
+      style={{ pointerEvents: visible ? 'auto' : 'none' }}
+    >
       <div ref={el} className="h-full w-full" />
       <div className="ui pointer-events-none fixed bottom-[18vh] left-0 right-0 flex justify-center gap-16">
-        {cluster.pages.map((p) => <span key={p.id} className="flex flex-col items-center gap-1"><span>{p.title}</span>{resolved.includes(p.id) && <span style={{ color: 'rgba(255,178,86,0.85)' }}>Resolved</span>}</span>)}
+        {cluster.pages.map((p) => (
+          <span key={p.id} className="flex flex-col items-center gap-1">
+            <span>{p.title}</span>
+            {resolved.includes(p.id) && (
+              <span style={{ color: 'rgba(255,178,86,0.85)' }}>Resolved</span>
+            )}
+          </span>
+        ))}
       </div>
     </motion.div>
-  );
+  )
 }
