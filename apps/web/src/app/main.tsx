@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
+import './index.css'
 
 // feat: ?studio=1 opens the theatre timeline for authoring the beats by hand
 if (new URLSearchParams(location.search).get('studio') === '1') {

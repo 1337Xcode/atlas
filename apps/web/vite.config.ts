@@ -1,9 +1,10 @@
+import tailwind from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 // note: shaders are imported as strings, so .frag files are treated as assets to inline
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwind()],
   assetsInclude: ['**/*.frag'],
   server: {
     port: 5173,

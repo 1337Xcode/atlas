@@ -2,6 +2,8 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Canvas, useFrame } from '@react-three/fiber'
 import { catalogue } from '../data/client'
 import { localPaths } from '../data/paths'
+import { createProjector } from '../scene/projection'
+import { useViewport } from './useViewport'
 import type { Cluster, LineBox, Scenario, WordBox } from '../data/types'
 import { usePhases } from '../sequence/phases'
 import { makeSampler, createSheet } from '../sequence/theatre'
@@ -121,6 +123,7 @@ function Clock({
 }
 
 export function App() {
+  const viewport = useViewport()
   const [clusters, setClusters] = useState<Cluster[]>([])
   const [sc, setSc] = useState<Scenario | null>(null)
   const [words, setWords] = useState<Record<string, WordBox[]>>({})
@@ -389,11 +392,9 @@ export function App() {
     radius: sample('focus.radius', t),
   }
   const mix = prov ? 0 : sample('world.mix', t)
-  const s = window.innerHeight / (2 * Math.tan((17.5 * Math.PI) / 180)) / cam.z
-  const proj = (u: number, v: number): [number, number] => [
-    window.innerWidth / 2 + (u - cam.x) * s,
-    window.innerHeight / 2 + (v - cam.y) * s,
-  ]
+  // note: one projector per render, so the overlay and the scene agree after any resize
+  const projector = createProjector(viewport, cam)
+  const proj = projector.toScreen
   const focusNdc = proj(focus.x, focus.y)
   const marks: ProjectedMark[] = sc.marks.map((m) => {
     const p = sc.pages[m.page]!
@@ -508,8 +509,8 @@ export function App() {
           aberration={prov ? 0 : sample('post.aberration', t)}
           warmth={prov ? 0 : sample('warmth', t)}
           focus={{
-            cx: focusNdc[0] / window.innerWidth,
-            cy: 1 - focusNdc[1] / window.innerHeight,
+            cx: projector.toUnit(focusNdc[0], focusNdc[1])[0],
+            cy: projector.toUnit(focusNdc[0], focusNdc[1])[1],
             radius: focus.radius * 0.5,
             enabled: !prov && mix < 0.5 && focus.radius < 0.98,
           }}
