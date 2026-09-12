@@ -148,15 +148,20 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     guard.begin()
   }
 
-  // fn: release the gpu and say why, so the ui can offer the right way back in
-  const closeSession = async (reason: SessionEndReason) => {
-    if (store.snapshot().phase === 'closed') return
+  // fn: stop every clock and hand the gpu back, whatever the outcome was
+  const releaseGpu = async () => {
     guard.dispose()
     clearTimeout(warmupTimer)
     clearTimeout(videoWarmupTimer)
     input.clear()
-    store.update({ phase: 'closed', endedReason: reason, countdown: null })
     await transport.disconnect().catch(() => undefined)
+  }
+
+  // fn: release the gpu and say why, so the ui can offer the right way back in
+  const closeSession = async (reason: SessionEndReason) => {
+    if (store.snapshot().phase === 'closed') return
+    store.update({ phase: 'closed', endedReason: reason, countdown: null })
+    await releaseGpu()
   }
 
   const onEvent = (event: ModelEvent) => {
@@ -180,17 +185,18 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
     }
   }
 
+  // fn: resolve true when the model confirms, false when the wait runs out
   const waitFor = (kind: ModelEvent['kind'], timeoutMs: number) =>
-    new Promise<void>((resolve) => {
+    new Promise<boolean>((resolve) => {
       const timer = setTimeout(() => {
         off()
-        resolve()
+        resolve(false)
       }, timeoutMs)
       const off = transport.on('message', (message) => {
         if (readModelMessage(message).kind !== kind) return
         clearTimeout(timer)
         off()
-        resolve()
+        resolve(true)
       })
     })
 
@@ -288,9 +294,9 @@ export function createWorldSession(options: CreateWorldSessionOptions): WorldSes
         await transport.connect()
         await stage()
       } catch (cause) {
-        // why: a failed world shows a reason and releases the gpu, it never takes the page down
-        store.update({ phase: 'error', error: describe(cause) })
-        await transport.disconnect().catch(() => undefined)
+        // why: a failed world names the reason and releases the gpu, it never takes the page down
+        store.update({ phase: 'error', error: describe(cause), endedReason: 'failed' })
+        await releaseGpu()
       }
     },
     restage: async () => {

@@ -31,8 +31,8 @@ export const WorldCapabilitiesSchema = z.object({
 
 // feat: tuning knobs the harness or the production frontend can override per session
 export const WorldControlSettingsSchema = z.object({
-  // why: a fresh world materialises before it accepts input, so staging is paced
-  imageSettleMs: z.number().int().nonnegative(),
+  // why: staging waits for the model to confirm each step, and this caps each wait
+  confirmTimeoutMs: z.number().int().positive(),
   startDelayMs: z.number().int().nonnegative(),
   resetSettleMs: z.number().int().nonnegative(),
   // note: mouse pixels to radians of yaw per latent

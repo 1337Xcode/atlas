@@ -25,12 +25,13 @@ export type FakeTransport = WorldTransport & {
 }
 
 export type FakeTransportOptions = {
-  // note: mirrors the real model, which confirms a decoded seed image with image_accepted
-  autoAcceptImage?: boolean
+  // note: mirrors the real model, which confirms each staged condition with its own event
+  // docs: https://docs.reactor.inc/model-api-reference/lingbot-world-2/schema#commands
+  autoConfirm?: boolean
 }
 
 export function createFakeTransport(options: FakeTransportOptions = {}): FakeTransport {
-  const { autoAcceptImage = true } = options
+  const { autoConfirm = true } = options
   const sent: Command[] = []
   const uploads: string[] = []
   const refusals = new Map<string, string>()
@@ -82,8 +83,13 @@ export function createFakeTransport(options: FakeTransportOptions = {}): FakeTra
       if (refusal) {
         return { type: 'command_error', data: { command: command.name, reason: refusal } }
       }
-      if (command.name === 'set_image' && autoAcceptImage) {
+      if (autoConfirm && command.name === 'set_image') {
         emitMessage('image_accepted', { width: 1664, height: 960 })
+        emitMessage('conditions_ready', { has_image: true, has_prompt: false })
+      }
+      if (autoConfirm && command.name === 'set_prompt') {
+        const prompt = command.data.prompt
+        emitMessage('prompt_accepted', { prompt: typeof prompt === 'string' ? prompt : '' })
       }
       return undefined
     },

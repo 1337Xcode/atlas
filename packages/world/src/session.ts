@@ -18,7 +18,8 @@ import type { WorldModelDescriptor } from './wire.ts'
 // note: paced from the reference app's launch sequence, which waits for the model between steps
 // docs: https://docs.reactor.inc/model-api-reference/lingbot-world-2/tutorial
 export const DEFAULT_CONTROL_SETTINGS: WorldControlSettings = {
-  imageSettleMs: 4000,
+  // note: a generous ceiling, since staging waits on an event and proceeds as soon as it lands
+  confirmTimeoutMs: 20_000,
   startDelayMs: 1500,
   resetSettleMs: 600,
   lookSensitivity: 0.0015,
