@@ -2,7 +2,7 @@ import { IDLE_SCENE_INPUT_STATE, type SceneInputState } from '@atlas/schema'
 import { describe, expect, it } from 'vitest'
 import { compileScene } from './compile.ts'
 import { composePrompt, composeStagingPrompt } from './compose.ts'
-import { authoredBrief } from './scene.fixture.ts'
+import { authoredBrief } from '@atlas/schema/testing'
 
 const scene = compileScene(authoredBrief(), { promptCharBudget: 2000 })
 

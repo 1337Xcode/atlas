@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { compileScene } from './compile.ts'
-import { authoredBrief, promptBrief } from './scene.fixture.ts'
+import { authoredBrief, promptBrief } from '@atlas/schema/testing'
 
 const options = { promptCharBudget: 2000 }
 

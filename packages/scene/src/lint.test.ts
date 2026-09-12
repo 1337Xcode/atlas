@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { compileScene } from './compile.ts'
 import { isServable, lintScene, type SceneDiagnostic } from './lint.ts'
-import { authoredBrief, promptBrief } from './scene.fixture.ts'
+import { authoredBrief, promptBrief } from '@atlas/schema/testing'
 import type { AuthoredSceneBrief, SceneBrief } from '@atlas/schema'
 
 function lint(brief: SceneBrief, sourceCount = 1): SceneDiagnostic[] {
