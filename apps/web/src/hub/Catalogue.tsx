@@ -1,3 +1,4 @@
+import { localPaths } from '../data/paths'
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -124,7 +125,7 @@ export function Catalogue({
             >
               {k.thumb && (
                 <img
-                  src={'/' + k.thumb}
+                  src={localPaths.asset(k.thumb)}
                   alt=""
                   style={{
                     display: 'block',

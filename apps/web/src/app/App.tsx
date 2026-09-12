@@ -1,6 +1,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { catalogue } from '../data/client'
+import { localPaths } from '../data/paths'
 import type { Cluster, LineBox, Scenario, WordBox } from '../data/types'
 import { usePhases } from '../sequence/phases'
 import { makeSampler, createSheet } from '../sequence/theatre'
@@ -164,8 +165,8 @@ export function App() {
       const w: Record<string, WordBox[]> = {}
       const l: typeof lines = {}
       for (const [pid, p] of Object.entries(s.pages)) {
-        if (p.words) w[pid] = (await (await fetch('/' + p.words)).json()) as WordBox[]
-        if (p.lines) l[pid] = (await (await fetch('/' + p.lines)).json()) as LineBox[]
+        if (p.words) w[pid] = (await (await fetch(localPaths.asset(p.words))).json()) as WordBox[]
+        if (p.lines) l[pid] = (await (await fetch(localPaths.asset(p.lines))).json()) as LineBox[]
         if (p.syntheticLines) {
           const sl = p.syntheticLines
           l[pid] = Array.from({ length: sl.count }, (_, i) => ({
@@ -190,7 +191,7 @@ export function App() {
       setCaption({ text: '', kind: 'voice', until: null })
       createSheet(
         s,
-        await fetch('/assets/events/' + id + '/' + id + '.theatre.json')
+        await fetch(localPaths.theatre(id))
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null),
       )
@@ -244,13 +245,7 @@ export function App() {
           run: () => {
             const src: WorldSource =
               new URLSearchParams(location.search).get('live') === '0'
-                ? new FallbackSource(
-                    '/assets/events/' +
-                      sc.id +
-                      '/video/r0' +
-                      (sc.id === 'apollo11' ? 1 : 2) +
-                      '.mp4',
-                  )
+                ? new FallbackSource(localPaths.asset(`assets/${sc.id}/video/pass.mp4`))
                 : new LiveReactorSource()
             world.current = src
             void src.open(sc.world.seed ?? '').then(setVideo)
@@ -283,11 +278,15 @@ export function App() {
   const start = useCallback(async () => {
     if (!sc) return
     if (!audio.current) {
-      audio.current = new AudioGraph('/assets/library/beds/b01.wav')
+      audio.current = new AudioGraph(localPaths.asset('assets/library/beds/b01.wav'))
       for (const [id, cue] of Object.entries(sc.audio))
-        audio.current.register(id, cue.src.startsWith('http') ? cue.src : '/' + cue.src, 'archive')
+        audio.current.register(id, localPaths.asset(cue.src), 'archive')
       ;['F01', 'F02', 'F03', 'F04'].forEach((f) =>
-        audio.current!.register(f, '/assets/library/foley/' + f.toLowerCase() + '.wav', 'foley'),
+        audio.current!.register(
+          f,
+          localPaths.asset(`assets/library/foley/${f.toLowerCase()}.wav`),
+          'foley',
+        ),
       )
     }
     await audio.current.start()
@@ -454,7 +453,7 @@ export function App() {
             return (
               <PagePlane
                 key={id}
-                src={'/' + p.src}
+                src={localPaths.asset(p.src)}
                 x={slide}
                 y={p.y}
                 w={p.w}
@@ -464,7 +463,7 @@ export function App() {
             )
           })}
           <HighlightPlane
-            src={'/' + page.src}
+            src={localPaths.asset(page.src)}
             x={page.x}
             y={page.y}
             w={page.w}
@@ -485,7 +484,7 @@ export function App() {
           />
           {!prov && (
             <PagePlane
-              src={'/' + (beat?.ghost?.src ?? sc.ghost.src)}
+              src={localPaths.asset(beat?.ghost?.src ?? sc.ghost.src)}
               x={page.x + sc.ghost.x * page.w}
               y={page.y + sc.ghost.y * page.w}
               w={sc.ghost.w * page.w * sample('ghost.scale', t)}

@@ -30,6 +30,13 @@ export default defineConfig({
           include: ['apps/wireframe/src/**/*.test.ts'],
         },
       },
+      {
+        test: {
+          name: 'web',
+          environment: 'jsdom',
+          include: ['apps/web/src/**/*.test.ts'],
+        },
+      },
     ],
   },
 })

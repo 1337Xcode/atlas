@@ -1,85 +1,87 @@
-import type { Cluster, Manifest, Scenario } from './types'
-import { loadScenario } from './scenario'
 import { loadManifest } from './manifest'
+import { localPaths, type AssetPaths } from './paths'
+import { loadScenario } from './scenario'
+import type { Cluster, Manifest, Scenario } from './types'
 
+// why: the newspaper reads through this interface only, so the archive behind it can change
 export interface CatalogueClient {
   listClusters(): Promise<Cluster[]>
   getScenario(clusterId: string): Promise<Scenario>
   getManifest(clusterId: string): Promise<Manifest>
 }
 
-export class FixtureCatalogueClient implements CatalogueClient {
+// note: the events the local archive ships with, in the order the hub shows them
+export const LOCAL_EVENTS = ['apollo11', 'berlin1989'] as const
+
+// fn: reads scenarios and manifests from wherever the given paths point
+export class ArchiveCatalogueClient implements CatalogueClient {
+  private readonly paths: AssetPaths
+  private readonly events: readonly string[]
+
+  constructor(paths: AssetPaths = localPaths, events: readonly string[] = LOCAL_EVENTS) {
+    this.paths = paths
+    this.events = events
+  }
+
   async listClusters(): Promise<Cluster[]> {
-    return []
+    const scenarios = await Promise.all(
+      this.events.map(async (id) => ({ id, scenario: await this.getScenario(id) })),
+    )
+    return scenarios.map(({ id, scenario }) => ({
+      id,
+      label: scenario.title,
+      date: scenario.date,
+      eventId: id,
+      // note: only the pages the scenario marks for the hub are offered to the reader
+      pages: Object.entries(scenario.pages)
+        .filter(([, page]) => page.hub)
+        .map(([pageId, page]) => ({ id: pageId, title: page.label, thumb: page.src })),
+    }))
   }
-  async getScenario(id: string): Promise<Scenario> {
-    throw new Error('fixture has no scenario for ' + id)
+
+  getScenario(id: string): Promise<Scenario> {
+    return loadScenario(this.paths.scenario(id))
   }
-  async getManifest(id: string): Promise<Manifest> {
-    return { event: id, assets: [] }
+
+  getManifest(id: string): Promise<Manifest> {
+    return loadManifest(this.paths.manifest(id))
   }
 }
 
-const EVENTS = ['apollo11', 'berlin1989'] as const
+// fn: try each catalogue in turn, so a local archive can stand in for a remote one
+export class CompositeCatalogueClient implements CatalogueClient {
+  private readonly clients: readonly CatalogueClient[]
 
-export class LocalEventClient implements CatalogueClient {
-  private base = '/assets/events/'
-  async listClusters(): Promise<Cluster[]> {
-    const out: Cluster[] = []
-    for (const id of EVENTS) {
-      const sc = await this.getScenario(id)
-      out.push({
-        id,
-        label: sc.title,
-        date: sc.date,
-        eventId: id,
-        pages: Object.entries(sc.pages)
-          .filter(([, p]) => p.hub)
-          .map(([pid, p]) => ({ id: pid, title: p.label, thumb: p.src })),
-      })
-    }
-    return out
-  }
-  getScenario(id: string) {
-    return loadScenario(this.base + id + '/scenario.json')
-  }
-  getManifest(id: string) {
-    return loadManifest(this.base + id + '/manifest.json')
-  }
-}
-
-export class CompositeClient implements CatalogueClient {
-  private readonly clients: CatalogueClient[]
-
-  constructor(clients: CatalogueClient[]) {
+  constructor(clients: readonly CatalogueClient[]) {
     this.clients = clients
   }
-  async listClusters() {
-    return (await Promise.all(this.clients.map((c) => c.listClusters()))).flat()
+
+  async listClusters(): Promise<Cluster[]> {
+    const lists = await Promise.all(
+      this.clients.map((client) => client.listClusters().catch(() => [] as Cluster[])),
+    )
+    return lists.flat()
   }
-  async getScenario(id: string) {
-    for (const c of this.clients) {
+
+  async getScenario(id: string): Promise<Scenario> {
+    return this.firstOf((client) => client.getScenario(id), `no scenario for "${id}"`)
+  }
+
+  async getManifest(id: string): Promise<Manifest> {
+    return this.firstOf((client) => client.getManifest(id), `no manifest for "${id}"`)
+  }
+
+  private async firstOf<T>(read: (client: CatalogueClient) => Promise<T>, message: string) {
+    for (const client of this.clients) {
       try {
-        return await c.getScenario(id)
+        return await read(client)
       } catch {
-        /* next */
+        // note: fall through to the next catalogue
       }
     }
-    throw new Error('no scenario ' + id)
-  }
-  async getManifest(id: string) {
-    for (const c of this.clients) {
-      try {
-        return await c.getManifest(id)
-      } catch {
-        /* next */
-      }
-    }
-    throw new Error('no manifest ' + id)
+    throw new Error(message)
   }
 }
 
-export const catalogue: CatalogueClient = new CompositeClient([
-  new FixtureCatalogueClient(),
-  new LocalEventClient(),
-])
+// note: the default the app runs on until the archive api is wired in
+export const catalogue: CatalogueClient = new ArchiveCatalogueClient()
