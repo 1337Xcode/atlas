@@ -476,7 +476,15 @@ export function App() {
       })()
     : null
 
-  const cluster = clusters.find((c) => c.id === sc.id)!
+  // why: a catalogue that came back short must not crash the page the reader is already on
+  const cluster = clusters.find((c) => c.id === sc.id) ?? {
+    id: sc.id,
+    label: sc.title,
+    date: sc.date,
+    pages: Object.entries(sc.pages)
+      .filter(([, candidate]) => candidate.hub)
+      .map(([id, candidate]) => ({ id, title: candidate.label, thumb: candidate.src })),
+  }
   const lb = sample('letterbox', t)
   const readLine =
     cur?.driftLine !== undefined

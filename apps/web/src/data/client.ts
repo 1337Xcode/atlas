@@ -24,9 +24,17 @@ export class ArchiveCatalogueClient implements CatalogueClient {
   }
 
   async listClusters(): Promise<Cluster[]> {
-    const scenarios = await Promise.all(
-      this.events.map(async (id) => ({ id, scenario: await this.getScenario(id) })),
+    // why: one unreadable event must not take the whole catalogue down with it
+    const settled = await Promise.all(
+      this.events.map(async (id) => {
+        try {
+          return { id, scenario: await this.getScenario(id) }
+        } catch {
+          return null
+        }
+      }),
     )
+    const scenarios = settled.filter((entry): entry is NonNullable<typeof entry> => entry !== null)
     return scenarios.map(({ id, scenario }) => ({
       id,
       label: scenario.title,
