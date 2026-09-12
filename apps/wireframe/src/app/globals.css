@@ -250,3 +250,9 @@ button {
     padding: 0.5rem;
   }
 }
+
+.diagnosis {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin: 0;
+}

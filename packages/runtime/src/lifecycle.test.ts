@@ -108,7 +108,7 @@ describe('createLifecycleGuard', () => {
     lifecycle.begin()
 
     lifecycle.setHidden(true)
-    vi.advanceTimersByTime(21_000)
+    vi.advanceTimersByTime(61_000)
     expect(expired).toEqual(['hidden'])
     lifecycle.dispose()
   })
@@ -118,7 +118,7 @@ describe('createLifecycleGuard', () => {
     lifecycle.begin()
 
     lifecycle.setHidden(true)
-    vi.advanceTimersByTime(10_000)
+    vi.advanceTimersByTime(30_000)
     lifecycle.setHidden(false)
     vi.advanceTimersByTime(30_000)
 

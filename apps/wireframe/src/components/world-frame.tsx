@@ -146,9 +146,14 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
           />
         ) : null}
 
-        {closed ? (
+        {closed || snapshot?.phase === 'error' ? (
           <div className="closed">
-            <p>{endedMessage(snapshot?.endedReason)}</p>
+            <p>{snapshot?.error ?? endedMessage(snapshot?.endedReason)}</p>
+            {/* note: enough to tell a connect problem from a generation problem without a console */}
+            <p className="diagnosis">
+              transport {snapshot?.status ?? 'unknown'} · chunk {snapshot?.chunkIndex ?? 0}
+              {snapshot?.notices.length ? ` · ${snapshot.notices.at(-1)}` : ''}
+            </p>
             <button type="button" onClick={() => void open()}>
               open it again
             </button>

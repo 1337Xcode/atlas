@@ -33,7 +33,7 @@ const LIMIT_WARNING_MS = 20_000
 
 export function createLifecycleGuard(options: LifecycleGuardOptions): LifecycleGuard {
   const tickMs = options.tickMs ?? 1_000
-  const hiddenGraceMs = options.hiddenGraceMs ?? 20_000
+  const hiddenGraceMs = options.hiddenGraceMs ?? 60_000
 
   let ticker: ReturnType<typeof setInterval> | undefined
   let liveSince: number | undefined
