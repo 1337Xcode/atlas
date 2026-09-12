@@ -124,6 +124,21 @@ credited to the library that holds it.
 </tr>
 </table>
 
+### Inside a world
+
+![The Apollo 11 world running live: a first person view of the lunar surface, having walked forward from the anchor photograph, with the control legend and the three sourced hold keys along the bottom edge](documentation/media/world-live.jpg)
+
+One click on the photograph opens the world in place, over the paper. The frame above is the
+Apollo 11 world after walking forward from the anchor photograph, which is the whole point: the
+reader has moved somewhere the original frame does not show. Along the bottom are the sourced
+details bound to `1`, `2` and `3`, each one citing the source that attests it.
+
+![The loading state: the archival photograph blurred behind the event title and a sentence of context, with a spinner reading Preparing the world](documentation/media/world-preparing.jpg)
+
+Staging takes eight to fifteen seconds, so the wait shows the photograph, the dateline and a
+sourced sentence of context rather than a spinner on its own. If the provider has no free GPU
+the same panel says exactly that, and no world is started.
+
 <details>
 <summary><strong>On a phone</strong></summary>
 
