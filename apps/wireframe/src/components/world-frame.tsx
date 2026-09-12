@@ -1,9 +1,16 @@
 'use client'
 
-import { useWorldControls, useWorldSession, useWorldViewport } from '@atlas/runtime/react'
+import {
+  useCoarsePointer,
+  useWorldControls,
+  useWorldSession,
+  useWorldTouchControls,
+  useWorldViewport,
+} from '@atlas/runtime/react'
 import { WorldSessionPlanSchema, type WorldSessionPlan } from '@atlas/schema'
 import { useCallback, useEffect, useRef, useState } from 'react'
 // note: extensionless, because turbopack does not resolve an explicit .tsx specifier
+import { WorldPads } from './world-pads'
 import { WorldStatus } from './world-status'
 
 // note: wireframe only, the production newspaper replaces this; the hooks are the contract
@@ -24,6 +31,8 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
   const { session, snapshot } = useWorldSession(plan, { autoStart: true })
   const bindVideo = useWorldViewport(session)
   const bindSurface = useWorldControls(session, plan)
+  const touch = useCoarsePointer()
+  const pads = useWorldTouchControls(session, plan)
 
   // fn: fetch a fresh plan, which mints the token and therefore starts the clock
   const open = useCallback(async () => {
@@ -56,27 +65,37 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
   }, [session])
 
   // feat: expand puts the reader inside the world with nothing else on screen
+  // why: ios safari refuses fullscreen on a div, so the css fallback covers it
   const toggleExpand = useCallback(() => {
     const element = shell.current
-    if (!element) return
     if (document.fullscreenElement) {
       void document.exitFullscreen().catch(() => undefined)
+      setExpanded(false)
       return
     }
-    void element.requestFullscreen?.().catch(() => undefined)
+    if (element && typeof element.requestFullscreen === 'function') {
+      void element
+        .requestFullscreen()
+        .then(() => setExpanded(true))
+        .catch(() => setExpanded(true))
+      return
+    }
+    setExpanded(true)
   }, [])
 
   useEffect(() => {
-    const onChange = () => setExpanded(Boolean(document.fullscreenElement))
+    const onChange = () => {
+      if (!document.fullscreenElement) setExpanded(false)
+    }
     document.addEventListener('fullscreenchange', onChange)
     return () => document.removeEventListener('fullscreenchange', onChange)
   }, [])
 
   // note: a closed world leaves fullscreen, so the reader is never stuck in a black rectangle
   useEffect(() => {
-    if (snapshot?.phase === 'closed' && document.fullscreenElement) {
-      void document.exitFullscreen().catch(() => undefined)
-    }
+    if (snapshot?.phase !== 'closed') return
+    setExpanded(false)
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined)
   }, [snapshot?.phase])
 
   if (!plan) {
@@ -118,6 +137,15 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
           </p>
         ) : null}
 
+        {touch && !closed ? (
+          <WorldPads
+            plan={plan}
+            bindMovePad={pads.bindMovePad}
+            bindLookPad={pads.bindLookPad}
+            bindButtonBar={pads.bindButtonBar}
+          />
+        ) : null}
+
         {snapshot?.audioBlocked ? (
           <button type="button" className="sound-blocked" onClick={() => session?.resumeSound()}>
             turn on the archive sound
@@ -135,6 +163,12 @@ export function WorldFrame({ articleId, anchorImageUrl, anchorCaption }: WorldFr
       </div>
 
       <p className="legend">
+        {touch
+          ? 'drag the left pad to walk, the right pad to look, and hold an event button to see what a source attests.'
+          : null}
+      </p>
+
+      <p className="legend" hidden={touch}>
         click the frame, then <kbd>W</kbd>
         <kbd>A</kbd>
         <kbd>S</kbd>

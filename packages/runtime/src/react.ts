@@ -1,6 +1,7 @@
 import type { WorldSessionPlan } from '@atlas/schema'
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { bindControls } from './controls.ts'
+import { bindTouchControls } from './touch.ts'
 import { createWorldSession, type CreateWorldSessionOptions, type WorldSession } from './session.ts'
 import type { SessionSnapshot } from './store.ts'
 import type { WorldTransport } from './transport.ts'
@@ -82,4 +83,47 @@ export function useWorldControls(
   }, [surface, session, plan])
 
   return setSurface
+}
+
+// fn: true on a touch-first device, which is the honest signal, not the screen width
+export function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(false)
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const query = window.matchMedia('(pointer: coarse)')
+    setCoarse(query.matches)
+    const onChange = (event: MediaQueryListEvent) => setCoarse(event.matches)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+
+  return coarse
+}
+
+// fn: bind the on-screen pads, a move stick on the left and a look area on the right
+export function useWorldTouchControls(
+  session: WorldSession | undefined,
+  plan: WorldSessionPlan | undefined,
+) {
+  const [movePad, setMovePad] = useState<HTMLElement | null>(null)
+  const [lookPad, setLookPad] = useState<HTMLElement | null>(null)
+  const [buttonBar, setButtonBar] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (!movePad || !lookPad || !session || !plan) return
+    return bindTouchControls({
+      movePad,
+      lookPad,
+      buttonBar: buttonBar ?? undefined,
+      input: session.input,
+      settings: plan.controls,
+      capabilities: plan.capabilities,
+      eventKeys: plan.annotations.map((annotation) => annotation.key),
+      onChange: session.nudge,
+      onActivity: session.markActivity,
+    })
+  }, [movePad, lookPad, buttonBar, session, plan])
+
+  return { bindMovePad: setMovePad, bindLookPad: setLookPad, bindButtonBar: setButtonBar }
 }

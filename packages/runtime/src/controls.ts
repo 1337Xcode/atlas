@@ -1,4 +1,5 @@
 import type { WorldCapabilities, WorldControlSettings } from '@atlas/schema'
+import { createEventHolds } from './holds.ts'
 import type { HoldAction, InputStore } from './input.ts'
 import type { Unsubscribe } from './transport.ts'
 
@@ -54,7 +55,7 @@ const SWALLOWED = new Set([
 export function bindControls(options: BindControlsOptions): Unsubscribe {
   const { surface, input, settings, capabilities, eventKeys, onChange } = options
   const onActivity = options.onActivity ?? (() => undefined)
-  const holdTimers = new Map<string, ReturnType<typeof setTimeout>>()
+  const holds = createEventHolds({ input, eventKeys, maxHoldMs: settings.maxHoldMs, onChange })
 
   // why: keys are listened for on the window, because macos browsers do not focus a div on click
   // why: so an explicit active flag decides whether this world owns the keyboard
@@ -73,17 +74,8 @@ export function bindControls(options: BindControlsOptions): Unsubscribe {
     return action
   }
 
-  const eventKeyFor = (code: string): string | undefined => {
-    if (!EVENT_CODES.includes(code)) return undefined
-    const key = code.replace('Digit', '')
-    return eventKeys.includes(key) ? key : undefined
-  }
-
-  const releaseEvent = (key: string) => {
-    clearTimeout(holdTimers.get(key))
-    holdTimers.delete(key)
-    input.releaseEvent(key)
-  }
+  const eventKeyFor = (code: string): string | undefined =>
+    EVENT_CODES.includes(code) ? code.replace('Digit', '') : undefined
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (!active || isTyping(event.target)) return
@@ -106,18 +98,7 @@ export function bindControls(options: BindControlsOptions): Unsubscribe {
     }
 
     const eventKey = eventKeyFor(event.code)
-    if (eventKey) {
-      input.pressEvent(eventKey)
-      // why: long continuous holds accumulate drift, so a hold releases itself and settles
-      holdTimers.set(
-        eventKey,
-        setTimeout(() => {
-          releaseEvent(eventKey)
-          onChange()
-        }, settings.maxHoldMs),
-      )
-      onChange()
-    }
+    if (eventKey && holds.press(eventKey)) onChange()
   }
 
   const onKeyUp = (event: KeyboardEvent) => {
@@ -132,10 +113,7 @@ export function bindControls(options: BindControlsOptions): Unsubscribe {
     }
 
     const eventKey = eventKeyFor(event.code)
-    if (eventKey) {
-      releaseEvent(eventKey)
-      onChange()
-    }
+    if (eventKey && holds.release(eventKey)) onChange()
   }
 
   // note: clicking the world takes the keyboard and asks for the mouse; clicking away gives both back
@@ -179,8 +157,7 @@ export function bindControls(options: BindControlsOptions): Unsubscribe {
 
   // why: a keyup lost to a blur or a tab switch would leave the world walking forever
   const sweep = () => {
-    for (const timer of holdTimers.values()) clearTimeout(timer)
-    holdTimers.clear()
+    holds.releaseAll()
     dragging = false
     input.clear()
     onChange()

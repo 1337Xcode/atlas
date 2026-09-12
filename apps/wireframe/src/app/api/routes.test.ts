@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { GET as getArticles } from './articles/route.ts'
+import { GET as getAudio } from './audio/[...path]/route.ts'
 import { GET as getImage } from './images/[...path]/route.ts'
 import { POST as postIngest } from './ingest/route.ts'
 import { POST as postWorld } from './worlds/[id]/route.ts'
@@ -51,6 +52,24 @@ describe('GET /api/images', () => {
   })
 })
 
+describe('GET /api/audio', () => {
+  it('reports a recording the archive does not have', async () => {
+    const response = await getAudio(
+      new Request('http://localhost/api/audio'),
+      params({ path: ['apollo-11-first-steps', 'missing.m4a'] }),
+    )
+    expect(response.status).toBe(404)
+  })
+
+  it('refuses a path that climbs out of the audio directory', async () => {
+    const response = await getAudio(
+      new Request('http://localhost/api/audio'),
+      params({ path: ['..', 'articles', 'apollo-11-first-steps.json'] }),
+    )
+    expect(response.status).toBe(404)
+  })
+})
+
 describe('POST /api/worlds/[id]', () => {
   const request = new Request('http://localhost/api/worlds', { method: 'POST' })
 
@@ -61,11 +80,14 @@ describe('POST /api/worlds/[id]', () => {
     )
 
     const response = await postWorld(request, params({ id: 'apollo-11-first-steps' }))
-    const body = (await response.json()) as { plan: { model: { slug: string }; scene: unknown } }
+    const body = (await response.json()) as {
+      plan: { model: { slug: string }; scene: unknown; soundscape: unknown }
+    }
 
     expect(response.status).toBe(200)
     expect(body.plan.model.slug).toBe('reactor/lingbot-world-2')
     expect(body.plan.scene).toBeDefined()
+    expect(body.plan.soundscape).toEqual({ cues: [] })
     expect(response.headers.get('Cache-Control')).toBe('private, no-store')
   })
 

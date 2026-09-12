@@ -11,6 +11,8 @@ export { buildCameraPose, type PoseInput } from './pose.ts'
 export { createSoundstage, type PlayableSound, type Soundstage } from './sound.ts'
 export { createWorldSession, type CreateWorldSessionOptions, type WorldSession } from './session.ts'
 export type { SessionEndReason, SessionPhase, SessionSnapshot } from './store.ts'
+export { bindTouchControls, type BindTouchControlsOptions } from './touch.ts'
+export { createEventHolds, type EventHolds } from './holds.ts'
 export {
   createReactorTransport,
   type ModelMessage,
