@@ -1,6 +1,4 @@
 pnpm-lock.yaml
 .next/
 node_modules/
-
-# vendored third-party component, kept as published
-apps/web/src/ui/OptionWheel.tsx
+dist/

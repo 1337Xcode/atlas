@@ -27,9 +27,9 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       apiKey: config.reactorApiKey,
       models: [model.slug],
       // note: the client closes a world after two minutes; this is the server side backstop
-      // why: a few sessions per token covers a reader who resumes after an idle close
-      maxSessions: 4,
-      maxSessionDurationSeconds: 180,
+      // why: each deliberate opening gets its own token and a two-minute server limit
+      maxSessions: 1,
+      maxSessionDurationSeconds: 120,
     })
 
     const { plan, diagnostics } = buildWorldSessionPlan({

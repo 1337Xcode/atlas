@@ -18,6 +18,8 @@ const config: NextConfig = {
   ],
   // note: lets a loopback browser preview reach the dev server's hot-reload channel
   allowedDevOrigins: ['127.0.0.1'],
+  // why: the repository keeps its own agent notes, so next must not generate a second set
+  agentRules: false,
 }
 
 export default config

@@ -22,12 +22,12 @@ export default defineConfig({
       {
         // note: the app's own `@/` alias, so route handlers can be called directly in tests
         resolve: {
-          alias: { '@': fileURLToPath(new URL('./apps/wireframe/src', import.meta.url)) },
+          alias: { '@': fileURLToPath(new URL('./apps/api/src', import.meta.url)) },
         },
         test: {
-          name: 'wireframe',
+          name: 'api',
           environment: 'node',
-          include: ['apps/wireframe/src/**/*.test.ts'],
+          include: ['apps/api/src/**/*.test.ts'],
         },
       },
       {

@@ -3,11 +3,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   // note: this file configures the linter, so it is not itself linted with type information
-  { ignores: ['**/node_modules/**', '**/.next/**',
-      // note: unwired handoff scripts, see apps/web/tools/README.md
-      'apps/web/tools/**',
-      // note: vendored third-party component, kept as published so it can be re-synced
-      'apps/web/src/ui/OptionWheel.tsx', '**/dist/**', '**/*.d.ts', 'eslint.config.js'] },
+  { ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/*.d.ts', 'eslint.config.js'] },
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {

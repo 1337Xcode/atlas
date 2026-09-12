@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Atlas wireframe',
-  description: 'Test harness for the Atlas interactive newspaper backend',
+  title: 'Atlas API',
+  description: 'The archive and world-session service behind the Atlas reader',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

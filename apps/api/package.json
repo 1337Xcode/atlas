@@ -1,5 +1,5 @@
 {
-  "name": "@atlas/wireframe",
+  "name": "@atlas/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,6 @@
   "dependencies": {
     "@atlas/archive": "workspace:*",
     "@atlas/ingest": "workspace:*",
-    "@atlas/runtime": "workspace:*",
     "@atlas/schema": "workspace:*",
     "@atlas/world": "workspace:*",
     "next": "16.3.4",
