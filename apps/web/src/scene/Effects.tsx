@@ -2,8 +2,8 @@ import { forwardRef, useMemo } from 'react'
 import { Uniform, Vector2 } from 'three'
 import { Effect, BlendFunction } from 'postprocessing'
 import { EffectComposer, Noise, Vignette, ChromaticAberration } from '@react-three/postprocessing'
-import warmthFrag from '../shaders/warmth.frag'
-import focusFrag from '../shaders/radialFocus.frag'
+import warmthFrag from '../shaders/warmth.frag?raw'
+import focusFrag from '../shaders/radialFocus.frag?raw'
 
 class WarmthEffect extends Effect {
   constructor() {

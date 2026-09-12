@@ -3,6 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { catalogue } from '../data/client'
 import { localPaths } from '../data/paths'
 import { createProjector } from '../scene/projection'
+import { ErrorNotice } from './ErrorNotice'
 import { useViewport } from './useViewport'
 import type { Cluster, LineBox, Scenario, WordBox } from '../data/types'
 import { usePhases } from '../sequence/phases'
@@ -124,6 +125,7 @@ function Clock({
 
 export function App() {
   const viewport = useViewport()
+  const [failure, setFailure] = useState<string | null>(null)
   const [clusters, setClusters] = useState<Cluster[]>([])
   const [sc, setSc] = useState<Scenario | null>(null)
   const [words, setWords] = useState<Record<string, WordBox[]>>({})
@@ -160,7 +162,9 @@ export function App() {
   } = usePhases()
 
   useEffect(() => {
-    void catalogue.listClusters().then(setClusters)
+    catalogue.listClusters().then(setClusters, (cause: unknown) => {
+      setFailure(cause instanceof Error ? cause.message : 'the archive could not be read')
+    })
   }, [])
   const choose = useCallback(
     async (id: string) => {
@@ -202,7 +206,10 @@ export function App() {
     [setEvent, setStop],
   )
   useEffect(() => {
-    if (clusters[0] && !sc) void choose(clusters[0].id)
+    if (!clusters[0] || sc) return
+    choose(clusters[0].id).catch((cause: unknown) => {
+      setFailure(cause instanceof Error ? cause.message : 'the front page could not be opened')
+    })
   }, [clusters, sc, choose])
 
   const sample = useMemo(() => (sc ? makeSampler(sc) : null), [sc])
@@ -366,7 +373,9 @@ export function App() {
     [sc, schedule, phase, setPhase, caption.until, wire, provenanceVisible, sample],
   )
 
-  if (!sc || !sample) return <div className="ui fixed inset-0 grid place-items-center">Loading</div>
+  if (failure !== null) return <ErrorNotice title="The archive did not open." detail={failure} />
+  if (!sc || !sample)
+    return <div className="ui fixed inset-0 grid place-items-center">Opening the front page…</div>
   const t = T.current
   const prov = provenanceVisible
   const page = sc.pages[sc.readPage]!

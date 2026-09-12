@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useLoader } from '@react-three/fiber'
-import frag from '../shaders/highlight.frag'
+import frag from '../shaders/highlight.frag?raw'
 
 const vert =
   'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }'
